@@ -1,9 +1,10 @@
-package com.jeanbarcellos.project115.support;
+package com.jeanbarcellos.project115.support.exception.handler;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.logging.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class ValidationExceptionHandler {
         problem.setTitle("Validation failed");
         problem.setDetail("One or more fields are invalid");
         problem.setInstance(URI.create(request.getRequestURI()));
+
+        problem.setProperty("correlationId", MDC.get("correlationId"));
 
         List<Map<String, String>> errors = ex.getBindingResult()
                 .getFieldErrors()

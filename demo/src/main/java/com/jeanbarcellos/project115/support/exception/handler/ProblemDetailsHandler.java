@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.support;
+package com.jeanbarcellos.project115.support.exception.handler;
 
 import java.net.URI;
 import java.time.Instant;
