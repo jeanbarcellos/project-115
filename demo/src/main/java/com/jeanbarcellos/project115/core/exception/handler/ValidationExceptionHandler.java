@@ -1,5 +1,7 @@
 package com.jeanbarcellos.project115.core.exception.handler;
 
+import static com.jeanbarcellos.project115.core.Constants.CORRELATION_ID_KEY;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class ValidationExceptionHandler {
         problem.setDetail("One or more fields are invalid");
         problem.setInstance(URI.create(request.getRequestURI()));
 
-        problem.setProperty("correlationId", MDC.get("correlationId"));
+        problem.setProperty(CORRELATION_ID_KEY, MDC.get(CORRELATION_ID_KEY));
 
         List<Map<String, String>> errors = ex.getBindingResult()
                 .getFieldErrors()
