@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.support;
+package com.jeanbarcellos.project115.core;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,7 +1,7 @@
-package com.jeanbarcellos.project115.support.filter;
+package com.jeanbarcellos.project115.core.filter;
 
-import static com.jeanbarcellos.project115.support.Constants.CORRELATION_ID_HEADER;
-import static com.jeanbarcellos.project115.support.Constants.CORRELATION_ID_KEY;
+import static com.jeanbarcellos.project115.core.Constants.CORRELATION_ID_HEADER;
+import static com.jeanbarcellos.project115.core.Constants.CORRELATION_ID_KEY;
 
 import java.io.IOException;
 import java.util.Optional;
