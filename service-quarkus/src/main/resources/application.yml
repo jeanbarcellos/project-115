@@ -1,0 +1,9 @@
+quarkus:
+  application:
+    name: project115-service-quarkus
+
+  http:
+    port: 8081
+
+  swagger-ui:
+    always-include: true
