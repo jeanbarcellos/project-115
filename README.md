@@ -125,3 +125,100 @@ Resultado:
 
 *   Campos extras não podem quebrar os campos padrão.
 *   Se você colocar errorCode e ignorar type, você violou o espírito da RFC.
+
+---
+
+## Diferença entre DomainException e BusinessException
+
+A diferença não é semântica superficial, é arquitetural.
+
+E muita gente usa os dois nomes como sinônimos — errado.
+
+### DomainException
+
+> Exceção que representa uma violação do domínio, independentemente de quem consome.
+
+*   Vive no core / domínio
+*   Não conhece HTTP, API, UI, fila, batch
+*   Pode ocorrer em qualquer contexto de execução
+*   É agnóstica de canal
+*   Carrega significado de negócio, não contrato externo
+
+👉 É linguagem ubíqua do domínio, não da API.
+
+### BusinessException
+
+> Exceção que representa um erro de negócio já projetado para um boundary específico (normalmente API).
+
+*   Geralmente nasce no adapter ou application layer
+*   Normalmente já assume que vai virar:
+    *   HTTP 4xx
+    *   mensagem para cliente
+*   Costuma carregar:
+    *   código
+    *   mensagem “user friendly”
+    *   às vezes status HTTP
+
+👉 É erro de negócio do ponto de vista do consumidor, não do domínio puro.
+
+### Diferença resumida
+
+| Aspecto | DomainException | BusinessException |
+| --- | --- | --- |
+| Onde nasce | Domínio / Core | Application / API |
+| Conhece HTTP | ❌ | ⚠️ geralmente sim |
+| Conhece contrato externo | ❌ | ✔️ |
+| Reutilizável fora da API | ✔️ | ❌ |
+| Linguagem | Domínio | Cliente / API |
+| Papel | Sinalizar violação | Traduzir violação |
+
+### Arquitetura correta (camadas claras)
+
+```
+[ Domain ]
+   └─ DomainException
+
+[ Application / Adapter ]
+   └─ BusinessException (opcional)
+
+[ API ]
+   └─ ProblemDetail / ApiError
+```
+
+E, atenção:
+
+*   👉 **BusinessException é opcional**
+*   👉 **DomainException é fundamental**
+
+### Regra simples (guarde isso)
+
+*   Se a exceção faz sentido fora da API → DomainException
+*   Se só faz sentido para o consumidor → BusinessException
+*   Se carrega HTTP → nunca DomainException
+*   Se está no core → nunca BusinessException
+
+### Veredito arquitetural
+
+Se você usa apenas DomainException + tradução no adapter:
+
+*   ✔️ arquitetura limpa
+*   ✔️ menos classes
+*   ✔️ menos acoplamento
+*   ✔️ mais reutilização
+
+Se você cria BusinessException no core:
+
+*   ❌ você acoplou domínio ao delivery
+*   ❌ perdeu agnosticismo
+*   ❌ dificultou evolução
+
+### Em uma frase (sem anestesia)
+
+*   **DomainException** é linguagem do domínio.
+*   **BusinessException** é linguagem da borda.
+
+Se quiser, no próximo passo posso:
+
+*   mostrar um projeto sem BusinessException nenhuma
+*   mostrar quando BusinessException é inevitável
+*   ou desmontar um design real que mistura as duas

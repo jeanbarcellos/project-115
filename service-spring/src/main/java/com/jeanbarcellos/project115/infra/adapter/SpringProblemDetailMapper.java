@@ -11,13 +11,17 @@ import lombok.NoArgsConstructor;
 public class SpringProblemDetailMapper {
 
     public static ProblemDetail toProblemDetail(ApiError error) {
-        ProblemDetail pd = ProblemDetail.forStatus(error.status());
-        pd.setType(error.type());
-        pd.setTitle(error.title());
-        pd.setDetail(error.detail());
-        pd.setInstance(error.instance());
 
-        error.properties().forEach(pd::setProperty);
+        ProblemDetail pd = ProblemDetail.forStatus(error.getStatus());
+        pd.setType(error.getType());
+        pd.setTitle(error.getTitle());
+        pd.setDetail(error.getDetail());
+        pd.setInstance(error.getInstance());
+
+        error.getProperties().forEach(pd::setProperty);
+
+        pd.setProperty("correlationId", error.getCorrelationId());
+        pd.setProperty("timestamp", error.getTimestamp());
 
         return pd;
     }

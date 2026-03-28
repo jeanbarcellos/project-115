@@ -40,6 +40,12 @@ public class UserRepository {
         return Optional.ofNullable(db.get(id));
     }
 
+    public Optional<User> findByEmail(String email) {
+        return db.values().stream()
+                .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                .findFirst();
+    }
+
     public List<User> findAll() {
         return new ArrayList<>(db.values());
     }

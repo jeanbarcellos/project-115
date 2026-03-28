@@ -1,3 +1,9 @@
 spring:
   application:
     name: project115-service-spring
+
+  jackson:
+    serialization:
+      order-map-entries-by-keys: false
+    mapper:
+      sort-properties-alphabetically: false
