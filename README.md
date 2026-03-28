@@ -222,3 +222,14 @@ Se quiser, no próximo passo posso:
 *   mostrar um projeto sem BusinessException nenhuma
 *   mostrar quando BusinessException é inevitável
 *   ou desmontar um design real que mistura as duas
+
+```
+[ Domain ]
+   └─ throw DomainException
+
+[ Application ]
+   └─ Domain → BusinessException
+
+[ API ]
+   └─ BusinessException → ApiError (RFC 7807)
+```
