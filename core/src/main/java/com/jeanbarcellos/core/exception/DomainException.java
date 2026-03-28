@@ -9,18 +9,16 @@ import lombok.Getter;
 @Getter
 public class DomainException extends RuntimeException {
 
-    private final ApiErrorType errorType;
+    private final ApiErrorType type;
     private final Map<String, Object> context;
 
-    public DomainException(ApiErrorType errorType, String detail) {
-        super(detail);
-        this.errorType = errorType;
-        this.context = null;
+    public DomainException(ApiErrorType type, String detail) {
+        this(type, detail, Map.of());
     }
 
-    public DomainException(ApiErrorType errorType, String detail, Map<String, Object> context) {
+    public DomainException(ApiErrorType type, String detail, Map<String, Object> context) {
         super(detail);
-        this.errorType = errorType;
+        this.type = type;
         this.context = context;
     }
 

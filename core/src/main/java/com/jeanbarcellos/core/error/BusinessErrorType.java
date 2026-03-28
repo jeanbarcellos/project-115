@@ -17,8 +17,16 @@ public enum BusinessErrorType implements ApiErrorType {
     INSUFFICIENT_BALANCE(
             "insufficient-balance",
             409,
-            "Insufficient balance");
+            "Insufficient balance"),
 
+    EMAIL_ALREADY_EXISTS("email-already-exists",
+            409,
+            "Email already exists"),
+
+    VALIDATION_ERROR(
+            "validation-error",
+            400,
+            "Validation failed");
 
     private final String code;
     private final URI type;

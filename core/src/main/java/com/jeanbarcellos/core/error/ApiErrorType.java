@@ -5,28 +5,29 @@ import java.net.URI;
 public interface ApiErrorType {
 
     /**
-     * Código do erro
+     * Código curto usado em /problems/{cod}
+     * Ex: user-note-found
      *
      * @return
      */
     String code();
 
     /**
-     * Identidade estável (RFC 7807)
+     * URI RFC 7807 que identifica o tipo do problema
      *
      * @return URI
      */
     URI type();
 
     /**
-     * Resumo humano
+     * Resumo humano e estável
      *
      * @return String
      */
     String title(); //
 
     /**
-     * Apenas o número, sem HttpStatus
+     * Status HTTP numérico (core não depende de HttpStatus)
      *
      * @return int
      */

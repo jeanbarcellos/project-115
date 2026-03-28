@@ -1,10 +1,12 @@
 package com.jeanbarcellos.core.error;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Accessors;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Accessors(fluent = true) // retira o prefixo getsset
+@NoArgsConstructor
+@AllArgsConstructor
 public class ValidationError {
     private String field;
     private String message;
