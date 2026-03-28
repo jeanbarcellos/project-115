@@ -2,7 +2,7 @@ package com.jeanbarcellos.project115.infra.adapter;
 
 import org.springframework.http.ProblemDetail;
 
-import com.jeanbarcellos.core.apierror.ApiError;
+import com.jeanbarcellos.core.error.ApiError;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

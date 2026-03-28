@@ -1,4 +1,4 @@
-package com.jeanbarcellos.core.apierror;
+package com.jeanbarcellos.core.error;
 
 import java.net.URI;
 import java.util.Map;

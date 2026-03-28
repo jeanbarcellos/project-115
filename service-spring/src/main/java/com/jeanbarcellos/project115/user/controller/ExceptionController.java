@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jeanbarcellos.core.apierror.BusinessErrorType;
-import com.jeanbarcellos.core.apierror.DomainException;
+import com.jeanbarcellos.core.error.BusinessErrorType;
+import com.jeanbarcellos.core.exception.DomainException;
 
 import lombok.RequiredArgsConstructor;
 

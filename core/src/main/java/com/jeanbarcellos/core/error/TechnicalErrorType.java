@@ -1,4 +1,4 @@
-package com.jeanbarcellos.core.apierror;
+package com.jeanbarcellos.core.error;
 
 import java.net.URI;
 
@@ -19,11 +19,13 @@ public enum TechnicalErrorType implements ApiErrorType {
             503,
             "Database unavailable");
 
+    private final String code;
     private final URI type;
     private final int httpStatus;
     private final String title;
 
     TechnicalErrorType(String code, int httpStatus, String title) {
+        this.code = code;
         this.type = URI.create("https://api.exemplo.com/problems/v1/" + code);
         this.httpStatus = httpStatus;
         this.title = title;

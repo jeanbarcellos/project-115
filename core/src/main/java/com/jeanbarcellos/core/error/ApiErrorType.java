@@ -1,8 +1,15 @@
-package com.jeanbarcellos.core.apierror;
+package com.jeanbarcellos.core.error;
 
 import java.net.URI;
 
 public interface ApiErrorType {
+
+    /**
+     * Código do erro
+     *
+     * @return
+     */
+    String code();
 
     /**
      * Identidade estável (RFC 7807)

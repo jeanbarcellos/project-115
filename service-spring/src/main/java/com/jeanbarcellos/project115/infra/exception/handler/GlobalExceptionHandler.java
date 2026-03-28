@@ -11,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.jeanbarcellos.core.apierror.ApiError;
-import com.jeanbarcellos.core.apierror.ApiErrorType;
-import com.jeanbarcellos.core.apierror.DomainException;
+import com.jeanbarcellos.core.error.ApiError;
+import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
 import com.jeanbarcellos.project115.infra.adapter.SpringProblemDetailMapper;
 

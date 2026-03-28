@@ -3,7 +3,7 @@ package com.jeanbarcellos.project115.infra.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jeanbarcellos.core.apierror.ApiError;
+import com.jeanbarcellos.core.error.ApiError;
 
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
