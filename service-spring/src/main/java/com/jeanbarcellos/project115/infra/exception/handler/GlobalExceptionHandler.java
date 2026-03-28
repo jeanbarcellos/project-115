@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.support.exception.handler;
+package com.jeanbarcellos.project115.infra.exception.handler;
 
 import java.net.URI;
 import java.util.Map;
@@ -15,7 +15,7 @@ import com.jeanbarcellos.core.apierror.ApiError;
 import com.jeanbarcellos.core.apierror.ApiErrorType;
 import com.jeanbarcellos.core.apierror.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-import com.jeanbarcellos.project115.support.adapter.SpringProblemDetailMapper;
+import com.jeanbarcellos.project115.infra.adapter.SpringProblemDetailMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,9 @@ public class GlobalExceptionHandler {
 
         ApiErrorType type = ex.getErrorType();
 
-        String correlationContext = CorrelationContext.get();
+        String correlationId = CorrelationContext.get();
         // String correlationContext = ""
-        log.info("correlationContext: {}", correlationContext);// ;
+        log.info("correlationId: {}", correlationId);
 
         ApiError apiError = new ApiError(
                 type.type(),
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
                 type.httpStatus(),
                 ex.getMessage(),
                 URI.create(request.getRequestURI()),
-                Map.of(CORRELATION_ID_KEY, correlationContext))
+                Map.of(CORRELATION_ID_KEY, correlationId))
                 ;
 
         return ResponseEntity

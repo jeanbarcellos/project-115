@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.support.adapter;
+package com.jeanbarcellos.project115.infra.adapter;
 
 import org.springframework.http.ProblemDetail;
 

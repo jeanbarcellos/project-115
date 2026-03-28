@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.support.exception.handler;
+package com.jeanbarcellos.project115.infra.exception.handler;
 
 import java.util.Map;
 
@@ -9,7 +9,7 @@ import com.jeanbarcellos.core.apierror.ApiError;
 import com.jeanbarcellos.core.apierror.ApiErrorType;
 import com.jeanbarcellos.core.apierror.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-import com.jeanbarcellos.project115.support.adapter.QuarkusProblemMapper;
+import com.jeanbarcellos.project115.infra.adapter.QuarkusProblemMapper;
 
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
