@@ -4,7 +4,7 @@ import static com.jeanbarcellos.project115.core.Constants.CORRELATION_ID_KEY;
 
 import java.net.URI;
 
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

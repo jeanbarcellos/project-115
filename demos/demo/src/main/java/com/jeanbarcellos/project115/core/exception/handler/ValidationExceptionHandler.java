@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.logging.MDC;
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
