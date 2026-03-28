@@ -2,7 +2,7 @@ package com.jeanbarcellos.project115.user.service;
 
 import org.springframework.stereotype.Service;
 
-import com.jeanbarcellos.project115.user.dto.CreateUserRequest;
+import com.jeanbarcellos.project115.user.dto.UserCreateRequest;
 import com.jeanbarcellos.project115.user.dto.UserResponse;
 import com.jeanbarcellos.project115.user.exception.UserNotFoundException;
 import com.jeanbarcellos.project115.user.model.User;
@@ -21,7 +21,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " dows not exist"));
     }
 
-    public UserResponse create(CreateUserRequest request) {
+    public UserResponse create(UserCreateRequest request) {
         var user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());

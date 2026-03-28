@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class CreateUserRequest {
+public class UserCreateRequest {
 
     @NotBlank
     private String name;

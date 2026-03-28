@@ -15,16 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jeanbarcellos.core.apierror.BusinessErrorType;
-import com.jeanbarcellos.core.apierror.DomainException;
-import com.jeanbarcellos.project115.user.dto.CreateUserRequest;
+import com.jeanbarcellos.project115.user.dto.UserCreateRequest;
 import com.jeanbarcellos.project115.user.dto.UserResponse;
 import com.jeanbarcellos.project115.user.model.User;
 import com.jeanbarcellos.project115.user.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,7 +49,7 @@ public class UserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> create(
-            @Valid @RequestBody CreateUserRequest request) {
+            @Valid @RequestBody UserCreateRequest request) {
         UserResponse response = service.create(request);
 
         URI location = URI.create("/users/" + response.getId());
@@ -66,11 +63,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         service.delete(id);
-    }
-
-    @GetMapping("/test/domain-exception")
-    public void testDomainException() {
-        throw new DomainException(BusinessErrorType.INSUFFICIENT_BALANCE, "Details ...");
     }
 
 }
