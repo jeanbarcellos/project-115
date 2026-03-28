@@ -1,7 +1,7 @@
-package com.jeanbarcellos.project115.user.domain.model;
+package com.jeanbarcellos.project115.user.application.dto;
 
-import java.time.LocalDateTime;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,14 +13,12 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserUpdateRequest {
 
-    private Long id;
-
+    @NotBlank
     private String name;
 
+    @Email
+    @NotBlank
     private String email;
-
-    private LocalDateTime version;
-
 }

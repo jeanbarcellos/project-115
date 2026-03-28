@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.adapter.controller;
+package com.jeanbarcellos.project115.user.adapter.api.controller;
 
 import java.net.URI;
 
@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jeanbarcellos.project115.user.application.dto.UserCreateRequest;
 import com.jeanbarcellos.project115.user.application.dto.UserResponse;
+import com.jeanbarcellos.project115.user.application.dto.UserUpdateRequest;
 import com.jeanbarcellos.project115.user.application.service.UserService;
-import com.jeanbarcellos.project115.user.domain.model.User;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,24 +32,17 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(
-            @PathVariable Long id,
-            @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
-        User user = service.findById(id);
+            @PathVariable Long id) {
 
-        String etag = "\"" + user.getVersion() + "\"";
+        UserResponse response = service.findById(id);
 
-        if (etag.equals(ifNoneMatch)) {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).eTag(etag).build();
-        }
-
-        return ResponseEntity.ok()
-                .eTag(etag)
-                .body(UserResponse.from(user));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> create(
             @Valid @RequestBody UserCreateRequest request) {
+
         UserResponse response = service.create(request);
 
         URI location = URI.create("/users/" + response.getId());
@@ -57,6 +50,16 @@ public class UserController {
         return ResponseEntity
                 .created(location)
                 .body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> update(
+            @PathVariable Long id,
+            @RequestBody UserUpdateRequest request) {
+
+        UserResponse response = service.update(id, request);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

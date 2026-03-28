@@ -11,9 +11,12 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Repository;
 
-import com.jeanbarcellos.project115.user.domain.model.User;
+import com.jeanbarcellos.project115.user.domain.entity.User;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
+@Slf4j
 public class UserRepository {
 
     private Map<Long, User> db = new HashMap<>();
@@ -63,10 +66,11 @@ public class UserRepository {
             User user = User.builder()
                     .id(idGenerator.getAndIncrement())
                     .name("User " + i)
-                    .email("email " + i + "@test.com")
+                    .email("email" + i + "@test.com")
                     .version(LocalDateTime.now())
                     .build();
             db.put(user.getId(), user);
         });
+        log.info("seed users");
     }
 }

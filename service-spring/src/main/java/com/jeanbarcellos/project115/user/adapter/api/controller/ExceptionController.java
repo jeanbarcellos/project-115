@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.adapter.controller;
+package com.jeanbarcellos.project115.user.adapter.api.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

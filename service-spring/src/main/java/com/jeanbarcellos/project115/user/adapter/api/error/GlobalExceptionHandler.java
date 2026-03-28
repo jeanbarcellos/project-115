@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
                 .type(type.type())
                 .title(type.title())
                 .status(type.httpStatus())
-                .detail("One or more fields are invalid")
+                .detail("Validation failed")
                 .errors(validationErrors)
                 .correlationId(CorrelationContext.get())
                 .timestamp(Instant.now())
