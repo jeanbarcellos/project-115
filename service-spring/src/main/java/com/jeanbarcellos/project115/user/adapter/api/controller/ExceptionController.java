@@ -31,7 +31,6 @@ public class ExceptionController {
     @GetMapping("/domain-exception")
     public void testDomainException() {
         throw new DomainException(
-                UserErrorType.USER_NOT_FOUND,
                 "User with id 777 does not exist",
                 Map.of("userId", 777));
     }

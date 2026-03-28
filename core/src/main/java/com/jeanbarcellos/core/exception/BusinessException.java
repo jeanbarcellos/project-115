@@ -11,6 +11,7 @@ import lombok.Getter;
  * externa.
  *
  * <p>
+ * Representa um erro pronto para ser exposto externamente.
  * Diferente de {@link DomainException}, esta exceção já carrega dados
  * prontos para serem serializados como resposta da API.
  * </p>

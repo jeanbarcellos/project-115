@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.jeanbarcellos.core.error.ApiError;
 import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.error.BusinessErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.exception.ApplicationException;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
+import com.jeanbarcellos.project115.user.application.mapper.DomainExceptionTranslator;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +40,13 @@ public class GlobalExceptionHandler {
     // DOMAIN → converte para BUSINESS
     // ============================
 
+    // Errado
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ApiError> handleDomain(
             DomainException ex,
             HttpServletRequest request) {
 
-        ApiErrorType type = ex.getType();
+        ApiErrorType type = BusinessErrorType.DOMAIN_ERROR;
 
         ApiError error = buildError(
                 type,
@@ -71,11 +74,16 @@ public class GlobalExceptionHandler {
 
         ApiErrorType type = ex.getType();
 
-        ApiError error = buildError(
-                type,
-                ex.getMessage(),
-                ex.getProperties(),
-                request.getRequestURI());
+        ApiError error = ApiError.builder()
+                .type(resolveTypeUri(type))
+                .title(type.title())
+                .status(type.httpStatus())
+                .detail(ex.getMessage())
+                .instance(URI.create(request.getRequestURI()))
+                .timestamp(Instant.now())
+                .correlationId(CorrelationContext.get())
+                .properties(ex.getProperties())
+                .build();
 
         log.warn("[business-error] code={} correlationId={}",
                 type.code(),

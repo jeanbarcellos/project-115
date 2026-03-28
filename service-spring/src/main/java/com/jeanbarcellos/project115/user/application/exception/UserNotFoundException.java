@@ -1,9 +1,12 @@
 package com.jeanbarcellos.project115.user.application.exception;
 
-public class UserNotFoundException extends RuntimeException {
+import java.util.Map;
 
-    public UserNotFoundException(String string) {
-        super(string);
+import com.jeanbarcellos.core.exception.DomainException;
+
+public class UserNotFoundException extends DomainException {
+
+    public UserNotFoundException(Long id) {
+        super("User not found", Map.of("userId", id));
     }
-
 }
