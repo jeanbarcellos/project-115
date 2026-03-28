@@ -2,60 +2,86 @@ package com.jeanbarcellos.core.error;
 
 import java.net.URI;
 import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Builder
-@Setter
+/**
+ * Representa um erro padronizado conforme a RFC 7807 (Problem Details for HTTP
+ * APIs).
+ *
+ * <p>
+ * Esta classe é agnóstica a frameworks e não contém dependências externas.
+ * O campo {@code type} (URI) NÃO é definido aqui propositalmente, sendo
+ * responsabilidade
+ * do adapter (ex: handler HTTP) resolver a URL do problema.
+ * </p>
+ *
+ * <p>
+ * Campos adicionais como {@code errors}, {@code properties},
+ * {@code correlationId} e
+ * {@code timestamp} são extensões permitidas pela RFC.
+ * </p>
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
+ */
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiError {
 
-    /**
-     * RFC 7807
-     */
+    // RFC 7807  ********************************
+
     private URI type;
+
+    /**
+     * Título curto e estável do problema.
+     */
     private String title;
+
+    /**
+     * Status HTTP associado ao erro.
+     */
     private int status;
-    private String detail; // Descrição da ocorrencia
+
+    /**
+     * Descrição detalhada da ocorrência específica.
+     */
+    private String detail;
+
+    /**
+     * URI da requisição que originou o erro.
+     */
     private URI instance;
 
-    /**
-     * Observabilidade
-     */
-    private String correlationId;
-    private Instant timestamp;
+    // Observabilidade **************************
 
     /**
-     * Detalhes de violação de restrições (ex: Bean Validation)
-     * Campo de primeiro nível por decisão de contrato
+     * Identificador de correlação para rastreamento.
+     */
+    private String correlationId;
+
+    /**
+     * Timestamp da ocorrência do erro.
+     */
+    private Instant timestamp;
+
+    // Validação entrada ************************
+
+    /**
+     * Lista de erros de validação (quando aplicável).
      */
     private List<ValidationError> errors;
 
+    // Extensões livres *************************
+
     /**
-     * Extensões livres permitidas pela RFC 7807
-     * (ex: contexto de negócio, ids, valores, etc.)
+     * Extensões adicionais permitidas pela RFC 7807.
      */
     private Map<String, Object> properties;
-
 }
-
-    // @Setter(value = AccessLevel.PRIVATE)
-    // @JsonAnyGetter
-    // private Map<String, Object> properties;  // extensão libre (RFC permite)
-
-	// public void setProperty(String name, Object value) {
-	// 	this.properties = (this.properties != null ? this.properties : new LinkedHashMap<>());
-	// 	this.properties.put(name, value);
-	// }

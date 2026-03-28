@@ -1,35 +1,35 @@
 package com.jeanbarcellos.core.error;
 
-import java.net.URI;
-
+/**
+ * Representa um tipo de erro conhecido pela aplicação.
+ *
+ * <p>
+ * O {@code code} identifica o erro de forma única e será utilizado
+ * para resolver a URI do problema no adapter (ex: /problems/{code}).
+ * </p>
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
+ */
 public interface ApiErrorType {
 
     /**
-     * Código curto usado em /problems/{cod}
-     * Ex: user-note-found
+     * Código único do erro.
      *
-     * @return
+     * @return código do erro
      */
     String code();
 
     /**
-     * URI RFC 7807 que identifica o tipo do problema
+     * Título curto do erro.
      *
-     * @return URI
+     * @return título do erro
      */
-    URI type();
+    String title();
 
     /**
-     * Resumo humano e estável
+     * Status HTTP associado ao erro.
      *
-     * @return String
-     */
-    String title(); //
-
-    /**
-     * Status HTTP numérico (core não depende de HttpStatus)
-     *
-     * @return int
+     * @return status HTTP
      */
     int httpStatus();
 }

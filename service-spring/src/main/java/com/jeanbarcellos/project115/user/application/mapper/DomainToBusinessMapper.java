@@ -14,7 +14,7 @@ public class DomainToBusinessMapper {
         return new BusinessException(
                 ex.getType(),
                 ex.getMessage(),
-                ex.getType().httpStatus(),
+                // ex.getType().httpStatus(),
                 ex.getContext() // aqui você pode filtrar se quiser
         );
     }
