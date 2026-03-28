@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.controller;
+package com.jeanbarcellos.project115.user.adapter.controller;
 
 import java.net.URI;
 
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jeanbarcellos.project115.user.dto.UserCreateRequest;
-import com.jeanbarcellos.project115.user.dto.UserResponse;
-import com.jeanbarcellos.project115.user.model.User;
-import com.jeanbarcellos.project115.user.service.UserService;
+import com.jeanbarcellos.project115.user.application.dto.UserCreateRequest;
+import com.jeanbarcellos.project115.user.application.dto.UserResponse;
+import com.jeanbarcellos.project115.user.application.service.UserService;
+import com.jeanbarcellos.project115.user.domain.model.User;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

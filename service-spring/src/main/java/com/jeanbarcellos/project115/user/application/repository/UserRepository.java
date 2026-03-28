@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.repository;
+package com.jeanbarcellos.project115.user.application.repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Repository;
 
-import com.jeanbarcellos.project115.user.model.User;
+import com.jeanbarcellos.project115.user.domain.model.User;
 
 @Repository
 public class UserRepository {

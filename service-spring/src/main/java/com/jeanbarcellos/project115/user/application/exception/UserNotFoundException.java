@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.exception;
+package com.jeanbarcellos.project115.user.application.exception;
 
 public class UserNotFoundException extends RuntimeException {
 

@@ -31,7 +31,7 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
 
         // 1. Tenta pegar o ID do cabeçalho, senão gera um novo
         String correlationId = getCorrelationId(request);
-        log.info("{}: {}", CORRELATION_ID_KEY, correlationId);
+        // log.info("{}: {}", CORRELATION_ID_KEY, correlationId);
 
         // 2. Alimenta sua classe utilitária
         CorrelationContext.set(correlationId);

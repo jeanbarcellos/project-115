@@ -21,13 +21,12 @@ import com.jeanbarcellos.core.error.ValidationError;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-import com.jeanbarcellos.project115.user.mapper.DomainToBusinessMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
+// @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

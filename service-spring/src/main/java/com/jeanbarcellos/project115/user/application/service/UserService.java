@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.service;
+package com.jeanbarcellos.project115.user.application.service;
 
 import java.util.Map;
 
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 import com.jeanbarcellos.core.error.BusinessErrorType;
 import com.jeanbarcellos.core.exception.DomainException;
-import com.jeanbarcellos.project115.user.dto.UserCreateRequest;
-import com.jeanbarcellos.project115.user.dto.UserResponse;
-import com.jeanbarcellos.project115.user.exception.UserNotFoundException;
-import com.jeanbarcellos.project115.user.model.User;
-import com.jeanbarcellos.project115.user.repository.UserRepository;
+import com.jeanbarcellos.project115.user.application.dto.UserCreateRequest;
+import com.jeanbarcellos.project115.user.application.dto.UserResponse;
+import com.jeanbarcellos.project115.user.application.exception.UserNotFoundException;
+import com.jeanbarcellos.project115.user.application.repository.UserRepository;
+import com.jeanbarcellos.project115.user.domain.model.User;
 
 import lombok.RequiredArgsConstructor;
 

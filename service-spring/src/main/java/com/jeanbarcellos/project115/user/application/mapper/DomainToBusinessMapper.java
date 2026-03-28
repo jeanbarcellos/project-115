@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.mapper;
+package com.jeanbarcellos.project115.user.application.mapper;
 
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;

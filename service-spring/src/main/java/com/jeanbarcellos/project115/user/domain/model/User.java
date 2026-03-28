@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.model;
+package com.jeanbarcellos.project115.user.domain.model;
 
 import java.time.LocalDateTime;
 

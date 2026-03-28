@@ -1,6 +1,6 @@
-package com.jeanbarcellos.project115.user.dto;
+package com.jeanbarcellos.project115.user.application.dto;
 
-import com.jeanbarcellos.project115.user.model.User;
+import com.jeanbarcellos.project115.user.domain.model.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
