@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.jeanbarcellos.project115</groupId>
+    <artifactId>project115-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>project115-service-quarkus</artifactId>
+  <packaging>jar</packaging>
+
+  <name>project115-service-quarkus</name>
+  <description>Biblioteca compartilhada para microserviços Quarkus</description>
+
+  <properties>
+  </properties>
+
+  <dependencies>
+
+    <!-- ******************************************************* -->
+    <!-- DEPENDENCIAS DE COMPILACAO E RUNTIME                    -->
+    <!-- ******************************************************* -->
+
+    <!-- Lib project115-core-->
+    <dependency>
+      <groupId>com.jeanbarcellos.project115</groupId>
+      <artifactId>project115-core</artifactId>
+    </dependency>
+
+    <!-- ******************************************************* -->
+    <!-- DEPENDENCIAS DE TESTES                                  -->
+    <!-- ******************************************************* -->
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>
