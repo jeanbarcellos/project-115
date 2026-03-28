@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.jeanbarcellos.core.error.ApiError;
 import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.error.BusinessErrorType;
 import com.jeanbarcellos.core.error.ValidationError;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
 
-        List<ValidationError> fields = ex.getBindingResult()
+        List<ValidationError> validationErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(field -> new ValidationError(
@@ -35,15 +36,15 @@ public class GlobalExceptionHandler {
                         field.getRejectedValue()))
                 .toList();
 
-        ApiError error = new ApiError(
-                URI.create("https://api.exemplo.com/problems/v1/validation-error"),
-                "Validation failed",
-                400,
-                "One or more fields are invalid",
-                URI.create(req.getRequestURI()),
-                CorrelationContext.get(),
-                Instant.now(),
-                Map.of("errors", fields));
+        ApiError error = ApiError.builder()
+                .type(BusinessErrorType.VALIDATION_ERROR.type())
+                .title(BusinessErrorType.VALIDATION_ERROR.title())
+                .status(400)
+                .detail("One or more fields are invalid")
+                .errors(validationErrors)
+                .correlationId(CorrelationContext.get())
+                .timestamp(Instant.now())
+                .build();
 
         return ResponseEntity.badRequest().body(error);
     }
@@ -56,15 +57,16 @@ public class GlobalExceptionHandler {
         String correlationId = CorrelationContext.get();
         log.info("correlationId: {}", correlationId);
 
-        ApiError apiError = new ApiError(
-                type.type(),
-                type.title(),
-                type.httpStatus(),
-                ex.getMessage(),
-                URI.create(request.getRequestURI()),
-                correlationId,
-                Instant.now(),
-                ex.getContext());
+        ApiError apiError = ApiError.builder()
+                .type(type.type())
+                .title(type.title())
+                .status(type.httpStatus())
+                .detail(ex.getMessage())
+                .instance(URI.create(request.getRequestURI()))
+                .correlationId(correlationId)
+                .timestamp(Instant.now())
+                .properties(ex.getContext())
+                .build();
 
         return ResponseEntity
                 .status(type.httpStatus())

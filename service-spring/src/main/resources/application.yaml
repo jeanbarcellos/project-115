@@ -3,6 +3,7 @@ spring:
     name: project115-service-spring
 
   jackson:
+    default-property-inclusion: non-null
     serialization:
       order-map-entries-by-keys: false
     mapper:
