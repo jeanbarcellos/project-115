@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.filter;
+package com.jeanbarcellos.project115.user.adapter.api.filter;
 
 import static com.jeanbarcellos.core.Constants.CORRELATION_ID_HEADER;
 import static com.jeanbarcellos.core.Constants.CORRELATION_ID_KEY;
