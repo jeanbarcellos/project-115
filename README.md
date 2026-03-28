@@ -233,3 +233,18 @@ Se quiser, no próximo passo posso:
 [ API ]
    └─ BusinessException → ApiError (RFC 7807)
 ```
+
+## **400 vs 422 — critério objetivo (não opinativo)**
+
+A confusão comum é tratar tudo como 400. Isso empobrece o contrato.
+
+## Regra prática
+
+*   **400 Bad Request**
+    *   Problema de **sintaxe/estrutura** da requisição
+    *   JSON inválido, tipo errado, header ausente, query malformada
+    *   O servidor **não consegue processar semanticamente**
+*   **422 Unprocessable Entity**
+    *   Estrutura válida, mas **violação de regra/validação**
+    *   Bean Validation, invariantes simples
+    *   O servidor **entende**, mas **rejeita**

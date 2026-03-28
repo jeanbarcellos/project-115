@@ -25,7 +25,7 @@ public enum BusinessErrorType implements ApiErrorType {
 
     VALIDATION_ERROR(
             "validation-error",
-            400,
+            422,
             "Validation failed");
 
     private final String code;
