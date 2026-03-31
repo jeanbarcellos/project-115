@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Getter
 @RequiredArgsConstructor
 @Accessors(fluent = true) // retira o prefixo getsset
-public enum BusinessErrorType implements ApiErrorType {
+public enum BusinessErrorType implements ErrorType {
 
     DOMAIN_ERROR("domain-error", 400, "Domain error"),
     VALIDATION_ERROR("validation-error", 422, "Validation failed");

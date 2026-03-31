@@ -7,7 +7,7 @@ import lombok.Getter;
  * Representa um erro de validação de campo.
  *
  * <p>
- * Utilizado como extensão do {@link ApiError} para detalhar
+ * Utilizado como extensão do {@link ErrorResponse} para detalhar
  * violações de regras de validação.
  * </p>
  *

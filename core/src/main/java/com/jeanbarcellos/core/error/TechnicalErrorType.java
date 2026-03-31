@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Getter
 @RequiredArgsConstructor
 @Accessors(fluent = true) // retira o prefixo getsset
-public enum TechnicalErrorType implements ApiErrorType {
+public enum TechnicalErrorType implements ErrorType {
 
     INTERNAL_ERROR("internal-error", 500, "Internal server error", false),
     DATABASE_ERROR("database-error", 503, "Database unavailable", true),

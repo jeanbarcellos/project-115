@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiError {
+public class ErrorResponse {
 
     // RFC 7807  ********************************
 

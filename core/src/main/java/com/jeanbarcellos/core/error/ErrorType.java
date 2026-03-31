@@ -10,7 +10,7 @@ package com.jeanbarcellos.core.error;
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public interface ApiErrorType {
+public interface ErrorType {
 
     /**
      * Código único do erro.
