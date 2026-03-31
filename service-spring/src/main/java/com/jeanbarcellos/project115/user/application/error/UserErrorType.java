@@ -1,6 +1,6 @@
 package com.jeanbarcellos.project115.user.application.error;
 
-import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.error.ErrorType;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Getter
 @RequiredArgsConstructor
 @Accessors(fluent = true) // retira o prefixo getsset
-public enum UserErrorType implements ApiErrorType {
+public enum UserErrorType implements ErrorType {
 
     USER_NOT_FOUND("user-not-found", 404, "User not found"),
     EMAIL_ALREADY_EXISTS("email-already-exists", 409, "Email already exists");

@@ -5,7 +5,6 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.jeanbarcellos.core.exception.BusinessException;
-import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.user.application.dto.UserCreateRequest;
 import com.jeanbarcellos.project115.user.application.dto.UserResponse;
 import com.jeanbarcellos.project115.user.application.dto.UserUpdateRequest;

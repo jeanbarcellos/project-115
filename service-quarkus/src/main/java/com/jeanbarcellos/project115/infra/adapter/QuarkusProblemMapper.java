@@ -3,7 +3,7 @@ package com.jeanbarcellos.project115.infra.adapter;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.jeanbarcellos.core.error.ApiError;
+import com.jeanbarcellos.core.error.ErrorResponse;
 
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuarkusProblemMapper {
 
-    public static Response toResponse(ApiError error) {
+    public static Response toResponse(ErrorResponse error) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("type", error.type().toString());

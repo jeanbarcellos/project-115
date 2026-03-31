@@ -1,6 +1,6 @@
 package com.jeanbarcellos.project115.user.application.mapper;
 
-import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DomainExceptionTranslator {
 
-    public static BusinessException map(DomainException ex, ApiErrorType type) {
+    public static BusinessException map(DomainException ex, ErrorType type) {
 
         // ⚠️ Aqui é onde você decide o erro externo
         // Exemplo simples (você pode evoluir isso depois)

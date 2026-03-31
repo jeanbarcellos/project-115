@@ -5,8 +5,8 @@ import java.util.Map;
 import static com.jeanbarcellos.core.Constants.CORRELATION_ID_HEADER;
 import static com.jeanbarcellos.core.Constants.CORRELATION_ID_KEY;
 
-import com.jeanbarcellos.core.error.ApiError;
-import com.jeanbarcellos.core.error.ApiErrorType;
+import com.jeanbarcellos.core.error.ErrorResponse;
+import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
 import com.jeanbarcellos.project115.infra.adapter.QuarkusProblemMapper;
@@ -32,7 +32,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<DomainException> {
     @Override
     public Response toResponse(DomainException ex) {
 
-        ApiErrorType type = ex.getErrorType();
+        ErrorType type = ex.getErrorType();
 
         // 1. Tenta pegar do ThreadLocal (CorrelationContext)
         String correlationId = CorrelationContext.get();
@@ -47,7 +47,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<DomainException> {
         // log.info("correlationContext: {}", correlationContext);
         // log.info("correlationContext2: {}", correlationContext2);
 
-        ApiError apiError = new ApiError(
+        ErrorResponse apiError = new ErrorResponse(
                 type.type(),
                 type.title(),
                 type.httpStatus(),
