@@ -11,24 +11,24 @@ public class WalletExceptionTranslator {
 
     public static BusinessException translate(DomainException ex) {
 
-        String message = ex.getMessage();
+        return switch (ex.getCode()) {
 
-        if (message.contains("Insufficient")) { // Alerta
-            return new BusinessException(
-                    WalletErrorType.INSUFFICIENT_BALANCE,
-                    message,
-                    ex.getContext());
-        }
+            case "INSUFFICIENT_BALANCE" ->
+                new BusinessException(
+                        WalletErrorType.INSUFFICIENT_BALANCE,
+                        "Insufficient balance",
+                        ex.getContext());
 
-        if (message.contains("Amount")) { // Alerta
-            return new BusinessException(
-                    WalletErrorType.INVALID_AMOUNT,
-                    message,
-                    ex.getContext());
-        }
+            case "INVALID_AMOUNT" ->
+                new BusinessException(
+                        WalletErrorType.INVALID_AMOUNT,
+                        "Invalid amount",
+                        ex.getContext());
 
-        return new BusinessException(
-                WalletErrorType.INVALID_AMOUNT,
-                message);
+            default ->
+                new BusinessException(
+                        WalletErrorType.INVALID_AMOUNT,
+                        "Unknown domain error");
+        };
     }
 }
