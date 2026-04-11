@@ -35,11 +35,9 @@ public class GlobalExceptionHandler {
     @Value("${api.problem.base-uri}")
     private String problemBaseUri;
 
-    // ============================
-    // DOMAIN → converte para BUSINESS
-    // ============================
+    // DOMAIN → converte para BUSINESS ========================================
 
-    // Errado
+    // Errado *
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomain(
             DomainException ex,
@@ -47,11 +45,16 @@ public class GlobalExceptionHandler {
 
         ErrorType type = BusinessErrorType.DOMAIN_ERROR;
 
-        ErrorResponse error = buildError(
-                type,
-                ex.getMessage(),
-                ex.getContext(),
-                request.getRequestURI());
+        ErrorResponse error = ErrorResponse.builder()
+                .type(resolveTypeUri(type))
+                .title(type.title())
+                .status(type.httpStatus())
+                .detail(ex.getMessage())
+                .instance(resolveInstance(request))
+                .timestamp(Instant.now())
+                .correlationId(CorrelationContext.get())
+                .properties(ex.getContext())
+                .build();
 
         log.warn("[domain-error] code={} correlationId={}",
                 type.code(),
@@ -62,9 +65,7 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // ============================
-    // BUSINESS
-    // ============================
+    // BUSINESS ===============================================================
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusiness(
@@ -77,11 +78,11 @@ public class GlobalExceptionHandler {
                 .type(resolveTypeUri(type))
                 .title(type.title())
                 .status(type.httpStatus())
-                .detail(ex.getMessage())
-                .instance(URI.create(request.getRequestURI()))
+                .detail(ex.getMessage()) // Mensagem customizada da exception
+                .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(CorrelationContext.get())
-                .properties(ex.getProperties())
+                .properties(ex.getProperties()) // Propriedades extras/contextos
                 .build();
 
         log.warn("[business-error] code={} correlationId={}",
@@ -92,9 +93,8 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
-    // ========================================================================
-    // VALIDATION → 422
-    // ========================================================================
+
+    // VALIDATION → 422 =======================================================
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidation(
@@ -108,13 +108,13 @@ public class GlobalExceptionHandler {
                 .title(type.title())
                 .status(type.httpStatus())
                 .detail(ex.getMessage()) // Mensagem customizada
-                .instance(URI.create(request.getRequestURI()))
-                .errors(ex.getErrors())
+                .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(CorrelationContext.get())
+                .errors(ex.getErrors()) // Campo customizado de erros
                 .build();
 
-        log.warn("[{}] correlationId={} errors={}",
+        log.warn("[validation-error] correlationId={} errors={}",
                 type.code(),
                 CorrelationContext.get(),
                 ex.getErrors());
@@ -124,9 +124,7 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // ========================================================================
-    // APPLICATION (fallback controlado)
-    // ========================================================================
+    // APPLICATION (fallback controlado) ======================================
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplication(
@@ -136,10 +134,15 @@ public class GlobalExceptionHandler {
         // Sem tipo explícito → vira erro interno
         TechnicalErrorType type = TechnicalErrorType.INTERNAL_ERROR;
 
-        ErrorResponse error = buildError(
-                type,
-                ex.getMessage(),
-                request.getRequestURI());
+        ErrorResponse error = ErrorResponse.builder()
+                .type(resolveTypeUri(type))
+                .title(type.title())
+                .status(type.httpStatus())
+                .detail(ex.getMessage()) // Mensagem customizada da exception
+                .instance(resolveInstance(request))
+                .timestamp(Instant.now())
+                .correlationId(CorrelationContext.get())
+                .build();
 
         log.error("[{}] correlationId={} message={}",
                 type.code(),
@@ -152,9 +155,7 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // ========================================================================
-    // TECHNICAL
-    // ========================================================================
+    // TECHNICAL ==============================================================
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleTechnical(
@@ -168,7 +169,7 @@ public class GlobalExceptionHandler {
                 .title(type.title())
                 .status(type.httpStatus())
                 .detail("Unexpected error")
-                .instance(URI.create(request.getRequestURI()))
+                .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(CorrelationContext.get())
                 .properties(Map.of("retryable", type.isRetryable()))
@@ -185,43 +186,14 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
-    // ========================================================================
-    // HELPERS
-    // ========================================================================
-
-    private ErrorResponse buildError(
-            ErrorType type,
-            String detail,
-            Map<String, Object> properties,
-            String uri) {
-        return ErrorResponse.builder()
-                .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
-                .detail(detail)
-                .instance(URI.create(uri))
-                .timestamp(Instant.now())
-                .correlationId(CorrelationContext.get())
-                .properties(properties)
-                .build();
-    }
-
-    private ErrorResponse buildError(
-            ErrorType type,
-            String detail,
-            String uri) {
-        return ErrorResponse.builder()
-                .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
-                .detail(detail)
-                .instance(URI.create(uri))
-                .timestamp(Instant.now())
-                .correlationId(CorrelationContext.get())
-                .build();
-    }
+    // HELPERS ================================================================
 
     private URI resolveTypeUri(ErrorType type) {
         return URI.create(problemBaseUri + "/" + type.code());
     }
+
+    private URI resolveInstance(HttpServletRequest request) {
+        return URI.create(request.getRequestURI());
+    }
+
 }
