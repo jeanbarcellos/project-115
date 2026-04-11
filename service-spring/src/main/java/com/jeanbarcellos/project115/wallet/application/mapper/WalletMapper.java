@@ -1,5 +1,6 @@
 package com.jeanbarcellos.project115.wallet.application.mapper;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +16,15 @@ public class WalletMapper {
     public WalletResponse toResponse(Wallet wallet) {
         return WalletResponse.builder()
                 .id(wallet.getId())
-                .balance(wallet.getBalance())
+                // .balance(wallet.getBalance())
+                .version(wallet.getVersion())
+                .build();
+    }
+
+    public WalletResponse toResponse(Wallet wallet, BigDecimal balance) {
+        return WalletResponse.builder()
+                .id(wallet.getId())
+                .balance(balance)
                 .version(wallet.getVersion())
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.wallet.application.mapper;
+package com.jeanbarcellos.project115.wallet.application.translator;
 
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
@@ -6,29 +6,24 @@ import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 
 public class WalletExceptionTranslator {
 
-    private WalletExceptionTranslator() {
-    }
-
     public static BusinessException translate(DomainException ex) {
 
-        return switch (ex.getCode()) {
+        return switch (ex.getMessage()) {
 
             case "INSUFFICIENT_BALANCE" ->
                 new BusinessException(
                         WalletErrorType.INSUFFICIENT_BALANCE,
-                        "Insufficient balance",
-                        ex.getContext());
+                        "Insufficient balance");
 
-            case "INVALID_AMOUNT" ->
+            case "UNBALANCED_TRANSACTION" ->
                 new BusinessException(
-                        WalletErrorType.INVALID_AMOUNT,
-                        "Invalid amount",
-                        ex.getContext());
+                        WalletErrorType.INVALID_TRANSACTION,
+                        "Transaction is not balanced");
 
             default ->
                 new BusinessException(
-                        WalletErrorType.INVALID_AMOUNT,
-                        "Unknown domain error");
+                        WalletErrorType.INVALID_TRANSACTION,
+                        "Invalid transaction");
         };
     }
 }

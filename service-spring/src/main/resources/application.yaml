@@ -2,6 +2,15 @@ spring:
   application:
     name: project115-service-spring
 
+  datasource:
+    url: jdbc:h2:mem:testdb
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+
   jackson:
     default-property-inclusion: non-null
     serialization:

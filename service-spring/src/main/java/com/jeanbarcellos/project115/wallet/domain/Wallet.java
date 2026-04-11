@@ -1,66 +1,41 @@
 package com.jeanbarcellos.project115.wallet.domain;
 
-import com.jeanbarcellos.core.exception.DomainException;
-
-import lombok.Getter;
-import lombok.Setter;
-
 import java.math.BigDecimal;
-import java.util.Map;
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
- * Aggregate raiz Wallet.
+ * Aggregate Wallet.
+ *
+ * Saldo NÃO é persistido — é derivado do ledger.
  */
+@Entity
+@Table(name = "wallet")
 @Getter
+@NoArgsConstructor
 public class Wallet {
 
-    @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private BigDecimal balance;
-    private Long version; // controle de conorrencia
 
-    public Wallet(BigDecimal initialBalance) {
+    /**
+     * Lock otimista
+     */
+    @Version
+    private Long version;
 
-        if (initialBalance == null || initialBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new DomainException(
-                    "Initial balance cannot be negative",
-                    Map.of("balance", initialBalance));
-        }
-
-        this.balance = initialBalance;
-        this.version = 0L;
+    public BigDecimal calculateBalance(List<LedgerEntry> entries) {
+        return entries.stream()
+                .map(LedgerEntry::getSignedAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-    public void deposit(BigDecimal amount) {
-
-        validateAmount(amount);
-
-        this.balance = this.balance.add(amount);
-        this.version++;
-    }
-
-    public void withdraw(BigDecimal amount) {
-
-        this.validateAmount(amount);
-
-        if (balance.compareTo(amount) < 0) {
-            throw new DomainException("INSUFFICIENT_BALANCE", Map.of(
-                    "balance", balance,
-                    "requested", amount
-            ));
-        }
-
-        this.balance = this.balance.subtract(amount);
-        this.version++;
-    }
-
-    private void validateAmount(BigDecimal amount) {
-
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new DomainException(
-                    "Amount must be greater than zero",
-                    Map.of("amount", amount));
-        }
-    }
-
 }
