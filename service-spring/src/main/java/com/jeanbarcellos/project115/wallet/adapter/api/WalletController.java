@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,6 +41,7 @@ public class WalletController {
         return ResponseEntity.status(201).body(service.create(request));
     }
 
+    // Deposito
     @PostMapping("/{id}/deposit")
     public WalletResponse deposit(
             @PathVariable Long id,
@@ -47,10 +49,17 @@ public class WalletController {
         return service.deposit(id, request);
     }
 
+    // Retirado
     @PostMapping("/{id}/withdraw")
-    public WalletResponse withdraw(
+    public ResponseEntity<WalletResponse> withdraw(
             @PathVariable Long id,
+            @RequestHeader("If-Match") Long version,
             @RequestBody WalletOperationRequest request) {
-        return service.withdraw(id, request);
+
+        WalletResponse response = service.withdrraw(id, request, version);
+
+        return ResponseEntity.ok()
+                .eTag(response.getVersion().toString())
+                .body(response);
     }
 }

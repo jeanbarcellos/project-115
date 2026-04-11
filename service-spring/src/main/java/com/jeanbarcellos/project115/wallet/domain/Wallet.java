@@ -43,11 +43,11 @@ public class Wallet {
 
         this.validateAmount(amount);
 
-        if (this.balance.compareTo(amount) < 0) {
-            throw new DomainException(
-                    "Insufficient balance",
-                    Map.of("balance", balance,
-                            "requested", amount));
+        if (balance.compareTo(amount) < 0) {
+            throw new DomainException("INSUFFICIENT_BALANCE", Map.of(
+                    "balance", balance,
+                    "requested", amount
+            ));
         }
 
         this.balance = this.balance.subtract(amount);

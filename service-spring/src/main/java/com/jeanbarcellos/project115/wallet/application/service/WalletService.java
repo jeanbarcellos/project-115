@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletCreateRequest;
@@ -81,5 +82,24 @@ public class WalletService {
                                 "Wallet not found"
                         )
                 );
+    }
+
+    public WalletResponse withdrraw(Long id, WalletOperationRequest request, Long expectedVersion) {
+
+        Wallet wallet = this.findWallet(id);
+
+        if (!wallet.getVersion().equals(expectedVersion)) {
+            throw new BusinessException(
+                    TechnicalErrorType.CONFLICT,
+                    "Version mismatch");
+        }
+
+        try {
+            wallet.withdraw(request.getAmount());
+        } catch (DomainException ex) {
+            throw WalletExceptionTranslator.translate(ex);
+        }
+
+        return this.mapper.toResponse(repository.save(wallet));
     }
 }

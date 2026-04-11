@@ -16,6 +16,7 @@ public class WalletMapper {
         return WalletResponse.builder()
                 .id(wallet.getId())
                 .balance(wallet.getBalance())
+                .version(wallet.getVersion())
                 .build();
     }
 

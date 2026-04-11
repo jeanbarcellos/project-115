@@ -1,19 +1,29 @@
 package com.jeanbarcellos.project115.wallet.domain;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Repository
 public class WalletRepository {
 
     private Map<Long, Wallet> db = new HashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
+
+    public WalletRepository() {
+        this.seed(10);
+    }
 
     // --- Métodos do Repository ---
 
@@ -41,5 +51,14 @@ public class WalletRepository {
 
     public boolean existsById(Long id) {
         return db.containsKey(id);
+    }
+
+    private void seed(int endInclusive) {
+        IntStream.rangeClosed(1, endInclusive).forEach(i -> {
+            Wallet entity = new Wallet(new BigDecimal(100L));
+            entity.setId(idGenerator.getAndIncrement());
+            db.put(entity.getId(), entity);
+        });
+        log.info("seed wallet");
     }
 }
