@@ -22,6 +22,9 @@ public enum TechnicalErrorType implements ErrorType {
     TIMEOUT("timeout", 504, "Timeout", true),
     MALFORMED_JSON("malformed-json", 400, "Malformed JSON", false),
     INVALID_PARAMETER("invalid-parameter", 400, "Invalid parameter", false),
+    UNEXPECTED_ERROR("unexpected-error", 500, "Unexpected error", false),
+
+    // Validação dos dados
     VALIDATION_ERROR("validation-error", 422, "Validation failed", false);
 
     private final String code;

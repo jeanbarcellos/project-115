@@ -10,7 +10,9 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true) // retira o prefixo getsset
 public enum BusinessErrorType implements ErrorType {
 
+    // Domínio e negócio // Temporário
     DOMAIN_ERROR("domain-error", 400, "Domain error"),
+    BUSINESS_ERROR("business-error", 422, "Business error"),
     VALIDATION_ERROR("validation-error", 422, "Validation failed");
 
     private final String code;
