@@ -17,6 +17,7 @@ public class Wallet {
     @Setter
     private Long id;
     private BigDecimal balance;
+    private Long version; // controle de conorrencia
 
     public Wallet(BigDecimal initialBalance) {
 
@@ -27,6 +28,7 @@ public class Wallet {
         }
 
         this.balance = initialBalance;
+        this.version = 0L;
     }
 
     public void deposit(BigDecimal amount) {
@@ -34,6 +36,7 @@ public class Wallet {
         validateAmount(amount);
 
         this.balance = this.balance.add(amount);
+        this.version++;
     }
 
     public void withdraw(BigDecimal amount) {
@@ -48,6 +51,7 @@ public class Wallet {
         }
 
         this.balance = this.balance.subtract(amount);
+        this.version++;
     }
 
     private void validateAmount(BigDecimal amount) {
