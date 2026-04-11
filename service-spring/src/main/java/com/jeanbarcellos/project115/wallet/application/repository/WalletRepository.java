@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.wallet.domain;
+package com.jeanbarcellos.project115.wallet.application.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Repository;
+
+import com.jeanbarcellos.project115.wallet.domain.Wallet;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -13,8 +13,8 @@ import com.jeanbarcellos.project115.wallet.application.dto.WalletResponse;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 import com.jeanbarcellos.project115.wallet.application.mapper.WalletExceptionTranslator;
 import com.jeanbarcellos.project115.wallet.application.mapper.WalletMapper;
+import com.jeanbarcellos.project115.wallet.application.repository.WalletRepository;
 import com.jeanbarcellos.project115.wallet.domain.Wallet;
-import com.jeanbarcellos.project115.wallet.domain.WalletRepository;
 
 import lombok.RequiredArgsConstructor;
 
