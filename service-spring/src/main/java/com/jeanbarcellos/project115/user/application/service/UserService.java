@@ -33,32 +33,33 @@ public class UserService {
     }
 
     public UserResponse create(UserCreateRequest request) {
-        repository.findByEmail(request.getEmail()).ifPresent(u -> {
+
+        this.repository.findByEmail(request.getEmail()).ifPresent(entity -> {
             throw new BusinessException(
                     UserErrorType.EMAIL_ALREADY_EXISTS,
                     "Email already registered",
                     Map.of("email", request.getEmail()));
         });
 
-        User user = mapper.toEntity(request);
+        User user = this.mapper.toEntity(request);
 
         this.repository.save(user);
 
-        return mapper.toResponse(user);
+        return this.mapper.toResponse(user);
     }
 
     public UserResponse update(Long id, UserUpdateRequest request) {
 
-        User user = repository.findById(id)
+        User user = this.repository.findById(id)
                 .orElseThrow(() -> new BusinessException(
                         UserErrorType.USER_NOT_FOUND,
                         "User not found"));
 
-        mapper.updateEntity(user, request);
+        this.mapper.updateEntity(user, request);
 
-        User updated = repository.save(user);
+        User updated = this.repository.save(user);
 
-        return mapper.toResponse(updated);
+        return this.mapper.toResponse(updated);
     }
 
     public void delete(Long id) {
