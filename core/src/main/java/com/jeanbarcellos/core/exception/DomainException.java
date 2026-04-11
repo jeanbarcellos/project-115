@@ -2,8 +2,6 @@ package com.jeanbarcellos.core.exception;
 
 import java.util.Map;
 
-import com.jeanbarcellos.core.error.ErrorType;
-
 import lombok.Getter;
 
 /**

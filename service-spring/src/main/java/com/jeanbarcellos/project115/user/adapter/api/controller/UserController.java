@@ -1,6 +1,7 @@
 package com.jeanbarcellos.project115.user.adapter.api.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,9 +31,16 @@ public class UserController {
 
     private final UserService service;
 
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> findByAll() {
+
+        List<UserResponse> response = this.service.findAll();
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findById(
-            @PathVariable Long id) {
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
 
         UserResponse response = service.findById(id);
 

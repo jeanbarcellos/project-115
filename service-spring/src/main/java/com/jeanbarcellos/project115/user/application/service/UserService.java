@@ -1,5 +1,6 @@
 package com.jeanbarcellos.project115.user.application.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,13 @@ public class UserService {
 
     private final UserRepository repository;
     private final UserMapper mapper;
+
+    public List<UserResponse> findAll() {
+        return this.repository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .toList();
+    }
 
     public UserResponse findById(Long id) {
         User user = this.repository.findById(id)
