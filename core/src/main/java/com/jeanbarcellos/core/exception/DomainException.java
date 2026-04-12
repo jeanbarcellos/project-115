@@ -17,6 +17,8 @@ import lombok.Getter;
 @Getter
 public class DomainException extends ApplicationException {
 
+    private final String code;
+
     /**
      * Contexto interno do erro (não exposto diretamente).
      */
@@ -26,8 +28,14 @@ public class DomainException extends ApplicationException {
         this(message, Map.of());
     }
 
-    public DomainException(String message, Map<String, Object> context) {
-        super(message);
+    // public DomainException(String message, Map<String, Object> context) {
+    //     super(message);
+    //     this.context = context;
+    // }
+
+    public DomainException(String code, Map<String, Object> context) {
+        super(code);
+        this.code = code;
         this.context = context;
     }
 
