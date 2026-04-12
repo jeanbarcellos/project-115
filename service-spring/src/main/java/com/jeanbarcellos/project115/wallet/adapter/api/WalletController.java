@@ -47,7 +47,8 @@ public class WalletController {
 
     @PostMapping
     public ResponseEntity<WalletResponse> create(
-            @RequestBody WalletCreateRequest request) {
+            @RequestBody WalletCreateRequest request
+        ) {
         return ResponseEntity.ok(service.create(request));
     }
 
@@ -59,9 +60,10 @@ public class WalletController {
     public ResponseEntity<WalletResponse> deposit(
             @PathVariable Long id,
             @RequestHeader("If-Match") Long version,
+            @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletOperationRequest request) {
 
-        WalletResponse response = service.deposit(id, request, version);
+        WalletResponse response = service.deposit(id, request, version, key);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())
@@ -76,9 +78,10 @@ public class WalletController {
     public ResponseEntity<WalletResponse> withdraw(
             @PathVariable Long id,
             @RequestHeader("If-Match") Long version,
+            @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletOperationRequest request) {
 
-        WalletResponse response = service.withdraw(id, request, version);
+        WalletResponse response = this.service.withdraw(id, request, version, key);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())
@@ -93,9 +96,10 @@ public class WalletController {
     public ResponseEntity<WalletResponse> transfer(
             @PathVariable Long id,
             @RequestHeader("If-Match") Long version,
+            @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletTransferRequest request) {
 
-        WalletResponse response = service.transfer(id, request, version);
+        WalletResponse response = service.transfer(id, request, version, key);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())

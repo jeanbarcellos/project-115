@@ -7,11 +7,18 @@ import java.util.UUID;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+/**
+ * Entrada contábil (parte de uma Transaction).
+ */
 @Entity
 @Table(name = "ledger_entry")
 @Getter
@@ -30,13 +37,20 @@ public class LedgerEntry {
 
     private Instant createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_id")
+    @Setter
+    private Transaction transaction;
+
     public LedgerEntry(Long walletId, TransactionType type, BigDecimal amount) {
 
         if (walletId == null)
-            throw new IllegalArgumentException();
-
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("walletId is required");
+        if (type == null)
+            throw new IllegalArgumentException("type is required");
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("amount must be greater than zero");
+        }
 
         this.id = UUID.randomUUID();
         this.walletId = walletId;
@@ -46,8 +60,8 @@ public class LedgerEntry {
     }
 
     public BigDecimal getSignedAmount() {
-        return type == TransactionType.DEBIT
-                ? amount.negate()
-                : amount;
+        return this.type == TransactionType.DEBIT
+                ? this.amount.negate()
+                : this.amount;
     }
 }

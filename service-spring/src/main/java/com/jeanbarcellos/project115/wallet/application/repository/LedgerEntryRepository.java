@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jeanbarcellos.project115.wallet.domain.LedgerEntry;
 
-public interface LedgerRepository extends JpaRepository<LedgerEntry, UUID> {
+public interface LedgerEntryRepository extends JpaRepository<LedgerEntry, UUID> {
 
     List<LedgerEntry> findByWalletId(Long walletId);
+
 }

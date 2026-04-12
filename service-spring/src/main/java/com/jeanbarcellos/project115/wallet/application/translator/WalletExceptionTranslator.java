@@ -4,26 +4,49 @@ import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 
-public class WalletExceptionTranslator {
+/**
+ * Tradutor de exceções de domínio para exceções de aplicação.
+ */
+public final class WalletExceptionTranslator {
 
-    public static BusinessException translate(DomainException ex) {
+    private WalletExceptionTranslator() {
+    }
 
-        return switch (ex.getMessage()) {
+    public static BusinessException translate(DomainException exception) {
+
+        String message = exception.getMessage();
+
+        return switch (message) {
 
             case "INSUFFICIENT_BALANCE" ->
                 new BusinessException(
                         WalletErrorType.INSUFFICIENT_BALANCE,
                         "Insufficient balance");
 
-            case "UNBALANCED_TRANSACTION" ->
+            case "INVALID_AMOUNT" ->
                 new BusinessException(
-                        WalletErrorType.INVALID_TRANSACTION,
-                        "Transaction is not balanced");
+                        WalletErrorType.INVALID_AMOUNT,
+                        "Invalid amount");
+
+            case "INVALID_TRANSFER" ->
+                new BusinessException(
+                        WalletErrorType.INVALID_TRANSFER,
+                        "Invalid transfer");
+
+            case "FRAUD_DETECTED" ->
+                new BusinessException(
+                        WalletErrorType.FRAUD_DETECTED,
+                        "Fraud detected");
+
+            case "IDEMPOTENCY_PAYLOAD_MISMATCH" ->
+                new BusinessException(
+                        WalletErrorType.IDEMPOTENT_PAYLOAD_MISMATCH,
+                        "Payload mismatch for idempotency key");
 
             default ->
                 new BusinessException(
                         WalletErrorType.INVALID_TRANSACTION,
-                        "Invalid transaction");
+                        "Unexpected domain error");
         };
     }
 }

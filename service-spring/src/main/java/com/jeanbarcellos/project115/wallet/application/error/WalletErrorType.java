@@ -12,9 +12,20 @@ import lombok.experimental.Accessors;
 public enum WalletErrorType implements ErrorType {
 
     WALLET_NOT_FOUND("wallet-not-found", 404, "Wallet not found"),
+
     INSUFFICIENT_BALANCE("insufficient-balance", 409, "Insufficient balance"),
+
+    INVALID_AMOUNT("invalid-amount", 422, "Invalid amount"),
+
     INVALID_TRANSACTION("invalid-transaction", 422, "Invalid transaction"),
-    FRAUD("fraud", 403, "Fraud detected");
+
+    INVALID_TRANSFER("invalid-transfer", 422, "Invalid transfer"),
+
+    IDEMPOTENT_CONFLICT("idempotent-conflict", 409, "Idempotent conflict"),
+
+    IDEMPOTENT_PAYLOAD_MISMATCH("idempotent-payload-mismatch", 409, "Payload mismatch"),
+
+    FRAUD_DETECTED("fraud-detected", 403, "Fraud detected");
 
     private final String code;
     private final int httpStatus;

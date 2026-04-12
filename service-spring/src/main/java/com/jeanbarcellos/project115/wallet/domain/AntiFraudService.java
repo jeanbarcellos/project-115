@@ -8,21 +8,20 @@ import com.jeanbarcellos.core.exception.DomainException;
 
 public class AntiFraudService {
 
-    private static final BigDecimal MAX = new BigDecimal("10000");
+    private static final BigDecimal MAX_AMOUNT = new BigDecimal("10000");
 
-    public void validate(BigDecimal amount, List<LedgerEntry> recent) {
+    public void validate(BigDecimal amount, List<LedgerEntry> recentEntries) {
 
-        if (amount.compareTo(MAX) > 0) {
-            throw new DomainException("FRAUD_HIGH_VALUE");
+        if (amount.compareTo(MAX_AMOUNT) > 0) {
+            throw new DomainException("FRAUD_DETECTED");
         }
 
-        long lastMinute = recent.stream()
-                .filter(e -> e.getCreatedAt()
-                        .isAfter(Instant.now().minusSeconds(60)))
+        long recentCount = recentEntries.stream()
+                .filter(entry -> entry.getCreatedAt().isAfter(Instant.now().minusSeconds(60)))
                 .count();
 
-        if (lastMinute > 5) {
-            throw new DomainException("FRAUD_RATE_LIMIT");
+        if (recentCount > 5) {
+            throw new DomainException("FRAUD_DETECTED");
         }
     }
 }

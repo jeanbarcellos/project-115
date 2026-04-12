@@ -13,9 +13,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Aggregate Wallet.
+ * Aggregate raiz Wallet.
  *
- * Saldo NÃO é persistido — é derivado do ledger.
+ * - saldo NÃO é persistido diretamente
+ * - balanceSnapshot otimiza leitura
  */
 @Entity
 @Table(name = "wallet")
@@ -28,14 +29,26 @@ public class Wallet {
     private Long id;
 
     /**
-     * Lock otimista
+     * Controle de concorrência (ETag)
      */
     @Version
     private Long version;
 
+    /**
+     * Snapshot de saldo (performance)
+     */
+    private BigDecimal balanceSnapshot = BigDecimal.ZERO;
+
     public BigDecimal calculateBalance(List<LedgerEntry> entries) {
-        return entries.stream()
+
+        BigDecimal delta = entries.stream()
                 .map(LedgerEntry::getSignedAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return this.balanceSnapshot.add(delta);
+    }
+
+    public void updateSnapshot(BigDecimal newBalance) {
+        this.balanceSnapshot = newBalance;
     }
 }

@@ -1,39 +1,53 @@
 package com.jeanbarcellos.project115.wallet.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.jeanbarcellos.core.exception.DomainException;
 
+/**
+ * Serviço de domínio responsável por criar transações válidas.
+ */
 public class LedgerService {
 
     private static final Long SYSTEM = 0L;
 
-    public Transaction deposit(Long walletId, BigDecimal amount) {
+    public Transaction deposit(Long walletId, BigDecimal amount, String idempotencyKey, String payloadHash) {
 
-        validate(amount);
+        this.validateAmount(amount);
 
-        return new Transaction(List.of(
-                new LedgerEntry(walletId, TransactionType.CREDIT, amount),
-                new LedgerEntry(SYSTEM, TransactionType.DEBIT, amount)));
+        Transaction transaction = new Transaction(idempotencyKey, payloadHash);
+
+        transaction.addEntry(new LedgerEntry(walletId, TransactionType.CREDIT, amount));
+        transaction.addEntry(new LedgerEntry(SYSTEM, TransactionType.DEBIT, amount));
+
+        transaction.validate();
+
+        return transaction;
     }
 
-    public Transaction withdraw(Long walletId, BigDecimal amount, BigDecimal balance) {
+    public Transaction withdraw(Long walletId, BigDecimal amount, BigDecimal balance, String idempotencyKey,
+            String payloadHash) {
 
-        validate(amount);
+        this.validateAmount(amount);
 
         if (balance.compareTo(amount) < 0) {
             throw new DomainException("INSUFFICIENT_BALANCE");
         }
 
-        return new Transaction(List.of(
-                new LedgerEntry(walletId, TransactionType.DEBIT, amount),
-                new LedgerEntry(SYSTEM, TransactionType.CREDIT, amount)));
+        Transaction transaction = new Transaction(idempotencyKey, payloadHash);
+
+        transaction.addEntry(new LedgerEntry(walletId, TransactionType.DEBIT, amount));
+        transaction.addEntry(new LedgerEntry(SYSTEM, TransactionType.CREDIT, amount));
+
+        transaction.validate();
+
+        return transaction;
     }
 
-    public Transaction transfer(Long from, Long to, BigDecimal amount, BigDecimal balance) {
+    public Transaction transfer(Long from, Long to, BigDecimal amount, BigDecimal balance, String idempotencyKey,
+            String payloadHash) {
 
-        validate(amount);
+        this.validateAmount(amount);
 
         if (from.equals(to)) {
             throw new DomainException("INVALID_TRANSFER");
@@ -43,14 +57,20 @@ public class LedgerService {
             throw new DomainException("INSUFFICIENT_BALANCE");
         }
 
-        return new Transaction(List.of(
-                new LedgerEntry(from, TransactionType.DEBIT, amount),
-                new LedgerEntry(to, TransactionType.CREDIT, amount),
-                new LedgerEntry(SYSTEM, TransactionType.CREDIT, amount),
-                new LedgerEntry(SYSTEM, TransactionType.DEBIT, amount)));
+        Transaction transaction = new Transaction(idempotencyKey, payloadHash);
+
+        transaction.addEntry(new LedgerEntry(from, TransactionType.DEBIT, amount));
+        transaction.addEntry(new LedgerEntry(to, TransactionType.CREDIT, amount));
+
+        transaction.addEntry(new LedgerEntry(SYSTEM, TransactionType.CREDIT, amount));
+        transaction.addEntry(new LedgerEntry(SYSTEM, TransactionType.DEBIT, amount));
+
+        transaction.validate();
+
+        return transaction;
     }
 
-    private void validate(BigDecimal amount) {
+    private void validateAmount(BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new DomainException("INVALID_AMOUNT");
         }
