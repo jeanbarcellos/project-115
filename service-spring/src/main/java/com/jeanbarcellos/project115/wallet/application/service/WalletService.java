@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
+import com.jeanbarcellos.core.exception.ApplicationException;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.wallet.application.cache.WalletBalanceCache;
@@ -22,6 +23,7 @@ import com.jeanbarcellos.project115.wallet.application.dto.WalletResponse;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletTransferCommandRequest;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 import com.jeanbarcellos.project115.wallet.application.mapper.WalletMapper;
+import com.jeanbarcellos.project115.wallet.application.policy.WalletPolicyEngine;
 import com.jeanbarcellos.project115.wallet.application.repository.LedgerEntryRepository;
 import com.jeanbarcellos.project115.wallet.application.repository.TransactionRepository;
 import com.jeanbarcellos.project115.wallet.application.repository.WalletRepository;
@@ -50,9 +52,9 @@ public class WalletService {
 
     private final WalletMapper walletMapper;
     private final WalletBalanceCache walletBalanceCache;
+    private final WalletPolicyEngine walletPolicyEngine;
 
     private final LedgerService ledgerService = new LedgerService();
-    private final AntiFraudService antiFraudService = new AntiFraudService();
 
     // ============================
     // QUERY
@@ -113,10 +115,42 @@ public class WalletService {
     @Transactional
     public WalletResponse deposit(WalletCommandRequest request) {
 
-        return this.processFinancialOperation(
-                request,
-                "DEPOSIT",
-                (wallet, amount, balance, key, hash) -> this.ledgerService.deposit(wallet.getId(), amount, key, hash));
+        String payloadHash = this.generatePayloadHash(
+                request.getWalletId(),
+                request.getAmount(),
+                "DEPOSIT");
+
+        Optional<Transaction> existing = this.transactionRepository.findByIdempotencyKey(request.getIdempotencyKey());
+
+        if (existing.isPresent()) {
+            existing.get().validatePayload(payloadHash);
+            return this.buildResponseFromSnapshot(existing.get());
+        }
+
+        Wallet wallet = this.findWallet(request.getWalletId());
+
+        this.validateVersion(wallet, request.getExpectedVersion());
+
+        try {
+
+            this.walletPolicyEngine.validate(wallet, request.getAmount());
+
+            Transaction transaction = this.ledgerService.deposit(
+                    wallet.getId(),
+                    request.getAmount(),
+                    request.getIdempotencyKey(),
+                    payloadHash);
+
+            this.transactionRepository.save(transaction);
+
+            return this.finalize(wallet, transaction);
+
+        } catch (DataIntegrityViolationException ex) {
+            return this.resolveConflict(request.getIdempotencyKey(), payloadHash);
+        } catch (DomainException ex) {
+            throw WalletExceptionTranslator.translate(ex);
+        }
+
     }
 
     // ============================
@@ -126,22 +160,44 @@ public class WalletService {
     @Transactional
     public WalletResponse withdraw(WalletCommandRequest request) {
 
-        return this.processFinancialOperation(
-                request,
-                "WITHDRAW",
-                (wallet, amount, balance, key, hash) -> {
+        String payloadHash = this.generatePayloadHash(
+                request.getWalletId(),
+                request.getAmount(),
+                "WITHDRAW");
 
-                    this.antiFraudService.validate(
-                            amount,
-                            this.ledgerEntryRepository.findByWalletId(wallet.getId()));
+        Optional<Transaction> existing = this.transactionRepository.findByIdempotencyKey(request.getIdempotencyKey());
 
-                    return this.ledgerService.withdraw(
-                            wallet.getId(),
-                            amount,
-                            balance,
-                            key,
-                            hash);
-                });
+        if (existing.isPresent()) {
+            existing.get().validatePayload(payloadHash);
+            return this.buildResponseFromSnapshot(existing.get());
+        }
+
+        Wallet wallet = this.findWallet(request.getWalletId());
+
+        this.validateVersion(wallet, request.getExpectedVersion());
+
+        BigDecimal balance = this.getBalance(wallet.getId());
+
+        try {
+
+            this.walletPolicyEngine.validate(wallet, request.getAmount());
+
+            Transaction transaction = this.ledgerService.withdraw(
+                    wallet.getId(),
+                    request.getAmount(),
+                    balance,
+                    request.getIdempotencyKey(),
+                    payloadHash);
+
+            this.transactionRepository.save(transaction);
+
+            return this.finalize(wallet, transaction);
+
+        } catch (DataIntegrityViolationException ex) {
+            return this.resolveConflict(request.getIdempotencyKey(), payloadHash);
+        } catch (DomainException ex) {
+            throw WalletExceptionTranslator.translate(ex);
+        }
     }
 
     // ============================
@@ -151,21 +207,46 @@ public class WalletService {
     @Transactional
     public WalletResponse transfer(WalletTransferCommandRequest request) {
 
-        Wallet targetWallet = this.findWallet(request.getTargetWalletId());
-
-        return this.processFinancialOperation(
+        String payloadHash = this.generatePayloadHash(
                 request.getSourceWalletId(),
                 request.getAmount(),
-                request.getExpectedVersion(),
-                request.getIdempotencyKey(),
-                "TRANSFER",
-                (wallet, amount, balance, key, hash) -> this.ledgerService.transfer(
-                        wallet.getId(),
-                        targetWallet.getId(),
-                        amount,
-                        balance,
-                        key,
-                        hash));
+                "TRANSFER");
+
+        Optional<Transaction> existing = this.transactionRepository.findByIdempotencyKey(request.getIdempotencyKey());
+
+        if (existing.isPresent()) {
+            existing.get().validatePayload(payloadHash);
+            return this.buildResponseFromSnapshot(existing.get());
+        }
+
+        Wallet source = this.findWallet(request.getSourceWalletId());
+        Wallet target = this.findWallet(request.getTargetWalletId());
+
+        this.validateVersion(source, request.getExpectedVersion());
+
+        BigDecimal balance = this.getBalance(source.getId());
+
+        try {
+
+            this.walletPolicyEngine.validate(source, request.getAmount());
+
+            Transaction transaction = this.ledgerService.transfer(
+                    source.getId(),
+                    target.getId(),
+                    request.getAmount(),
+                    balance,
+                    request.getIdempotencyKey(),
+                    payloadHash);
+
+            this.transactionRepository.save(transaction);
+
+            return this.finalize(source, transaction);
+
+        } catch (DataIntegrityViolationException ex) {
+            return this.resolveConflict(request.getIdempotencyKey(), payloadHash);
+        } catch (DomainException ex) {
+            throw WalletExceptionTranslator.translate(ex);
+        }
     }
 
     // ============================
@@ -182,91 +263,38 @@ public class WalletService {
     }
 
     // ============================
-    // CORE (ÚNICO PONTO)
-    // ============================
-
-    private WalletResponse processFinancialOperation(
-            WalletCommandRequest request,
-            String operation,
-            OperationHandler handler) {
-
-        return this.processFinancialOperation(
-                request.getWalletId(),
-                request.getAmount(),
-                request.getExpectedVersion(),
-                request.getIdempotencyKey(),
-                operation,
-                handler);
-    }
-
-    private WalletResponse processFinancialOperation(
-            Long walletId,
-            BigDecimal amount,
-            Long expectedVersion,
-            String idempotencyKey,
-            String operation,
-            OperationHandler handler) {
-
-        String payloadHash = this.generatePayloadHash(walletId, amount, operation);
-
-        Optional<Transaction> existing = this.transactionRepository.findByIdempotencyKey(idempotencyKey);
-
-        if (existing.isPresent()) {
-            existing.get().validatePayload(payloadHash);
-            return this.buildResponseFromSnapshot(existing.get());
-        }
-
-        Wallet wallet = this.findWallet(walletId);
-
-        this.validateVersion(wallet, expectedVersion);
-
-        BigDecimal balance = this.getBalance(walletId);
-
-        try {
-
-            Transaction transaction = handler.execute(
-                    wallet,
-                    amount,
-                    balance,
-                    idempotencyKey,
-                    payloadHash);
-
-            this.transactionRepository.save(transaction);
-
-            this.walletBalanceCache.evict(walletId);
-
-            BigDecimal newBalance = this.getBalance(walletId);
-
-            wallet.updateSnapshot(newBalance);
-
-            Wallet updated = this.walletRepository.save(wallet);
-
-            transaction.storeSnapshot(
-                    updated.getId(),
-                    newBalance,
-                    updated.getVersion());
-
-            return this.walletMapper.toResponse(updated, newBalance);
-
-        } catch (DataIntegrityViolationException exception) {
-
-            Transaction persisted = this.transactionRepository.findByIdempotencyKey(idempotencyKey)
-                    .orElseThrow(() -> new BusinessException(
-                            WalletErrorType.IDEMPOTENT_CONFLICT,
-                            "Transaction not found"));
-
-            persisted.validatePayload(payloadHash);
-
-            return this.buildResponseFromSnapshot(persisted);
-
-        } catch (DomainException exception) {
-            throw WalletExceptionTranslator.translate(exception);
-        }
-    }
-
-    // ============================
     // HELPERS
     // ============================
+
+    private WalletResponse finalize(Wallet wallet, Transaction transaction) {
+
+        this.walletBalanceCache.evict(wallet.getId());
+
+        BigDecimal newBalance = this.getBalance(wallet.getId());
+
+        wallet.updateSnapshot(newBalance);
+
+        Wallet updated = this.walletRepository.save(wallet);
+
+        transaction.storeSnapshot(
+                updated.getId(),
+                newBalance,
+                updated.getVersion()
+        );
+
+        return this.walletMapper.toResponse(updated, newBalance);
+    }
+
+    private WalletResponse resolveConflict(String key, String hash) {
+
+        Transaction transaction =
+                this.transactionRepository.findByIdempotencyKey(key)
+                        .orElseThrow();
+
+        transaction.validatePayload(hash);
+
+        return this.buildResponseFromSnapshot(transaction);
+    }
 
     private WalletResponse buildResponseFromSnapshot(Transaction transaction) {
 
@@ -295,8 +323,9 @@ public class WalletService {
 
         if (!wallet.getVersion().equals(expectedVersion)) {
             throw new BusinessException(
-                    TechnicalErrorType.CONFLICT,
-                    "Version mismatch");
+                    WalletErrorType.IDEMPOTENT_CONFLICT,
+                    "Version mismatch"
+            );
         }
     }
 
@@ -329,12 +358,8 @@ public class WalletService {
             return HexFormat.of().formatHex(hash);
 
         } catch (NoSuchAlgorithmException exception) {
-            throw new RuntimeException(exception);
+            throw new ApplicationException("Erro ao gerar hash", exception);
         }
     }
 
-    @FunctionalInterface
-    private interface OperationHandler {
-        Transaction execute(Wallet wallet, BigDecimal amount, BigDecimal balance, String key, String hash);
-    }
 }
