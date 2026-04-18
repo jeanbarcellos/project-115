@@ -1,6 +1,10 @@
 package com.jeanbarcellos.project115.wallet.application.service;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,10 +16,10 @@ import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.wallet.application.cache.WalletBalanceCache;
+import com.jeanbarcellos.project115.wallet.application.dto.WalletCommandRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletCreateRequest;
-import com.jeanbarcellos.project115.wallet.application.dto.WalletOperationRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletResponse;
-import com.jeanbarcellos.project115.wallet.application.dto.WalletTransferRequest;
+import com.jeanbarcellos.project115.wallet.application.dto.WalletTransferCommandRequest;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 import com.jeanbarcellos.project115.wallet.application.mapper.WalletMapper;
 import com.jeanbarcellos.project115.wallet.application.repository.LedgerEntryRepository;
@@ -31,13 +35,10 @@ import com.jeanbarcellos.project115.wallet.domain.Wallet;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Serviço de aplicação da Wallet.
+ * Application Service da Wallet.
  *
- * Responsável por:
- * - orquestrar operações financeiras
- * - garantir idempotência forte
- * - validar concorrência (ETag)
- * - integrar antifraude
+ * Sem abstrações desnecessárias.
+ * Fluxo explícito.
  */
 @Service
 @RequiredArgsConstructor
@@ -71,9 +72,7 @@ public class WalletService {
 
         Wallet wallet = this.findWallet(walletId);
 
-        BigDecimal balance = this.getBalance(walletId);
-
-        return this.walletMapper.toResponse(wallet, balance);
+        return this.walletMapper.toResponse(wallet, this.getBalance(walletId));
     }
 
     // ============================
@@ -87,28 +86,24 @@ public class WalletService {
 
         Wallet savedWallet = this.walletRepository.save(wallet);
 
-        BigDecimal initialBalance = BigDecimal.ZERO;
-
         if (request.getInitialBalance() != null &&
                 request.getInitialBalance().compareTo(BigDecimal.ZERO) > 0) {
 
             String payloadHash = this.generatePayloadHash(
                     savedWallet.getId(),
                     request.getInitialBalance(),
-                    "INITIAL");
+                    "CREATE");
 
             Transaction transaction = this.ledgerService.deposit(
                     savedWallet.getId(),
                     request.getInitialBalance(),
-                    "INITIAL-" + savedWallet.getId(),
+                    "CREATE-" + savedWallet.getId(),
                     payloadHash);
 
             this.transactionRepository.save(transaction);
-
-            initialBalance = request.getInitialBalance();
         }
 
-        return this.walletMapper.toResponse(savedWallet, initialBalance);
+        return this.walletMapper.toResponse(savedWallet, this.getBalance(savedWallet.getId()));
     }
 
     // ============================
@@ -116,17 +111,10 @@ public class WalletService {
     // ============================
 
     @Transactional
-    public WalletResponse deposit(
-            Long walletId,
-            WalletOperationRequest request,
-            Long expectedVersion,
-            String idempotencyKey) {
+    public WalletResponse deposit(WalletCommandRequest request) {
 
-        return this.executeOperation(
-                walletId,
-                request.getAmount(),
-                expectedVersion,
-                idempotencyKey,
+        return this.processFinancialOperation(
+                request,
                 "DEPOSIT",
                 (wallet, amount, balance, key, hash) -> this.ledgerService.deposit(wallet.getId(), amount, key, hash));
     }
@@ -136,20 +124,24 @@ public class WalletService {
     // ============================
 
     @Transactional
-    public WalletResponse withdraw(
-            Long walletId,
-            WalletOperationRequest request,
-            Long expectedVersion,
-            String idempotencyKey) {
+    public WalletResponse withdraw(WalletCommandRequest request) {
 
-        return this.executeOperation(
-                walletId,
-                request.getAmount(),
-                expectedVersion,
-                idempotencyKey,
+        return this.processFinancialOperation(
+                request,
                 "WITHDRAW",
-                (wallet, amount, balance, key, hash) -> this.ledgerService.withdraw(wallet.getId(), amount, balance,
-                        key, hash));
+                (wallet, amount, balance, key, hash) -> {
+
+                    this.antiFraudService.validate(
+                            amount,
+                            this.ledgerEntryRepository.findByWalletId(wallet.getId()));
+
+                    return this.ledgerService.withdraw(
+                            wallet.getId(),
+                            amount,
+                            balance,
+                            key,
+                            hash);
+                });
     }
 
     // ============================
@@ -157,19 +149,15 @@ public class WalletService {
     // ============================
 
     @Transactional
-    public WalletResponse transfer(
-            Long walletId,
-            WalletTransferRequest request,
-            Long expectedVersion,
-            String idempotencyKey) {
+    public WalletResponse transfer(WalletTransferCommandRequest request) {
 
         Wallet targetWallet = this.findWallet(request.getTargetWalletId());
 
-        return this.executeOperation(
-                walletId,
+        return this.processFinancialOperation(
+                request.getSourceWalletId(),
                 request.getAmount(),
-                expectedVersion,
-                idempotencyKey,
+                request.getExpectedVersion(),
+                request.getIdempotencyKey(),
                 "TRANSFER",
                 (wallet, amount, balance, key, hash) -> this.ledgerService.transfer(
                         wallet.getId(),
@@ -180,43 +168,52 @@ public class WalletService {
                         hash));
     }
 
-
     // ============================
     // BALANCE
     // ============================
 
-    public WalletResponse getBalanceById(Long id) {
+    public WalletResponse getBalanceById(Long walletId) {
 
-        Wallet wallet = this.findWallet(id);
+        Wallet wallet = this.findWallet(walletId);
 
-        BigDecimal balance = this.getBalance(id);
+        BigDecimal balance = this.getBalance(walletId);
 
         return this.walletMapper.toResponse(wallet, balance);
     }
 
     // ============================
-    // CORE FLOW (sem abstração feia)
+    // CORE (ÚNICO PONTO)
     // ============================
 
-    private WalletResponse executeOperation(
+    private WalletResponse processFinancialOperation(
+            WalletCommandRequest request,
+            String operation,
+            OperationHandler handler) {
+
+        return this.processFinancialOperation(
+                request.getWalletId(),
+                request.getAmount(),
+                request.getExpectedVersion(),
+                request.getIdempotencyKey(),
+                operation,
+                handler);
+    }
+
+    private WalletResponse processFinancialOperation(
             Long walletId,
             BigDecimal amount,
             Long expectedVersion,
             String idempotencyKey,
             String operation,
-            OperationExecutor executor) {
+            OperationHandler handler) {
 
         String payloadHash = this.generatePayloadHash(walletId, amount, operation);
 
         Optional<Transaction> existing = this.transactionRepository.findByIdempotencyKey(idempotencyKey);
 
         if (existing.isPresent()) {
-
-            Transaction existingTransaction = existing.get();
-
-            existingTransaction.validatePayload(payloadHash);
-
-            return this.buildResponseFromSnapshot(existingTransaction);
+            existing.get().validatePayload(payloadHash);
+            return this.buildResponseFromSnapshot(existing.get());
         }
 
         Wallet wallet = this.findWallet(walletId);
@@ -227,11 +224,7 @@ public class WalletService {
 
         try {
 
-            this.antiFraudService.validate(
-                    amount,
-                    this.ledgerEntryRepository.findByWalletId(walletId));
-
-            Transaction transaction = executor.execute(
+            Transaction transaction = handler.execute(
                     wallet,
                     amount,
                     balance,
@@ -246,21 +239,21 @@ public class WalletService {
 
             wallet.updateSnapshot(newBalance);
 
-            Wallet updatedWallet = this.walletRepository.save(wallet);
+            Wallet updated = this.walletRepository.save(wallet);
 
             transaction.storeSnapshot(
-                    updatedWallet.getId(),
+                    updated.getId(),
                     newBalance,
-                    updatedWallet.getVersion());
+                    updated.getVersion());
 
-            return this.walletMapper.toResponse(updatedWallet, newBalance);
+            return this.walletMapper.toResponse(updated, newBalance);
 
         } catch (DataIntegrityViolationException exception) {
 
             Transaction persisted = this.transactionRepository.findByIdempotencyKey(idempotencyKey)
                     .orElseThrow(() -> new BusinessException(
                             WalletErrorType.IDEMPOTENT_CONFLICT,
-                            "Idempotent transaction not found"));
+                            "Transaction not found"));
 
             persisted.validatePayload(payloadHash);
 
@@ -326,13 +319,22 @@ public class WalletService {
 
     private String generatePayloadHash(Long walletId, BigDecimal amount, String operation) {
 
-        String raw = walletId + "|" + amount + "|" + operation;
+        try {
+            String raw = walletId + "|" + amount + "|" + operation;
 
-        return Integer.toHexString(raw.hashCode());
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+
+            byte[] hash = digest.digest(raw.getBytes(StandardCharsets.UTF_8));
+
+            return HexFormat.of().formatHex(hash);
+
+        } catch (NoSuchAlgorithmException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     @FunctionalInterface
-    private interface OperationExecutor {
+    private interface OperationHandler {
         Transaction execute(Wallet wallet, BigDecimal amount, BigDecimal balance, String key, String hash);
     }
 }

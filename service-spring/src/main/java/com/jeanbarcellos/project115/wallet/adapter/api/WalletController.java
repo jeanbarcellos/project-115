@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jeanbarcellos.project115.wallet.application.dto.WalletCommandRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletCreateRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletOperationRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletResponse;
+import com.jeanbarcellos.project115.wallet.application.dto.WalletTransferCommandRequest;
 import com.jeanbarcellos.project115.wallet.application.dto.WalletTransferRequest;
 import com.jeanbarcellos.project115.wallet.application.service.WalletService;
 
@@ -63,7 +65,9 @@ public class WalletController {
             @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletOperationRequest request) {
 
-        WalletResponse response = service.deposit(id, request, version, key);
+        WalletCommandRequest command = new WalletCommandRequest(id, request.getAmount(), version, key);
+
+        WalletResponse response = service.deposit(command);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())
@@ -81,7 +85,9 @@ public class WalletController {
             @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletOperationRequest request) {
 
-        WalletResponse response = this.service.withdraw(id, request, version, key);
+        WalletCommandRequest command = new WalletCommandRequest(id, request.getAmount(), version, key);
+
+        WalletResponse response = this.service.withdraw(command);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())
@@ -99,7 +105,9 @@ public class WalletController {
             @RequestHeader(value = "Idempotency-Key", required = false) String key,
             @RequestBody WalletTransferRequest request) {
 
-        WalletResponse response = service.transfer(id, request, version, key);
+        WalletTransferCommandRequest command = new WalletTransferCommandRequest(id, id, request.getAmount(), version, key);
+
+        WalletResponse response = service.transfer(command);
 
         return ResponseEntity.ok()
                 .eTag(response.getVersion().toString())
