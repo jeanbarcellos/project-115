@@ -28,7 +28,6 @@ import com.jeanbarcellos.project115.wallet.application.repository.LedgerEntryRep
 import com.jeanbarcellos.project115.wallet.application.repository.TransactionRepository;
 import com.jeanbarcellos.project115.wallet.application.repository.WalletRepository;
 import com.jeanbarcellos.project115.wallet.application.translator.WalletExceptionTranslator;
-import com.jeanbarcellos.project115.wallet.domain.AntiFraudService;
 import com.jeanbarcellos.project115.wallet.domain.LedgerEntry;
 import com.jeanbarcellos.project115.wallet.domain.LedgerService;
 import com.jeanbarcellos.project115.wallet.domain.Transaction;
