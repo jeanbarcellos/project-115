@@ -32,4 +32,13 @@ public interface ErrorType {
      * @return status HTTP
      */
     int httpStatus();
+
+    /**
+     * Indica se a operação pode ser tentada novamente.
+     *
+     * Ex:
+     * - timeout → true
+     * - validação → false
+     */
+    boolean isRetryable();
 }

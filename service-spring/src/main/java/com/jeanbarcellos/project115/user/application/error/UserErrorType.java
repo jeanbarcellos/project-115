@@ -14,11 +14,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true) // retira o prefixo getsset
 public enum UserErrorType implements ErrorType {
 
-    USER_NOT_FOUND("user-not-found", 404, "User not found"),
-    EMAIL_ALREADY_EXISTS("email-already-exists", 409, "Email already exists");
+    USER_NOT_FOUND("user-not-found", 404, "User not found", false),
+    EMAIL_ALREADY_EXISTS("email-already-exists", 409, "Email already exists", false);
 
     private final String code;
     private final int httpStatus;
     private final String title;
+    private final boolean isRetryable;
 
 }

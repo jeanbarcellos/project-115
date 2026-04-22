@@ -31,15 +31,6 @@ public enum TechnicalErrorType implements ErrorType {
     private final String code;
     private final int httpStatus;
     private final String title;
-    private final boolean retryable;
-
-    /**
-     * Indica se o erro pode ser reprocessado.
-     *
-     * @return true se retry é recomendado
-     */
-    public boolean isRetryable() {
-        return retryable;
-    }
+    private final boolean isRetryable;
 
 }
