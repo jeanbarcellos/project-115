@@ -59,10 +59,6 @@ public class Transaction {
             throw new DomainException("INVALID_PAYLOAD_HASH");
         }
 
-        // if (idempotencyKey == null || payloadHash == null) {
-        //     throw new DomainException("INVALID_TRANSACTION_METADATA");
-        // }
-
         this.id = UUID.randomUUID();
         this.idempotencyKey = idempotencyKey;
         this.payloadHash = payloadHash;
@@ -70,7 +66,6 @@ public class Transaction {
     }
 
     public void validatePayload(String incomingHash) {
-
         if (!this.payloadHash.equals(incomingHash)) {
             throw new DomainException("IDEMPOTENCY_PAYLOAD_MISMATCH");
         }

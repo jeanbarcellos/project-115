@@ -56,12 +56,12 @@ public class WalletController {
     // CREATE
     // ============================
 
-    // @PostMapping
-    // public ResponseEntity<WalletResponse> create(
-    //         @RequestBody WalletCreateRequest request
-    //     ) {
-    //     return ResponseEntity.ok(this.commandService.create(request));
-    // }
+//     @PostMapping
+//     public ResponseEntity<WalletResponse> create(
+//             @RequestBody WalletCreateRequest request
+//         ) {
+//         return ResponseEntity.ok(this.commandService.create(request));
+//     }
 
     // ============================
     // DEPOSIT

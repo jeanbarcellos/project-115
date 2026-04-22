@@ -51,6 +51,8 @@ public class TransferHandler extends AbstractWalletCommandHandler<TransferComman
             String payloadHash,
             String idempotencyKey) {
 
+        TransferCommand command = null;// Teste
+
         Wallet target = this.walletRepository.findById(
                 ((TransferCommand) command).getTargetWalletId()).orElseThrow();
 
