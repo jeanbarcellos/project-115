@@ -1,7 +1,11 @@
 package com.jeanbarcellos.project115.wallet.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.jeanbarcellos.core.error.DomainViolation;
+import com.jeanbarcellos.core.exception.DomainValidationException;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +42,23 @@ public class Wallet {
      * Snapshot de saldo (performance)
      */
     private BigDecimal balanceSnapshot = BigDecimal.ZERO;
+
+    public Wallet(BigDecimal initialBalance) {
+
+        List<DomainViolation> violations = new ArrayList<>();
+
+        if (initialBalance == null) {
+            violations.add(new DomainViolation("initialBalance", "must not be null", null));
+        }
+
+        if (initialBalance != null && initialBalance.compareTo(BigDecimal.ZERO) < 0) {
+            violations.add(new DomainViolation("initialBalance", "must be >= 0", initialBalance));
+        }
+
+        if (!violations.isEmpty()) {
+            throw new DomainValidationException("Invalid wallet creation", violations);
+        }
+    }
 
     public BigDecimal calculateBalance(List<LedgerEntry> entries) {
 
