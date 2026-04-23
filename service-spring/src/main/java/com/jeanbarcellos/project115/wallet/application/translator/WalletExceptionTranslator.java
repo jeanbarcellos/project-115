@@ -3,6 +3,9 @@ package com.jeanbarcellos.project115.wallet.application.translator;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
+import com.jeanbarcellos.project115.wallet.domain.exception.InsufficientBalanceException;
+import com.jeanbarcellos.project115.wallet.domain.exception.InvalidAmountException;
+import com.jeanbarcellos.project115.wallet.domain.exception.InvalidTransactionException;
 
 /**
  * Tradutor de exceções de domínio para exceções de aplicação.
@@ -13,6 +16,24 @@ public final class WalletExceptionTranslator {
     }
 
     public static BusinessException translate(DomainException exception) {
+
+        if (exception instanceof InsufficientBalanceException) {
+            return new BusinessException(
+                    WalletErrorType.INSUFFICIENT_BALANCE,
+                    exception.getMessage());
+        }
+
+        if (exception instanceof InvalidAmountException) {
+            return new BusinessException(
+                    WalletErrorType.INVALID_AMOUNT,
+                    exception.getMessage());
+        }
+
+        if (exception instanceof InvalidTransactionException) {
+            return new BusinessException(
+                    WalletErrorType.INVALID_TRANSACTION,
+                    exception.getMessage());
+        }
 
         String message = exception.getMessage();
 
