@@ -16,6 +16,7 @@ public final class WalletExceptionTranslator {
 
         String message = exception.getMessage();
 
+        // ⚠️ Ainda string-based (ponto de melhoria futura)
         return switch (message) {
 
             case "INSUFFICIENT_BALANCE" ->
@@ -27,6 +28,11 @@ public final class WalletExceptionTranslator {
                 new BusinessException(
                         WalletErrorType.INVALID_AMOUNT,
                         "Invalid amount");
+
+            case "INVALID_TRANSACTION" ->
+                new BusinessException(
+                        WalletErrorType.INVALID_TRANSACTION,
+                        "Invalid transaction");
 
             case "INVALID_TRANSFER" ->
                 new BusinessException(
