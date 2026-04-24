@@ -290,4 +290,13 @@ public class GlobalExceptionHandler {
             log.warn("[{}] {}", errorType.code(), ex.getMessage());
         }
     }
+
+    private void log(ErrorType type, String detail, Map<String, Object> ctx) {
+
+        if (type.httpStatus() >= 500) {
+            log.error("error={} detail={}", ctx, detail);
+        } else {
+            log.warn("error={} detail={}", ctx, detail);
+        }
+    }
 }

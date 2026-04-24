@@ -1,5 +1,7 @@
 package com.jeanbarcellos.core.observability;
 
+import java.util.UUID;
+
 /**
  * Contexto de correlação utilizado para rastreamento de requisições.
  *
@@ -23,7 +25,19 @@ public final class CorrelationContext {
         return CORRELATION_ID.get();
     }
 
+    public static String getOrCreate() {
+        String id = CORRELATION_ID.get();
+
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+            CORRELATION_ID.set(id);
+        }
+
+        return id;
+    }
+
     public static void clear() {
         CORRELATION_ID.remove();
     }
+
 }
