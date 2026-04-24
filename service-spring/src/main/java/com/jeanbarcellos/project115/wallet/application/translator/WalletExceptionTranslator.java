@@ -10,7 +10,7 @@ import com.jeanbarcellos.project115.wallet.domain.exception.InvalidTransactionEx
 /**
  * Tradutor de exceções de domínio para exceções de aplicação.
  */
-public final class WalletExceptionTranslator {
+public class WalletExceptionTranslator {
 
     private WalletExceptionTranslator() {
     }

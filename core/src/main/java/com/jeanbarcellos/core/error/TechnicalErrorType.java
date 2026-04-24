@@ -45,6 +45,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Operation timed out",
             true),
 
+    UNKNOWN_ERROR(
+            "unknown-error",
+            500,
+            "Unknown error",
+            true),
+
     // ============================
     // VALIDATION
     // ============================
@@ -79,6 +85,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Missing required parameter",
             false),
 
+    INVALID_FORMAT(
+            "invalid-format",
+            400,
+            "Invalid format",
+            false),
+
     // ============================
     // RESOURCE
     // ============================
@@ -108,6 +120,7 @@ public enum TechnicalErrorType implements ErrorType {
             false),
 
     MALFORMED_JSON("malformed-json", 400, "Malformed JSON", false),
+
     UNEXPECTED_ERROR("unexpected-error", 500, "Unexpected error", false),
 
     // ============================
@@ -125,6 +138,10 @@ public enum TechnicalErrorType implements ErrorType {
             409,
             "Version conflict",
             true),
+
+    OPTIMISTIC_LOCK_ERROR("optimistic-lock-error", 409, "Optimistic lock failure", true),
+
+    PESSIMISTIC_LOCK_ERROR("pessimistic-lock-error", 423, "Pessimistic lock failure", true),
 
     IDEMPOTENCY_CONFLICT(
             "idempotency-conflict",
@@ -188,6 +205,12 @@ public enum TechnicalErrorType implements ErrorType {
             "External service timeout",
             true),
 
+    EXTERNAL_SERVICE_UNAVAILABLE(
+            "external-service-unavailable",
+            503,
+            "External service unavailable",
+            true),
+
     DEPENDENCY_FAILURE(
             "dependency-failure",
             424,
@@ -195,7 +218,7 @@ public enum TechnicalErrorType implements ErrorType {
             true),
 
     // ============================
-    // DATA / INFRA
+    // DATA / INFRASTRUCTURE
     // ============================
 
     DATABASE_ERROR(
@@ -222,6 +245,8 @@ public enum TechnicalErrorType implements ErrorType {
             "Malformed request body",
             false),
 
+    CONNECTION_ERROR("connection-error", 500, "Connection error", true),
+
     // ============================
     // RATE LIMIT / THROTTLING
     // ============================
@@ -230,7 +255,15 @@ public enum TechnicalErrorType implements ErrorType {
             "rate-limit-exceeded",
             429,
             "Too many requests",
-            true);
+            true),
+
+    // ============================
+    // CACHE
+    // ============================
+
+    CACHE_ERROR("cache-error", 500, "Cache error", true),
+
+    CACHE_MISS("cache-miss", 404, "Cache miss", false);
 
     private final String code;
     private final int httpStatus;

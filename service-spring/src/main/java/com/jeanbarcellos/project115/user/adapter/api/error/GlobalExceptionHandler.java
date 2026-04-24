@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.jeanbarcellos.core.error.BusinessErrorType;
 import com.jeanbarcellos.core.error.ErrorResponse;
 import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
@@ -41,6 +40,7 @@ public class GlobalExceptionHandler {
 
     // DOMAIN =================================================================
 
+    // se chegou aqui → erro de arquitetura (não traduziu)
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomain(
             DomainException ex,
