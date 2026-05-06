@@ -280,6 +280,25 @@ public class GlobalExceptionHandler {
         return merged;
     }
 
+    private Map<String, Object> buildLogContext(
+            ErrorType type,
+            String correlationId,
+            Map<String, Object> custom) {
+
+        Map<String, Object> context = new HashMap<>();
+
+        context.put("errorCode", type.code());
+        context.put("httpStatus", type.httpStatus());
+        context.put("retryable", type.isRetryable());
+        context.put("correlationId", correlationId);
+
+        if (custom != null) {
+            context.putAll(custom);
+        }
+
+        return context;
+    }
+
     // LOGGING ================================================================
 
     private void log(ErrorType errorType, Exception ex) {
@@ -297,6 +316,19 @@ public class GlobalExceptionHandler {
             log.error("error={} detail={}", ctx, detail);
         } else {
             log.warn("error={} detail={}", ctx, detail);
+        }
+    }
+
+    private void log(
+            ErrorType type,
+            String detail,
+            Map<String, Object> context,
+            Exception ex) {
+
+        if (type.httpStatus() >= 500) {
+            log.error("event=error detail={} context={}", detail, context, ex);
+        } else {
+            log.warn("event=error detail={} context={}", detail, context);
         }
     }
 }

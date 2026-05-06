@@ -119,16 +119,23 @@ public enum TechnicalErrorType implements ErrorType {
             "Resource no longer available",
             false),
 
-    MALFORMED_JSON("malformed-json", 400, "Malformed JSON", false),
+    MALFORMED_JSON(
+            "malformed-json",
+            400,
+            "Malformed JSON",
+            false),
 
-    UNEXPECTED_ERROR("unexpected-error", 500, "Unexpected error", false),
+    UNEXPECTED_ERROR(
+            "unexpected-error",
+            500,
+            "Unexpected error",
+            false),
 
     // ============================
     // CONFLICT / CONCURRENCY
     // ============================
 
-    CONFLICT(
-            "conflict",
+    CONFLICT("conflict",
             409,
             "Resource conflict",
             true),
@@ -139,9 +146,17 @@ public enum TechnicalErrorType implements ErrorType {
             "Version conflict",
             true),
 
-    OPTIMISTIC_LOCK_ERROR("optimistic-lock-error", 409, "Optimistic lock failure", true),
+    OPTIMISTIC_LOCK_ERROR(
+            "optimistic-lock-error",
+            409,
+            "Optimistic lock failure",
+            true),
 
-    PESSIMISTIC_LOCK_ERROR("pessimistic-lock-error", 423, "Pessimistic lock failure", true),
+    PESSIMISTIC_LOCK_ERROR(
+            "pessimistic-lock-error",
+            423,
+            "Pessimistic lock failure",
+            true),
 
     IDEMPOTENCY_CONFLICT(
             "idempotency-conflict",
@@ -245,7 +260,10 @@ public enum TechnicalErrorType implements ErrorType {
             "Malformed request body",
             false),
 
-    CONNECTION_ERROR("connection-error", 500, "Connection error", true),
+    CONNECTION_ERROR("connection-error",
+            500,
+            "Connection error",
+            true),
 
     // ============================
     // RATE LIMIT / THROTTLING
@@ -261,9 +279,17 @@ public enum TechnicalErrorType implements ErrorType {
     // CACHE
     // ============================
 
-    CACHE_ERROR("cache-error", 500, "Cache error", true),
+    CACHE_ERROR(
+            "cache-error",
+            500,
+            "Cache error",
+            true),
 
-    CACHE_MISS("cache-miss", 404, "Cache miss", false);
+    CACHE_MISS(
+            "cache-miss",
+            404,
+            "Cache miss",
+            false);
 
     private final String code;
     private final int httpStatus;
