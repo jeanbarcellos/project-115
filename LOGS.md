@@ -25,7 +25,7 @@ logback → JSON encoder
 
 Você gera:
 
-```json
+```
 {
   "message": "{\"event\":\"error\",\"errorCode\":\"...\"}"
 }
@@ -160,7 +160,7 @@ log.error("error", event);
 
 vira:
 
-```json
+```
 {
   "message": "error",
   "errorCode": "invalid-amount",
@@ -288,7 +288,7 @@ log.error("error", event);
 
 Sai:
 
-```json
+```
 {
   "message": "error",
   "correlationId": "req-123",
@@ -343,7 +343,7 @@ logs de múltiplos serviços misturados
 
 ## Resultado
 
-```json
+```
 {
   "app": "wallet-service",
   "env": "prod",
@@ -421,7 +421,7 @@ log.info("wallet.transfer.executed",
 
 ## técnico
 
-```json
+```
 {
   "event": "error",
   "errorCode": "database-error"
@@ -432,7 +432,7 @@ log.info("wallet.transfer.executed",
 
 ## negócio
 
-```json
+```
 {
   "event": "wallet.transfer",
   "walletId": 123,
@@ -511,3 +511,207 @@ Sem isso, você não consegue:
 ```
 filtrar / agrupar / criar métricas
 ```
+
+---
+
+---
+
+---
+
+Agora ficou claro — e isso está no nível certo.
+
+Você quer um padrão:
+
+```
+[level][categoria] campos estruturados
+```
+
+Sem abstração, sem DTO, sem framework.
+
+---
+
+# 🧠 AJUSTE FINO NO SEU FORMATO
+
+O que você propôs:
+
+```
+[error][business-exception] code=invalid-amount status=422 correlationId=req-123 message=Invalid amount
+```
+
+Está bom, mas dá pra melhorar levemente:
+
+```
+[level][category] code=... status=... correlationId=... message=...
+```
+
+👉 padronize “category” (não misture nomes depois)
+
+---
+
+# 📦 IMPLEMENTAÇÃO FINAL
+
+## Método central no GlobalExceptionHandler
+
+```java
+private void log(
+        String category,
+        ErrorType type,
+        String detail,
+        String correlationId,
+        Exception ex
+) {
+
+    String pattern = "[error][{}] code={} status={} correlationId={} message={}";
+
+    if (type.getHttpStatus() >= 500) {
+        log.error(
+                pattern,
+                category,
+                type.getCode(),
+                type.getHttpStatus(),
+                correlationId,
+                detail,
+                ex
+        );
+    } else {
+        log.warn(
+                pattern,
+                category,
+                type.getCode(),
+                type.getHttpStatus(),
+                correlationId,
+                detail
+        );
+    }
+}
+```
+
+---
+
+# 📦 USO NOS HANDLERS
+
+## BusinessException
+
+```java
+this.log(
+        "business",
+        ex.getErrorType(),
+        ex.getMessage(),
+        correlationId,
+        ex
+);
+```
+
+---
+
+## ValidationException
+
+```java
+this.log(
+        "validation",
+        TechnicalErrorType.INPUT_VALIDATION_ERROR,
+        ex.getMessage(),
+        correlationId,
+        ex
+);
+```
+
+---
+
+## DomainException (vazou)
+
+```java
+this.log(
+        "domain",
+        TechnicalErrorType.SYSTEM_VALIDATION_ERROR,
+        ex.getMessage(),
+        correlationId,
+        ex
+);
+```
+
+---
+
+## Exception genérica
+
+```java
+this.log(
+        "technical",
+        TechnicalErrorType.INTERNAL_ERROR,
+        "Unexpected error",
+        correlationId,
+        ex
+);
+```
+
+---
+
+# 🧠 RESULTADO FINAL
+
+### 4xx
+
+```
+[error][business] code=invalid-amount status=422 correlationId=req-123 message=Invalid amount
+```
+
+---
+
+### 5xx
+
+```
+[error][technical] code=database-error status=500 correlationId=req-123 message=Database error
+java.sql.SQLException: ...
+```
+
+---
+
+# 🧠 POR QUE ISSO FUNCIONA
+
+```
+✔ grep por [error]
+✔ filtra por [business], [technical]
+✔ agrupa por code
+✔ rastreia por correlationId
+✔ sem dependência externa
+✔ sem complexidade
+```
+
+---
+
+# ⚠️ ÚNICO CUIDADO
+
+Padronize as categorias e NÃO invente depois:
+
+```
+business
+validation
+technical
+domain
+```
+
+Se começar a criar:
+
+```
+business-error
+biz
+err
+```
+
+→ você perde o benefício
+
+---
+
+# 📌 CONCLUSÃO
+
+Você chegou em um padrão:
+
+```
+✔ simples
+✔ legível
+✔ consistente
+✔ sustentável
+```
+
+Sem cair em overengineering.
+
+---

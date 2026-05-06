@@ -61,8 +61,10 @@ public class GlobalExceptionHandler {
                 .properties(ex.getContext())
                 .build();
 
-        log.warn("[domain-error] code={} correlationId={}",
+        // centralizar/padronizar
+        log.warn("[error][domain] code={} status={} correlationId={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 this.getCorrelationId());
 
         return ResponseEntity.status(type.getHttpStatus())
@@ -96,7 +98,8 @@ public class GlobalExceptionHandler {
                 .errors(errors) // Campo customizado de erros
                 .build();
 
-        log.warn("[validation-error] correlationId={} errors={}",
+        // centralizar/padronizar
+        log.warn("[error][validation] correlationId={} errors={}",
                 type.getCode(),
                 this.getCorrelationId(),
                 errors);
@@ -126,8 +129,9 @@ public class GlobalExceptionHandler {
                 .properties(ex.getProperties()) // Propriedades extras/contextos
                 .build();
 
-        log.warn("[business-error] code={} correlationId={}",
+        log.warn("[error][business] code={} status={} correlationId={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 this.getCorrelationId());
 
         return ResponseEntity.status(type.getHttpStatus())
@@ -155,7 +159,7 @@ public class GlobalExceptionHandler {
                 .errors(ex.getErrors()) // Campo customizado de erros
                 .build();
 
-        log.warn("[validation-error] correlationId={} errors={}",
+        log.warn("[error][validation] correlationId={} errors={}",
                 type.getCode(),
                 this.getCorrelationId(),
                 ex.getErrors());
@@ -185,7 +189,8 @@ public class GlobalExceptionHandler {
                 .correlationId(this.getCorrelationId())
                 .build();
 
-        log.error("[{}] correlationId={} message={}",
+                // log.error("[{}] correlationId={} message={}",
+            log.error("[error][techinical] code={} correlationId={} message={}",
                 type.getCode(),
                 this.getCorrelationId(),
                 ex.getMessage(),
@@ -216,7 +221,7 @@ public class GlobalExceptionHandler {
                 .properties(Map.of("retryable", type.isRetryable()))
                 .build();
 
-        log.error("[technical-error] code={} retryable={} correlationId={}",
+        log.error("[error][technical] code={} retryable={} correlationId={}",
                 type.getCode(),
                 type.isRetryable(),
                 this.getCorrelationId(),
@@ -358,6 +363,35 @@ public class GlobalExceptionHandler {
             log.error("error", event, ex);
         } else {
             log.warn("error", event);
+        }
+    }
+
+    private void log(
+            String category,
+            ErrorType type,
+            String detail,
+            String correlationId,
+            Exception ex) {
+
+        String pattern = "[error][{}] code={} status={} correlationId={} message={}";
+
+        if (type.getHttpStatus() >= 500) {
+            log.error(
+                    pattern,
+                    category,
+                    type.getCode(),
+                    type.getHttpStatus(),
+                    correlationId,
+                    detail,
+                    ex);
+        } else {
+            log.warn(
+                    pattern,
+                    category,
+                    type.getCode(),
+                    type.getHttpStatus(),
+                    correlationId,
+                    detail);
         }
     }
 
