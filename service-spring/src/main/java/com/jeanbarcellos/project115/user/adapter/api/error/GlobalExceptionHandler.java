@@ -52,8 +52,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail(ex.getMessage())
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
@@ -62,10 +62,10 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("[domain-error] code={} correlationId={}",
-                type.code(),
+                type.getCode(),
                 this.getCorrelationId());
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -87,8 +87,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail(ex.getMessage()) // Mensagem customizada
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
@@ -97,11 +97,11 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("[validation-error] correlationId={} errors={}",
-                type.code(),
+                type.getCode(),
                 this.getCorrelationId(),
                 errors);
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -117,8 +117,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail(ex.getMessage()) // Mensagem customizada da exception
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
@@ -127,10 +127,10 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("[business-error] code={} correlationId={}",
-                type.code(),
+                type.getCode(),
                 this.getCorrelationId());
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -146,8 +146,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail(ex.getMessage()) // Mensagem customizada
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
@@ -156,11 +156,11 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("[validation-error] correlationId={} errors={}",
-                type.code(),
+                type.getCode(),
                 this.getCorrelationId(),
                 ex.getErrors());
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -177,8 +177,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail(ex.getMessage()) // Mensagem customizada da exception
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
@@ -186,12 +186,12 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.error("[{}] correlationId={} message={}",
-                type.code(),
+                type.getCode(),
                 this.getCorrelationId(),
                 ex.getMessage(),
                 ex);
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -207,8 +207,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
-                .title(type.title())
-                .status(type.httpStatus())
+                .title(type.getTitle())
+                .status(type.getHttpStatus())
                 .detail("Unexpected error")
                 .instance(this.resolveInstance(request))
                 .timestamp(Instant.now())
@@ -217,12 +217,12 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.error("[technical-error] code={} retryable={} correlationId={}",
-                type.code(),
+                type.getCode(),
                 type.isRetryable(),
                 this.getCorrelationId(),
                 ex);
 
-        return ResponseEntity.status(type.httpStatus())
+        return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
@@ -238,8 +238,8 @@ public class GlobalExceptionHandler {
 
         ErrorResponse response = ErrorResponse.builder()
                 .type(resolveTypeUri(errorType))
-                .title(errorType.title())
-                .status(errorType.httpStatus())
+                .title(errorType.getTitle())
+                .status(errorType.getHttpStatus())
                 .detail(detail)
                 .instance(this.resolveInstance(request))
                 .timestamp(Instant.now())
@@ -248,11 +248,11 @@ public class GlobalExceptionHandler {
                 .properties(this.buildProperties(errorType, properties))
                 .build();
 
-        return ResponseEntity.status(errorType.httpStatus()).body(response);
+        return ResponseEntity.status(errorType.getHttpStatus()).body(response);
     }
 
     private URI resolveTypeUri(ErrorType type) {
-        return URI.create(this.problemBaseUri + "/" + type.code());
+        return URI.create(this.problemBaseUri + "/" + type.getCode());
     }
 
     private URI resolveInstance(HttpServletRequest request) {
@@ -268,7 +268,7 @@ public class GlobalExceptionHandler {
             Map<String, Object> custom) {
 
         Map<String, Object> base = Map.of(
-                "errorCode", errorType.code(),
+                "errorCode", errorType.getCode(),
                 "retryable", errorType.isRetryable());
 
         if (custom == null || custom.isEmpty()) {
@@ -288,8 +288,8 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> context = new HashMap<>();
 
-        context.put("errorCode", type.code());
-        context.put("httpStatus", type.httpStatus());
+        context.put("errorCode", type.getCode());
+        context.put("httpStatus", type.getHttpStatus());
         context.put("retryable", type.isRetryable());
         context.put("correlationId", correlationId);
 
@@ -309,8 +309,8 @@ public class GlobalExceptionHandler {
 
         return ErrorLogEvent.builder()
                 .event("error")
-                .errorCode(type.code())
-                .httpStatus(type.httpStatus())
+                .errorCode(type.getCode())
+                .httpStatus(type.getHttpStatus())
                 .retryable(type.isRetryable())
                 .message(detail)
                 .exception(ex != null ? ex.getClass().getSimpleName() : null)
@@ -327,16 +327,16 @@ public class GlobalExceptionHandler {
 
     private void log(ErrorType errorType, Exception ex) {
 
-        if (errorType.httpStatus() >= 500) {
-            log.error("[{}] {}", errorType.code(), ex.getMessage(), ex);
+        if (errorType.getHttpStatus() >= 500) {
+            log.error("[{}] {}", errorType.getCode(), ex.getMessage(), ex);
         } else {
-            log.warn("[{}] {}", errorType.code(), ex.getMessage());
+            log.warn("[{}] {}", errorType.getCode(), ex.getMessage());
         }
     }
 
     private void log(ErrorType type, String detail, Map<String, Object> ctx) {
 
-        if (type.httpStatus() >= 500) {
+        if (type.getHttpStatus() >= 500) {
             log.error("error={} detail={}", ctx, detail);
         } else {
             log.warn("error={} detail={}", ctx, detail);
@@ -345,7 +345,7 @@ public class GlobalExceptionHandler {
 
     private void log(ErrorType type, String detail, Map<String, Object> context, Exception ex) {
 
-        if (type.httpStatus() >= 500) {
+        if (type.getHttpStatus() >= 500) {
             log.error("event=error detail={} context={}", detail, context, ex);
         } else {
             log.warn("event=error detail={} context={}", detail, context);
@@ -354,7 +354,7 @@ public class GlobalExceptionHandler {
 
     private void log(ErrorType type, ErrorLogEvent event, Exception ex) {
 
-        if (type.httpStatus() >= 500) {
+        if (type.getHttpStatus() >= 500) {
             log.error("error", event, ex);
         } else {
             log.warn("error", event);

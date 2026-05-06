@@ -17,21 +17,21 @@ public interface ErrorType {
      *
      * @return código do erro
      */
-    String code();
+    String getCode();
 
     /**
      * Título curto do erro.
      *
      * @return título do erro
      */
-    String title();
+    String getTitle();
 
     /**
      * Status HTTP associado ao erro.
      *
      * @return status HTTP
      */
-    int httpStatus();
+    int getHttpStatus();
 
     /**
      * Indica se a operação pode ser tentada novamente.

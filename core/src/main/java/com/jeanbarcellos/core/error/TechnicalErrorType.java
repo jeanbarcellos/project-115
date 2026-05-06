@@ -2,7 +2,6 @@ package com.jeanbarcellos.core.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 
 /**
  * Enumeração de erros técnicos comuns da aplicação.
@@ -14,7 +13,6 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @RequiredArgsConstructor
-@Accessors(fluent = true) // retira o prefixo getsset
 public enum TechnicalErrorType implements ErrorType {
 
     // ============================

@@ -17,8 +17,8 @@ public final class ObservabilityUtil {
 
         Map<String, Object> context = new HashMap<>();
 
-        context.put("errorCode", errorType.code());
-        context.put("httpStatus", errorType.httpStatus());
+        context.put("errorCode", errorType.getCode());
+        context.put("httpStatus", errorType.getHttpStatus());
         context.put("retryable", errorType.isRetryable());
         context.put("correlationId", CorrelationContext.get());
 
