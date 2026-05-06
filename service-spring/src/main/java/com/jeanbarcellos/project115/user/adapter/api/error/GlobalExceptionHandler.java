@@ -22,6 +22,7 @@ import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
+import com.jeanbarcellos.core.observability.ErrorLogEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -299,6 +300,29 @@ public class GlobalExceptionHandler {
         return context;
     }
 
+    private ErrorLogEvent buildLogEvent(
+            ErrorType type,
+            String detail,
+            Exception ex,
+            HttpServletRequest request,
+            String correlationId) {
+
+        return ErrorLogEvent.builder()
+                .event("error")
+                .errorCode(type.code())
+                .httpStatus(type.httpStatus())
+                .retryable(type.isRetryable())
+                .message(detail)
+                .exception(ex != null ? ex.getClass().getSimpleName() : null)
+                .correlationId(correlationId)
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .timestamp(Instant.now())
+                .build();
+    }
+
+
+
     // LOGGING ================================================================
 
     private void log(ErrorType errorType, Exception ex) {
@@ -319,11 +343,7 @@ public class GlobalExceptionHandler {
         }
     }
 
-    private void log(
-            ErrorType type,
-            String detail,
-            Map<String, Object> context,
-            Exception ex) {
+    private void log(ErrorType type, String detail, Map<String, Object> context, Exception ex) {
 
         if (type.httpStatus() >= 500) {
             log.error("event=error detail={} context={}", detail, context, ex);
@@ -331,4 +351,14 @@ public class GlobalExceptionHandler {
             log.warn("event=error detail={} context={}", detail, context);
         }
     }
+
+    private void log(ErrorType type, ErrorLogEvent event, Exception ex) {
+
+        if (type.httpStatus() >= 500) {
+            log.error("error", event, ex);
+        } else {
+            log.warn("error", event);
+        }
+    }
+
 }
