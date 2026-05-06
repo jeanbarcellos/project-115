@@ -84,7 +84,7 @@ Exemplo real:
 
 Agora seu erro carrega:
 
-```
+```json
 {
   "type": "...",
   "title": "...",
@@ -1124,3 +1124,8 @@ instrumentação + contexto + propagação
 ```
 
 Não existe mágica.
+
+---
+---
+---
+
