@@ -174,6 +174,8 @@ public class GlobalExceptionHandler {
                 this.getCorrelationId(),
                 ex.getErrors());
 
+        this.log("validation", type, ex, ex.getMessage(), this.getCorrelationId());
+
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
@@ -219,12 +221,13 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         TechnicalErrorType type = TechnicalErrorResolver.resolve(ex);
+        String detail = "Unexpected error";
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
                 .title(type.getTitle())
                 .status(type.getHttpStatus())
-                .detail("Unexpected error")
+                .detail(detail)
                 .instance(this.resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
@@ -238,6 +241,8 @@ public class GlobalExceptionHandler {
                 this.getCorrelationId(),
                 ex);
 
+        // this.log("technical", type, ex, detail, this.getCorrelationId());
+
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
@@ -246,7 +251,22 @@ public class GlobalExceptionHandler {
 
 
 
-    // HELPERS ================================================================
+    // RESOLVERS ==============================================================
+
+    private URI resolveTypeUri(ErrorType type) {
+        return URI.create(this.problemBaseUri + "/" + type.getCode());
+    }
+
+    private URI resolveInstance(HttpServletRequest request) {
+        return URI.create(request.getRequestURI());
+    }
+
+    private String getCorrelationId() {
+        return CorrelationContext.get();
+    }
+
+
+    // BUILDERS ===============================================================
 
     private ResponseEntity<ErrorResponse> buildResponse(
             ErrorType errorType,
@@ -270,17 +290,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorType.getHttpStatus()).body(response);
     }
 
-    private URI resolveTypeUri(ErrorType type) {
-        return URI.create(this.problemBaseUri + "/" + type.getCode());
-    }
 
-    private URI resolveInstance(HttpServletRequest request) {
-        return URI.create(request.getRequestURI());
-    }
-
-    private String getCorrelationId() {
-        return CorrelationContext.get();
-    }
 
     private Map<String, Object> buildProperties(
             ErrorType errorType,
@@ -344,25 +354,16 @@ public class GlobalExceptionHandler {
 
     // LOGGING ================================================================
 
-    private void log(ErrorType errorType, Exception ex) {
-
-        if (errorType.getHttpStatus() >= 500) {
-            log.error("[{}] {}", errorType.getCode(), ex.getMessage(), ex);
-        } else {
-            log.warn("[{}] {}", errorType.getCode(), ex.getMessage());
-        }
-    }
-
-    private void log(ErrorType type, String detail, Map<String, Object> context) {
+    private void log(ErrorType type, Exception ex) {
 
         if (type.getHttpStatus() >= 500) {
-            log.error("error={} detail={}", context, detail);
+            log.error("[{}] {}", type.getCode(), ex.getMessage(), ex);
         } else {
-            log.warn("error={} detail={}", context, detail);
+            log.warn("[{}] {}", type.getCode(), ex.getMessage());
         }
     }
 
-    private void log(ErrorType type, String detail, Map<String, Object> context, Exception ex) {
+    private void log(ErrorType type, Exception ex, String detail, Map<String, Object> context) {
 
         if (type.getHttpStatus() >= 500) {
             log.error("event=error detail={} context={}", detail, context, ex);
@@ -371,39 +372,26 @@ public class GlobalExceptionHandler {
         }
     }
 
-    private void log(ErrorType type, ErrorLogEvent event, Exception ex) {
+    private void log(String category, ErrorType type, Exception ex, String detail, String correlationId) {
+
+        // Erros não técnicos não é necessário logar
+        String pattern = "[error][{}] code={} status={} retryable={} correlationId={} message={}";
 
         if (type.getHttpStatus() >= 500) {
-            log.error("error", event, ex);
-        } else {
-            log.warn("error", event);
-        }
-    }
-
-    private void log(
-            String category,
-            ErrorType type,
-            String detail,
-            String correlationId,
-            Exception ex) {
-
-        String pattern = "[error][{}] code={} status={} correlationId={} message={}";
-
-        if (type.getHttpStatus() >= 500) {
-            log.error(
-                    pattern,
+            log.error(pattern,
                     category,
                     type.getCode(),
                     type.getHttpStatus(),
+                    type.isRetryable(),
                     correlationId,
                     detail,
                     ex);
         } else {
-            log.warn(
-                    pattern,
+            log.warn(pattern,
                     category,
                     type.getCode(),
                     type.getHttpStatus(),
+                    type.isRetryable(),
                     correlationId,
                     detail);
         }
