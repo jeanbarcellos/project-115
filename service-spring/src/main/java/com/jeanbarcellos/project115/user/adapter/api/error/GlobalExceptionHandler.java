@@ -66,10 +66,12 @@ public class GlobalExceptionHandler {
                 .build();
 
         // centralizar/padronizar
-        log.warn("[error][domain] code={} status={} correlationId={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                this.getCorrelationId());
+        // log.warn("[error][domain] code={} status={} correlationId={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         this.getCorrelationId());
+
+        this.log("domain", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
@@ -102,12 +104,14 @@ public class GlobalExceptionHandler {
                 .errors(errors) // Campo customizado de erros
                 .build();
 
-        // centralizar/padronizar
-        log.warn("[error][validation] code={} status={} correlationId={} errors={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                this.getCorrelationId(),
-                errors);
+        // // centralizar/padronizar
+        // log.warn("[error][validation] code={} status={} correlationId={} errors={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         this.getCorrelationId(),
+        //         errors);
+
+        this.log("validation", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
@@ -136,10 +140,12 @@ public class GlobalExceptionHandler {
                 .properties(properties) // Propriedades extras/contextos
                 .build();
 
-        log.warn("[error][business] code={} status={} correlationId={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                this.getCorrelationId());
+        // log.warn("[error][business] code={} status={} correlationId={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         this.getCorrelationId());
+
+        this.log("business", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
@@ -168,13 +174,13 @@ public class GlobalExceptionHandler {
                 .errors(errors) // Campo customizado de erros
                 .build();
 
-        log.warn("[error][validation] code={} status={} correlationId={} errors={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                this.getCorrelationId(),
-                ex.getErrors());
+        // log.warn("[error][validation] code={} status={} correlationId={} errors={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         this.getCorrelationId(),
+        //         ex.getErrors());
 
-        this.log("validation", type, ex, ex.getMessage(), this.getCorrelationId());
+        this.log("validation", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
@@ -201,17 +207,20 @@ public class GlobalExceptionHandler {
                 .correlationId(this.getCorrelationId())
                 .build();
 
-            log.error("[error][technical] code={} status={} correlationId={} message={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                this.getCorrelationId(),
-                ex.getMessage(),
-                ex);
+        // log.error("[error][technical] code={} status={} correlationId={} message={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         this.getCorrelationId(),
+        //         ex.getMessage(),
+        //         ex);
+
+        this.log("technical", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
+
 
     // GENERIC / TECHNICAL ====================================================
 
@@ -234,14 +243,14 @@ public class GlobalExceptionHandler {
                 .properties(Map.of("retryable", type.isRetryable()))
                 .build();
 
-        log.error("[error][technical] code={} status={} retryable={} correlationId={}",
-                type.getCode(),
-                type.getHttpStatus(),
-                type.isRetryable(),
-                this.getCorrelationId(),
-                ex);
+        // log.error("[error][technical] code={} status={} retryable={} correlationId={}",
+        //         type.getCode(),
+        //         type.getHttpStatus(),
+        //         type.isRetryable(),
+        //         this.getCorrelationId(),
+        //         ex);
 
-        // this.log("technical", type, ex, detail, this.getCorrelationId());
+        this.log("technical", type, ex, detail);
 
         return ResponseEntity.status(type.getHttpStatus())
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
@@ -354,25 +363,9 @@ public class GlobalExceptionHandler {
 
     // LOGGING ================================================================
 
-    private void log(ErrorType type, Exception ex) {
+    private void log(String category, ErrorType type, Exception ex, String detail) {
 
-        if (type.getHttpStatus() >= 500) {
-            log.error("[{}] {}", type.getCode(), ex.getMessage(), ex);
-        } else {
-            log.warn("[{}] {}", type.getCode(), ex.getMessage());
-        }
-    }
-
-    private void log(ErrorType type, Exception ex, String detail, Map<String, Object> context) {
-
-        if (type.getHttpStatus() >= 500) {
-            log.error("event=error detail={} context={}", detail, context, ex);
-        } else {
-            log.warn("event=error detail={} context={}", detail, context);
-        }
-    }
-
-    private void log(String category, ErrorType type, Exception ex, String detail, String correlationId) {
+        String correlationId = this.getCorrelationId();
 
         // Erros não técnicos não é necessário logar
         String pattern = "[error][{}] code={} status={} retryable={} correlationId={} message={}";
@@ -393,6 +386,36 @@ public class GlobalExceptionHandler {
                     type.getHttpStatus(),
                     type.isRetryable(),
                     correlationId,
+                    detail);
+        }
+    }
+
+    private void log(String category, ErrorType type, Exception ex, String detail, Map<String, Object> context) {
+
+        String correlationId = this.getCorrelationId();
+        Map<String, Object> properties = ObjectUtils.isNotEmpty(context) ? context : null;
+
+        // Erros não técnicos não é necessário logar
+        String pattern = "[error][{}] code={} status={} retryable={} correlationId={} message={} context={}";
+
+        if (type.getHttpStatus() >= 500) {
+            log.error(pattern,
+                    category,
+                    type.getCode(),
+                    type.getHttpStatus(),
+                    type.isRetryable(),
+                    correlationId,
+                    detail,
+                    properties,
+                    ex);
+        } else {
+            log.warn(pattern,
+                    category,
+                    type.getCode(),
+                    type.getHttpStatus(),
+                    type.isRetryable(),
+                    correlationId,
+                    properties,
                     detail);
         }
     }
