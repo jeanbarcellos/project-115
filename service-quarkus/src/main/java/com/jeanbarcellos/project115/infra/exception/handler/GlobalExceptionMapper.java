@@ -7,6 +7,7 @@ import static com.jeanbarcellos.core.Constants.CORRELATION_ID_KEY;
 
 import com.jeanbarcellos.core.error.ErrorResponse;
 import com.jeanbarcellos.core.error.ErrorType;
+import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
 import com.jeanbarcellos.project115.infra.adapter.QuarkusProblemMapper;
@@ -32,7 +33,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<DomainException> {
     @Override
     public Response toResponse(DomainException ex) {
 
-        ErrorType type = ex.getErrorType();
+        ErrorType type = TechnicalErrorType.INTERNAL_ERROR;
 
         // 1. Tenta pegar do ThreadLocal (CorrelationContext)
         String correlationId = CorrelationContext.get();
@@ -42,18 +43,21 @@ public class GlobalExceptionMapper implements ExceptionMapper<DomainException> {
             correlationId = (String) requestContext.getProperty(CORRELATION_ID_KEY);
         }
 
+        var url = requestContext.getUriInfo().getRequestUri();
+
         // String correlationContext2 = CorrelationContext.get();
         // String correlationContext = "";
         // log.info("correlationContext: {}", correlationContext);
         // log.info("correlationContext2: {}", correlationContext2);
 
-        ErrorResponse apiError = new ErrorResponse(
-                type.type(),
-                type.title(),
-                type.httpStatus(),
-                ex.getMessage(),
-                uriInfo.getRequestUri(),
-                Map.of(CORRELATION_ID_KEY, correlationId));
+        ErrorResponse apiError = null;
+        // ErrorResponse apiError = new ErrorResponse(
+        //         url,
+        //         type.getTitle(),
+        //         type.getHttpStatus(),
+        //         ex.getMessage(),
+        //         uriInfo.getRequestUri(),
+        //         Map.of(CORRELATION_ID_KEY, correlationId));
 
         return QuarkusProblemMapper.toResponse(apiError);
     }
