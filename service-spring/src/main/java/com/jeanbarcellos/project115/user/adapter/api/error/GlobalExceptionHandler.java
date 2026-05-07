@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,15 +51,18 @@ public class GlobalExceptionHandler {
         // ⚠️ fallback global (sem contexto específico de módulo)
         ErrorType type = TechnicalErrorType.SYSTEM_VALIDATION_ERROR;
 
+        // TODO Context do dominio não deveria ser repassado para client
+        Map<String, Object> properties = ObjectUtils.isNotEmpty(ex.getContext()) ? ex.getContext(): null;
+
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
                 .title(type.getTitle())
                 .status(type.getHttpStatus())
-                .detail(ex.getMessage())
+                .detail(ex.getMessage()) // Mensagem customizada da exception
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
-                .properties(ex.getContext())
+                .properties(properties) // Propriedades extras/contextos
                 .build();
 
         // centralizar/padronizar
@@ -81,17 +85,17 @@ public class GlobalExceptionHandler {
 
         List<ValidationError> errors = ex.getViolations()
                 .stream()
-                .map(v -> ValidationError.of(
-                        v.getField(),
-                        v.getMessage(),
-                        v.getRejectedValue()))
+                .map(violation -> ValidationError.of(
+                        violation.getField(),
+                        violation.getMessage(),
+                        violation.getRejectedValue()))
                 .toList();
 
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
                 .title(type.getTitle())
                 .status(type.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada
+                .detail(ex.getMessage()) // Mensagem customizada da exception
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
@@ -99,8 +103,9 @@ public class GlobalExceptionHandler {
                 .build();
 
         // centralizar/padronizar
-        log.warn("[error][validation] correlationId={} errors={}",
+        log.warn("[error][validation] code={} status={} correlationId={} errors={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 this.getCorrelationId(),
                 errors);
 
@@ -118,6 +123,8 @@ public class GlobalExceptionHandler {
 
         ErrorType type = ex.getType();
 
+        Map<String, Object> properties = ObjectUtils.isNotEmpty(ex.getProperties()) ? ex.getProperties(): null;
+
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
                 .title(type.getTitle())
@@ -126,7 +133,7 @@ public class GlobalExceptionHandler {
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
-                .properties(ex.getProperties()) // Propriedades extras/contextos
+                .properties(properties) // Propriedades extras/contextos
                 .build();
 
         log.warn("[error][business] code={} status={} correlationId={}",
@@ -148,19 +155,22 @@ public class GlobalExceptionHandler {
 
         TechnicalErrorType type = TechnicalErrorType.INPUT_VALIDATION_ERROR;
 
+        List<ValidationError> errors = ex.getErrors();
+
         ErrorResponse error = ErrorResponse.builder()
                 .type(resolveTypeUri(type))
                 .title(type.getTitle())
                 .status(type.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada
+                .detail(ex.getMessage()) // Mensagem customizada da exception
                 .instance(resolveInstance(request))
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
-                .errors(ex.getErrors()) // Campo customizado de erros
+                .errors(errors) // Campo customizado de erros
                 .build();
 
-        log.warn("[error][validation] correlationId={} errors={}",
+        log.warn("[error][validation] code={} status={} correlationId={} errors={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 this.getCorrelationId(),
                 ex.getErrors());
 
@@ -189,9 +199,9 @@ public class GlobalExceptionHandler {
                 .correlationId(this.getCorrelationId())
                 .build();
 
-                // log.error("[{}] correlationId={} message={}",
-            log.error("[error][techinical] code={} correlationId={} message={}",
+            log.error("[error][technical] code={} status={} correlationId={} message={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 this.getCorrelationId(),
                 ex.getMessage(),
                 ex);
@@ -221,8 +231,9 @@ public class GlobalExceptionHandler {
                 .properties(Map.of("retryable", type.isRetryable()))
                 .build();
 
-        log.error("[error][technical] code={} retryable={} correlationId={}",
+        log.error("[error][technical] code={} status={} retryable={} correlationId={}",
                 type.getCode(),
+                type.getHttpStatus(),
                 type.isRetryable(),
                 this.getCorrelationId(),
                 ex);
@@ -231,6 +242,9 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
                 .body(error);
     }
+
+
+
 
     // HELPERS ================================================================
 
@@ -339,12 +353,12 @@ public class GlobalExceptionHandler {
         }
     }
 
-    private void log(ErrorType type, String detail, Map<String, Object> ctx) {
+    private void log(ErrorType type, String detail, Map<String, Object> context) {
 
         if (type.getHttpStatus() >= 500) {
-            log.error("error={} detail={}", ctx, detail);
+            log.error("error={} detail={}", context, detail);
         } else {
-            log.warn("error={} detail={}", ctx, detail);
+            log.warn("error={} detail={}", context, detail);
         }
     }
 

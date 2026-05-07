@@ -29,7 +29,7 @@ public class BusinessException extends ApplicationException {
     }
 
     public BusinessException(ErrorType type, String detail, Map<String, Object> properties) {
-        super(detail);
+        super(detail); // #TODO Seria message ou details?
         this.type = type;
         this.properties = properties;
     }
