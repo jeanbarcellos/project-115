@@ -8,18 +8,16 @@ import com.jeanbarcellos.core.integration.ExternalErrorType;
 import lombok.Getter;
 
 /**
- * Erros em mensageria (Kafka, Rabbit, etc).
+ * Erros em storage externo (Redis, S3, etc).
  */
 @Getter
-public class MessagingIntegrationException extends IntegrationException {
+public class StorageIntegrationException extends IntegrationException {
 
-    private final String topicOrQueue;
-    private final String operation;
+    private final String resource;
 
-    public MessagingIntegrationException(
+    public StorageIntegrationException(
             String service,
-            String topicOrQueue,
-            String operation,
+            String resource,
             String message,
             Map<String, Object> metadata,
             ExternalErrorType externalError,
@@ -31,10 +29,9 @@ public class MessagingIntegrationException extends IntegrationException {
                 null,
                 metadata,
                 externalError,
-                TechnicalErrorType.DEPENDENCY_FAILURE,
+                TechnicalErrorType.CONNECTION_ERROR,
                 cause);
-        this.topicOrQueue = topicOrQueue;
-        this.operation = operation;
+        this.resource = resource;
     }
 
 }
