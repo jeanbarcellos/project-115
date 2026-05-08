@@ -24,12 +24,12 @@ public class BusinessException extends ApplicationException {
     private final ErrorType type;
     private final Map<String, Object> properties;
 
-    public BusinessException(ErrorType type, String detail) {
-        this(type, detail, Map.of());
+    public BusinessException(ErrorType type, String message) {
+        this(type, message, Map.of());
     }
 
-    public BusinessException(ErrorType type, String detail, Map<String, Object> properties) {
-        super(detail); // #TODO Seria message ou details?
+    public BusinessException(ErrorType type, String message, Map<String, Object> properties) {
+        super(message);
         this.type = type;
         this.properties = properties;
     }
