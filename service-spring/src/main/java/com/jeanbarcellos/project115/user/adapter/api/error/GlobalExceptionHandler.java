@@ -65,12 +65,6 @@ public class GlobalExceptionHandler {
                 .properties(properties) // Propriedades extras/contextos
                 .build();
 
-        // centralizar/padronizar
-        // log.warn("[error][domain] code={} status={} correlationId={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         this.getCorrelationId());
-
         this.log("domain", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
@@ -104,13 +98,6 @@ public class GlobalExceptionHandler {
                 .errors(errors) // Campo customizado de erros
                 .build();
 
-        // // centralizar/padronizar
-        // log.warn("[error][validation] code={} status={} correlationId={} errors={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         this.getCorrelationId(),
-        //         errors);
-
         this.log("validation", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
@@ -139,11 +126,6 @@ public class GlobalExceptionHandler {
                 .correlationId(this.getCorrelationId())
                 .properties(properties) // Propriedades extras/contextos
                 .build();
-
-        // log.warn("[error][business] code={} status={} correlationId={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         this.getCorrelationId());
 
         this.log("business", type, ex, ex.getMessage());
 
@@ -174,12 +156,6 @@ public class GlobalExceptionHandler {
                 .errors(errors) // Campo customizado de erros
                 .build();
 
-        // log.warn("[error][validation] code={} status={} correlationId={} errors={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         this.getCorrelationId(),
-        //         ex.getErrors());
-
         this.log("validation", type, ex, ex.getMessage());
 
         return ResponseEntity.status(type.getHttpStatus())
@@ -206,13 +182,6 @@ public class GlobalExceptionHandler {
                 .timestamp(Instant.now())
                 .correlationId(this.getCorrelationId())
                 .build();
-
-        // log.error("[error][technical] code={} status={} correlationId={} message={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         this.getCorrelationId(),
-        //         ex.getMessage(),
-        //         ex);
 
         this.log("technical", type, ex, ex.getMessage());
 
@@ -242,13 +211,6 @@ public class GlobalExceptionHandler {
                 .correlationId(this.getCorrelationId())
                 .properties(Map.of("retryable", type.isRetryable()))
                 .build();
-
-        // log.error("[error][technical] code={} status={} retryable={} correlationId={}",
-        //         type.getCode(),
-        //         type.getHttpStatus(),
-        //         type.isRetryable(),
-        //         this.getCorrelationId(),
-        //         ex);
 
         this.log("technical", type, ex, detail);
 
