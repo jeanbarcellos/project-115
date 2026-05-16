@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jeanbarcellos.core.error.DomainViolation;
+import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.error.ValidationError;
 import com.jeanbarcellos.core.exception.BusinessException;
 import com.jeanbarcellos.core.exception.DomainException;
 import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
+import com.jeanbarcellos.core.exception.integration.IntegrationException;
 import com.jeanbarcellos.project115.user.application.error.UserErrorType;
 
 import lombok.RequiredArgsConstructor;
@@ -65,6 +67,13 @@ public class ExceptionController {
                 Map.of("field", 777));
     }
 
+    @GetMapping("/business-exception-1")
+    public void testBusinessException1() {
+        throw new BusinessException(
+                UserErrorType.USER_NOT_FOUND,
+                "Details of business exception");
+    }
+
     // VALIDATION → 422 =======================================================
 
     @GetMapping("/validation-exception")
@@ -76,6 +85,17 @@ public class ExceptionController {
                 ValidationError.of("arquivo", "O tamanho excede o limite permitido"));
 
         throw new ValidationException(mensagem, erros);
+    }
+
+    // INTEGRATION ===============================================================
+
+    @GetMapping("/integration-exception")
+    public void testIntegrationException() {
+        throw new IntegrationException("http", 422, "MessageTest", "{}",
+        null,
+        null,
+        TechnicalErrorType.DEPENDENCY_FAILURE,
+        null);
     }
 
     // APPLICATION (fallback controlado) ======================================
