@@ -66,14 +66,14 @@ public class ErrorResponse {
     // Observabilidade **************************
 
     /**
-     * Identificador de correlação para rastreamento.
-     */
-    private String correlationId;
-
-    /**
      * Timestamp da ocorrência do erro.
      */
     private Instant timestamp;
+
+    /**
+     * Identificador de correlação para rastreamento.
+     */
+    private String correlationId;
 
     // Validação entrada ************************
 

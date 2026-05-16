@@ -10,6 +10,7 @@ import com.jeanbarcellos.core.error.DomainViolation;
  *
  * NÃO depende de HTTP ou RFC.
  */
+@SuppressWarnings({ "java:S110", "java:S1948" })
 public class DomainValidationException extends DomainException {
 
     private final List<DomainViolation> violations;

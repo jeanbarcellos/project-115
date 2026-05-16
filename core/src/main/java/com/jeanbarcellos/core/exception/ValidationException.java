@@ -33,23 +33,22 @@ public class ValidationException extends ApplicationException {
     /**
      * Construtor para falhas de validação com múltiplos campos inválidos.
      *
-     * @param detail Mensagem específica e legível sobre o contexto do erro (RFC
-     *               9457 'detail').
-     * @param errors Lista de campos que falharam na validação e seus motivos.
+     * @param message Mensagem específica e legível sobre o contexto do erro (RFC 9457 'detail').
+     * @param errors  Lista de campos que falharam na validação e seus motivos.
      */
-    public ValidationException(String detail, List<ValidationError> errors) {
-        super(detail);
+    public ValidationException(String message, List<ValidationError> errors) {
+        super(message);
         this.errors = errors != null ? errors : Collections.emptyList();
     }
 
     /**
      * Construtor para quando há apenas um erro de campo a ser reportado.
      *
-     * @param detail Mensagem específica do contexto do erro.
-     * @param error  O erro único detectado.
+     * @param message Mensagem específica do contexto do erro.
+     * @param error   O erro único detectado.
      */
-    public ValidationException(String detail, ValidationError error) {
-        super(detail);
+    public ValidationException(String message, ValidationError error) {
+        super(message);
         this.errors = error != null ? List.of(error) : Collections.emptyList();
     }
 
