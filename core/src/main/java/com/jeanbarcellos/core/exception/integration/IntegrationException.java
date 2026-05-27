@@ -12,13 +12,15 @@ import lombok.Getter;
  * Exceção para falhas em integrações externas (REST, fila, etc).
  */
 @Getter
+@SuppressWarnings({ "java:S110", "java:S1948" })
 public class IntegrationException extends ApplicationException {
 
     private final String service; // nome do serviço externo
+
     private final Integer status; // HTTP status (se aplicável)
     private final String errorBody; // resposta retornada (opcional)
 
-    private final Map<String, Object> metadata;
+    private final Map<String, Object> metadata; // metadados (podendo ser header)
 
     private final TechnicalErrorType errorType; // interno
     private final ExternalErrorType externalError; // externo
@@ -31,8 +33,7 @@ public class IntegrationException extends ApplicationException {
             Map<String, Object> metadata,
             ExternalErrorType externalError,
             TechnicalErrorType errorType,
-            Throwable cause)
-            {
+            Throwable cause) {
 
         super(message, cause);
         this.service = service;

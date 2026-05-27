@@ -11,6 +11,7 @@ import lombok.Getter;
  * Erros de integração HTTP (REST).
  */
 @Getter
+@SuppressWarnings({ "java:S110", "java:S1948" })
 public class HttpIntegrationException extends IntegrationException {
 
     private final String method;
@@ -24,14 +25,18 @@ public class HttpIntegrationException extends IntegrationException {
             String message,
             String responseBody,
             Map<String, Object> metadata,
-            ExternalErrorType externalError,
-            TechnicalErrorType errorType,
+
+            ExternalErrorType externalError, // External
+            TechnicalErrorType errorType, // Interno
+
             Throwable cause) {
-        super(service, status, message, responseBody, metadata, externalError, resolveErrorType(status), cause);
+
+        super(service, status, message, responseBody, metadata, externalError, errorType, cause);
         this.method = method;
         this.url = url;
     }
 
+    // TODO Mapeamento Genérico
     private static TechnicalErrorType resolveErrorType(Integer status) {
 
         if (status == null) {
