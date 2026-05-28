@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.adapter.api.error;
+package com.jeanbarcellos.project115.infra.error;
 
 import java.net.URI;
 import java.time.Instant;
@@ -165,18 +165,31 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IntegrationException.class)
     public ResponseEntity<ErrorResponse> handleIntegrationException(IntegrationException ex, HttpServletRequest request) {
-        this.log(
-                "integration",
-                ex.getErrorType(),
-                ex,
-                ex.getMessage());
 
-        return this.buildResponse(
-                request,
-                ex.getErrorType(),
-                ex.getMessage(),
-                null,
-                null);
+            ErrorType errorType = ex.getErrorType();
+
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("service", ex.getService());
+            if (ex.getExternalError() != null) {
+                properties.put("externalCode", ex.getExternalError().getCode());
+                properties.put("externalStatus", ex.getExternalError().getStatus());
+                properties.put("retryable", ex.getExternalError().isRetryable());
+            }
+
+            properties.putAll(ex.getMetadata());
+
+            this.log(
+                    "integration",
+                    errorType,
+                    ex,
+                    ex.getMessage());
+
+            return this.buildResponse(
+                    request,
+                    errorType,
+                    ex.getMessage(),
+                    null,
+                    properties);
     }
 
     // APPLICATION (fallback controlado) ======================================
@@ -280,7 +293,7 @@ public class GlobalExceptionHandler {
         // 4. Verificação e Merge de Properties
         Map<String, Object> finalProperties = this.buildProperties(errorType, properties);
 
-        if (ObjectUtils.isNotEmpty(finalProperties.isEmpty())) {
+        if (!finalProperties.isEmpty()) {
             responseBuilder.properties(finalProperties);
         }
 

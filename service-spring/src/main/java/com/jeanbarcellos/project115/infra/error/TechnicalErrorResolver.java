@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.adapter.api.error;
+package com.jeanbarcellos.project115.infra.error;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 
