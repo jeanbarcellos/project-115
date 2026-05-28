@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.controller;
+package com.jeanbarcellos.project115.infra.api.controller;
 
 import java.net.URI;
 import java.util.Map;
@@ -14,7 +14,10 @@ import com.jeanbarcellos.core.exception.integration.RpcIntegrationException;
 import com.jeanbarcellos.core.exception.integration.StorageIntegrationException;
 import com.jeanbarcellos.project115.endereco.SerproErrorType;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
+@Tag(name = "test-exceptions")
 @RequestMapping("/test/exceptions/integrations")
 public class IntegrationExceptionTestController {
 

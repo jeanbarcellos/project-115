@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.error;
+package com.jeanbarcellos.project115.infra.exception.handler;
 
 import java.net.URI;
 import java.time.Instant;
@@ -25,6 +25,7 @@ import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.exception.integration.IntegrationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
+import com.jeanbarcellos.project115.infra.error.TechnicalErrorResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.adapter;
+package com.jeanbarcellos.project115.infra.error;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class QuarkusProblemMapper {
 
-    public static Response toResponse(ErrorResponse error) {
+    private static Response toResponse(ErrorResponse error) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("type", error.getType().toString());

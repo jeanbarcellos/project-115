@@ -57,10 +57,16 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
         return this.handleException(exception);
     }
 
-    // BUSINESS ===============================================================
+    // =========================================================================
+    // BUSINESS
+    // =========================================================================
 
     /**
-     * Constrói a resposta para erros de regra de negócio (400).
+     * Trata exceções de negócio conhecidas.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
      */
     private Response handleBusinessException(BusinessException ex) {
 
@@ -83,10 +89,16 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 .build();
     }
 
-    // BUSINESS -> VALIDATION =================================================
+    // =========================================================================
+    // BUSINESS >> VALIDATION
+    // =========================================================================
 
     /**
-     * Método especializado para tratar ValidationException (Status 400).
+     * Trata erros de validação de entrada.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
      */
     private Response handleValidationException(ValidationException ex) {
 
@@ -109,10 +121,20 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 .build();
     }
 
+    // =========================================================================
+    // INTEGRATION
+    // =========================================================================
+
+
+    // =========================================================================
+    // APPLICATION (fallback controlado de exceções da aplicação)
+    // =========================================================================
+
     // APPLICATION -> NOT FOUND ===============================================
 
     /**
      * Tratamento para erros de recurso não encontrado (404).
+     * // Usar implenetação negocial
      */
     private Response handleNotFoundException(NotFoundException ex) {
 
@@ -134,7 +156,9 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 .build();
     }
 
-    // APPLICATION (fallback controlado) ======================================
+    // =========================================================================
+    // APPLICATION (fallback controlado de exceções da aplicação)
+    // =========================================================================
 
     /**
      * Constrói a resposta para erros de aplicação genéricos ou de negócio (500).
@@ -160,7 +184,9 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 .build();
     }
 
-    // GENERIC / TECHNICAL ====================================================
+    // =========================================================================
+    // GENERIC / TECHNICAL
+    // =========================================================================
 
     private Response handleException(Exception ex) {
 
@@ -183,8 +209,14 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
                 .build();
     }
 
+    // =========================================================================
+    // BUILDERS
+    // =========================================================================
 
-    // RESOLVERS ==============================================================
+
+    // =========================================================================
+    // RESOLVERS
+    // =========================================================================
 
     private URI resolveTypeUri(ErrorType errorType) {
         return URI.create(this.uriInfo.getBaseUri() + problemBaseUri + "/" + errorType.getCode());
@@ -194,7 +226,9 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
         return URI.create(this.uriInfo.getPath());
     }
 
-    // LOGGING ================================================================
+    // =========================================================================
+    // LOGGING
+    // =========================================================================
 
     private void log(String category, ErrorType errorType, Exception ex, String detail) {
 

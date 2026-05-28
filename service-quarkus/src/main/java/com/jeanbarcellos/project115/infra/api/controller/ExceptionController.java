@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.user.controller;
+package com.jeanbarcellos.project115.infra.api.controller;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.Path;

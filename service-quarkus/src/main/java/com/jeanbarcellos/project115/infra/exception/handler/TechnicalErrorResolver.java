@@ -28,8 +28,7 @@ public class TechnicalErrorResolver {
      * Construtor privado para ocultar o construtor público implícito,
      * garantindo que esta classe utilitária não seja instanciada.
      */
-    private TechnicalErrorResolver() {
-    }
+    private TechnicalErrorResolver() { }
 
     /**
      * Analisa uma exceção ({@link Throwable}) e determina qual é o {@link TechnicalErrorType}

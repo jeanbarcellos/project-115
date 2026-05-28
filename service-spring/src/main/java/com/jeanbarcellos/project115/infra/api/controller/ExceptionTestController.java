@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.controller;
+package com.jeanbarcellos.project115.infra.api.controller;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -31,6 +31,7 @@ import com.jeanbarcellos.project115.endereco.SerproErrorType;
 import com.jeanbarcellos.project115.user.application.error.UserErrorType;
 import com.jeanbarcellos.project115.wallet.application.error.WalletErrorType;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -61,6 +62,7 @@ import lombok.RequiredArgsConstructor;
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @RestController
+@Tag(name = "test-exceptions")
 @RequestMapping(value = "/test/exceptions", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class ExceptionTestController {

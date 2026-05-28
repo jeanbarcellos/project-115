@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.wallet.adapter.api;
+package com.jeanbarcellos.project115.wallet.adapter.api.controller;
 
 import java.util.List;
 
