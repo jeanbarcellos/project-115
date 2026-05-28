@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.jeanbarcellos.core.error.ErrorCategory;
 import com.jeanbarcellos.core.error.ErrorResponse;
 import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
@@ -29,57 +30,90 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Handler global responsável por traduzir exceções para RFC 7807.
+ * Handler global responsável por traduzir exceções
+ * para respostas padronizadas no formato RFC 7807.
+ *
+ * <p>
+ * Centraliza:
+ * </p>
+ *
+ * <ul>
+ *   <li>tratamento de erros;</li>
+ *   <li>padronização de respostas;</li>
+ *   <li>logging estruturado;</li>
+ *   <li>correlationId;</li>
+ *   <li>mapeamento de falhas técnicas.</li>
+ * </ul>
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * URI base utilizada na construção
+     * do campo {@code type} do Problem Details.
+     */
     private static final String MEDIA_TYPE_APPLICATION_PROBLEM_JSON = "application/problem+json";
 
+    /**
+     * URI base utilizada na construção
+     * do campo {@code type} do Problem Details.
+     */
     @Value("${api.problem.base-uri}")
     private String problemBaseUri;
 
-    // DOMAIN =================================================================
+    private boolean logClientErrors = true;
 
-    // se chegou aqui → erro de arquitetura (não traduziu)
+    // =========================================================================
+    // DOMAIN
+    // =========================================================================
+
+    /**
+     * Fallback para exceções de domínio não tratadas corretamente.
+     * Trata exceções genéricas de domínio.
+     *
+     * <p>
+     * Este handler funciona como fallback para falhas de domínio não mapeadas
+     * especificamente.
+     * </p>
+     * <p>
+     * Se chegou neste handler, provavelmente houve falha arquitetural
+     * no mapeamento específico do domínio.
+     * </p>
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomainException(
             DomainException ex,
             HttpServletRequest request) {
 
-        // ⚠️ fallback global (sem contexto específico de módulo)
+        ErrorCategory category = ErrorCategory.DOMAIN;
         ErrorType errorType = TechnicalErrorType.SYSTEM_VALIDATION_ERROR;
 
-        // Context do dominio não deveria ser repassado para client
-        Map<String, Object> properties = ObjectUtils.isNotEmpty(ex.getContext()) ? ex.getContext(): null;
+        this.log(category, errorType, ex, ex.getMessage());
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada da exception
-                .instance(resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .properties(properties) // Propriedades extras/contextos
-                .build();
-
-        this.log("domain", errorType, ex, ex.getMessage());
-
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, ex.getMessage(), ex.getContext());
     }
 
+    /**
+     * Trata erros de validação de domínio.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(DomainValidationException.class)
     public ResponseEntity<ErrorResponse> handleDomainValidation(
             DomainValidationException ex,
             HttpServletRequest request) {
 
+        ErrorCategory category = ErrorCategory.VALIDATION;
         ErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
-
-        this.log("validation", errorType, ex, ex.getMessage());
 
         List<ValidationError> errors = ex.getViolations()
                 .stream()
@@ -89,186 +123,221 @@ public class GlobalExceptionHandler {
                         violation.getRejectedValue()))
                 .toList();
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada da exception
-                .instance(resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .errors(errors) // Campo customizado de erros
-                .build();
+        this.log(category, errorType, ex, ex.getMessage());
 
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, ex.getMessage(), errors);
     }
 
-    // BUSINESS ===============================================================
+    // =========================================================================
+    // BUSINESS
+    // =========================================================================
 
+    /**
+     * Trata exceções de negócio conhecidas.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(
             BusinessException ex,
             HttpServletRequest request) {
 
+        ErrorCategory category = ErrorCategory.BUSINESS;
         ErrorType errorType = ex.getType();
-        Map<String, Object> properties = ObjectUtils.isNotEmpty(ex.getProperties()) ? ex.getProperties(): null;
 
-        this.log("business", errorType, ex, ex.getMessage());
+        this.log(category, errorType, ex, ex.getMessage());
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada da exception
-                .instance(resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .properties(properties) // Propriedades extras/contextos
-                .build();
-
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, ex.getMessage(), ex.getProperties());
     }
 
-    // VALIDATION → 422 =======================================================
+    // =========================================================================
+    // BUSINESS >> VALIDATION
+    // =========================================================================
 
+    /**
+     * Trata erros de validação de entrada.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
             ValidationException ex,
             HttpServletRequest request) {
 
-        TechnicalErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
-        List<ValidationError> errors = ex.getErrors();
+        ErrorCategory category = ErrorCategory.VALIDATION;
+                ErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
 
-        this.log("validation", errorType, ex, ex.getMessage());
+        this.log(category, errorType, ex, ex.getMessage());
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada da exception
-                .instance(resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .errors(errors) // Campo customizado de erros
-                .build();
-
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, ex.getMessage(), ex.getErrors());
     }
 
-    // INTEGRATION ============================================================
+    // =========================================================================
+    // INTEGRATION
+    // =========================================================================
 
+    /**
+     * Trata falhas em integrações externas.
+     *
+     * <p>
+     * Enriquece automaticamente a resposta RFC 7807 com metadados operacionais da
+     * integração.
+     * </p>
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(IntegrationException.class)
-    public ResponseEntity<ErrorResponse> handleIntegrationException(IntegrationException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleIntegrationException(IntegrationException ex,
+            HttpServletRequest request) {
 
-            ErrorType errorType = ex.getErrorType();
+        ErrorCategory category = ErrorCategory.INTEGRATION;
+        ErrorType errorType = ex.getErrorType();
 
-            Map<String, Object> properties = new HashMap<>();
-            properties.put("service", ex.getService());
-            if (ex.getExternalError() != null) {
-                properties.put("externalCode", ex.getExternalError().getCode());
-                properties.put("externalStatus", ex.getExternalError().getStatus());
-                properties.put("retryable", ex.getExternalError().isRetryable());
-            }
+        Map<String, Object> properties = new HashMap<>();
 
+        properties.put("service", ex.getService());
+
+        if (ex.getExternalError() != null) {
+            properties.put("externalCode", ex.getExternalError().getCode());
+            properties.put("externalStatus", ex.getExternalError().getStatus());
+            properties.put("externalRetryable", ex.getExternalError().isRetryable());
+        }
+
+        if (ObjectUtils.isNotEmpty(ex.getMetadata())) {
             properties.putAll(ex.getMetadata());
+        }
 
-            this.log(
-                    "integration",
-                    errorType,
-                    ex,
-                    ex.getMessage());
+        this.log(category, errorType, ex, ex.getMessage());
 
-            return this.buildResponse(
-                    request,
-                    errorType,
-                    ex.getMessage(),
-                    null,
-                    properties);
+        return this.buildResponse(request, errorType, ex.getMessage(), properties);
     }
 
-    // APPLICATION (fallback controlado) ======================================
+    // =========================================================================
+    // APPLICATION (fallback controlado de exceções da aplicação)
+    // =========================================================================
 
+    /**
+     * Trata exceções genéricas da aplicação.
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(
             ApplicationException ex,
             HttpServletRequest request) {
 
-        // Sem tipo explícito → vira erro interno
+        ErrorCategory category = ErrorCategory.APPLICATION;
         TechnicalErrorType errorType = TechnicalErrorType.INTERNAL_ERROR;
 
-        this.log("technical", errorType, ex, ex.getMessage());
+        this.log(category, errorType, ex, ex.getMessage());
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(ex.getMessage()) // Mensagem customizada da exception
-                .instance(resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .build();
-
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, ex.getMessage());
     }
 
-    // GENERIC / TECHNICAL ====================================================
+    // =========================================================================
+    // GENERIC / TECHNICAL
+    // =========================================================================
 
+    /**
+     * Fallback técnico global da aplicação.
+     *
+     * <p>
+     * Captura exceções inesperadas não tratadas
+     * explicitamente por outros handlers.
+     * </p>
+     *
+     * @param ex      exceção capturada
+     * @param request requisição HTTP atual
+     * @return resposta RFC 7807
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleTechnicalException(
             Exception ex,
             HttpServletRequest request) {
 
+        ErrorCategory category = ErrorCategory.TECHNICAL;
         TechnicalErrorType errorType = TechnicalErrorResolver.resolveType(ex);
         String detail = "Unexpected error";
 
-        this.log("technical", errorType, ex, detail);
+        this.log(category, errorType, ex, detail);
 
-        ErrorResponse errorResposne = ErrorResponse.builder()
-                .type(resolveTypeUri(errorType))
-                .title(errorType.getTitle())
-                .status(errorType.getHttpStatus())
-                .detail(detail)
-                .instance(this.resolveInstance(request))
-                .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId())
-                .properties(Map.of("retryable", errorType.isRetryable()))
-                .build();
-
-        return ResponseEntity.status(errorType.getHttpStatus())
-                .contentType(MediaType.valueOf(MEDIA_TYPE_APPLICATION_PROBLEM_JSON))
-                .body(errorResposne);
+        return this.buildResponse(request, errorType, detail);
     }
 
+    // =========================================================================
+    // BUILDERS
+    // =========================================================================
 
-    // RESOLVERS ==============================================================
+    /**
+     * Constrói uma resposta RFC 7807 simples.
+     *
+     * @param request   requisição HTTP
+     * @param errorType erro interno
+     * @param detail    detalhe do erro
+     * @return resposta RFC 7807
+     */
+    private ResponseEntity<ErrorResponse> buildResponse(
+            HttpServletRequest request,
+            ErrorType errorType,
+            String detail) {
 
-    private URI resolveTypeUri(ErrorType errorType) {
-        return URI.create(this.problemBaseUri + "/" + errorType.getCode());
+        return this.buildResponse(request, errorType, detail, null, null);
     }
 
-    private URI resolveInstance(HttpServletRequest request) {
-        return URI.create(request.getRequestURI());
+    /**
+     * Constrói uma resposta RFC 7807 com propriedades adicionais.
+     *
+     * @param request    requisição HTTP
+     * @param errorType  erro interno
+     * @param detail     detalhe do erro
+     * @param properties propriedades adicionais
+     * @return resposta RFC 7807
+     */
+    private ResponseEntity<ErrorResponse> buildResponse(
+            HttpServletRequest request,
+            ErrorType errorType,
+            String detail,
+            Map<String, Object> properties) {
+
+        return this.buildResponse(request, errorType, detail, null, properties);
     }
 
-    private String getCorrelationId() {
-        String correlationId = CorrelationContext.get();
-        if (correlationId == null || correlationId.isBlank()) {
-            correlationId = "no-correlation-id"; // Ou generate um UUID temporário
-        }
+    /**
+     * Constrói uma resposta RFC 7807 com erros de validação.
+     *
+     * @param request   requisição HTTP
+     * @param errorType erro interno
+     * @param detail    detalhe do erro
+     * @param errors    erros de validação
+     * @return resposta RFC 7807
+     */
+    private ResponseEntity<ErrorResponse> buildResponse(
+            HttpServletRequest request,
+            ErrorType errorType,
+            String detail,
+            List<ValidationError> errors) {
 
-        return correlationId;
+        return this.buildResponse(request, errorType, detail, errors, null);
     }
 
-    // BUILDERS ===============================================================
-
+    /**
+     * Constrói uma resposta RFC 7807 completa.
+     *
+     * @param request requisição HTTP
+     * @param errorType erro interno
+     * @param detail detalhe do erro
+     * @param errors erros de validação
+     * @param properties propriedades adicionais
+     * @return response entity padronizada
+     */
     private ResponseEntity<ErrorResponse> buildResponse(
             HttpServletRequest request,
             ErrorType errorType,
@@ -276,21 +345,19 @@ public class GlobalExceptionHandler {
             List<ValidationError> errors,
             Map<String, Object> properties) {
 
-        var responseBuilder = ErrorResponse.builder()
+        ErrorResponse.ErrorResponseBuilder responseBuilder = ErrorResponse.builder()
                 .type(resolveTypeUri(errorType))
                 .title(errorType.getTitle())
                 .status(errorType.getHttpStatus())
                 .detail(detail)
-                .instance(this.resolveInstance(request))
+                .instance(resolveInstance(request))
                 .timestamp(Instant.now())
-                .correlationId(this.getCorrelationId());
+                .correlationId(getCorrelationId());
 
-        // 3. Verificação de Erros de Validação (Só adiciona se houver conteúdo)
         if (ObjectUtils.isNotEmpty(errors)) {
             responseBuilder.errors(errors);
         }
 
-        // 4. Verificação e Merge de Properties
         Map<String, Object> finalProperties = this.buildProperties(errorType, properties);
 
         if (!finalProperties.isEmpty()) {
@@ -304,51 +371,137 @@ public class GlobalExceptionHandler {
                 .body(body);
     }
 
+    /**
+     * Constrói propriedades adicionais da resposta RFC 7807.
+     *
+     * @param errorType erro interno
+     * @param customProperties propriedades customizadas
+     * @return mapa final de propriedades
+     */
     private Map<String, Object> buildProperties(
             ErrorType errorType,
-            Map<String, Object> custom) {
+            Map<String, Object> customProperties) {
 
-        Map<String, Object> base = Map.of(
-                "errorCode", errorType.getCode(),
-                "retryable", errorType.isRetryable());
+        Map<String, Object> properties = new HashMap<>();
 
-        if (custom == null || custom.isEmpty()) {
-            return base;
+        properties.put("errorCode", errorType.getCode());
+        properties.put("retryable", errorType.isRetryable());
+
+        if (ObjectUtils.isNotEmpty(customProperties)) {
+            properties.putAll(customProperties);
         }
 
-        Map<String, Object> merged = new HashMap<>(base);
-        merged.putAll(custom);
-
-        return merged;
+        return properties;
     }
 
-    // LOGGING ================================================================
+    // =========================================================================
+    // RESOLVERS
+    // =========================================================================
 
-    private void log(String category, ErrorType errorType, Exception ex, String detail) {
+    /**
+     * Resolve a URI RFC 7807 do tipo do problema.
+     *
+     * @param errorType erro interno
+     * @return URI do problema
+     */
+    private URI resolveTypeUri(ErrorType errorType) {
 
-        String correlationId = this.getCorrelationId();
+        return URI.create(problemBaseUri + "/" + errorType.getCode());
+    }
 
-        // Erros não técnicos não é necessário logar
+    /**
+     * Resolve a URI completa da requisição atual.
+     *
+     * @param request requisição HTTP
+     * @return URI da requisição
+     */
+    private URI resolveInstance(HttpServletRequest request) {
+
+        String uri = request.getRequestURL().toString();
+
+        if (request.getQueryString() != null) {
+            uri += "?" + request.getQueryString();
+        }
+
+        return URI.create(uri);
+    }
+
+    /**
+     * Obtém o correlationId atual.
+     *
+     * @return correlationId atual
+     */
+    private String getCorrelationId() {
+
+        String correlationId = CorrelationContext.get();
+
+        if (correlationId == null || correlationId.isBlank()) {
+            return "no-correlation-id";
+        }
+
+        return correlationId;
+    }
+
+    // =========================================================================
+    // LOGGING
+    // =========================================================================
+
+    /**
+     * Realiza logging estruturado da falha.
+     *
+     * <p>
+     * Atualmente o nível de log é resolvido
+     * utilizando regras simples baseadas
+     * na categoria do erro.
+     * </p>
+     *
+     * <p>
+     * O método já está preparado para futura
+     * evolução utilizando resolvers
+     * operacionais mais avançados
+     * (severity, alerting, logLevel, etc).
+     * </p>
+     *
+     * @param category  categoria do erro
+     * @param errorType erro interno
+     * @param ex        exceção original
+     * @param detail    detalhe do erro
+     */
+    private void log(ErrorCategory category, ErrorType errorType, Exception ex, String detail) {
+
         String pattern = "[error][{}] code={} status={} retryable={} correlationId={} message={}";
 
-        if (errorType.getHttpStatus() >= 500) {
+        String correlationId = this.getCorrelationId();
+        int status = errorType.getHttpStatus();
+
+        // 5xx → erro técnico/infra
+        if (status >= 500) {
+
             log.error(pattern,
-                    category,
+                    category.getCode(),
                     errorType.getCode(),
-                    errorType.getHttpStatus(),
+                    status,
                     errorType.isRetryable(),
                     correlationId,
                     detail,
                     ex);
-        } else {
-            log.warn(pattern,
-                    category,
+            return;
+        }
+
+        // 4xx -> opcional/configurável
+        if (status >= 400 && this.logClientErrors) {
+            // validação e negócio → warn sem stacktrace -> apenas para validação interna
+            log.warn(
+                    pattern,
+                    category.getCode(),
                     errorType.getCode(),
-                    errorType.getHttpStatus(),
+                    status,
                     errorType.isRetryable(),
                     correlationId,
                     detail);
         }
+
+        // default: não loga nada
     }
 
 }
