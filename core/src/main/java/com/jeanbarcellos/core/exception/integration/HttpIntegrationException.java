@@ -1,8 +1,8 @@
 package com.jeanbarcellos.core.exception.integration;
 
+import java.net.URI;
 import java.util.Map;
 
-import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.integration.ExternalErrorType;
 
 import lombok.Getter;
@@ -14,44 +14,77 @@ import lombok.Getter;
 @SuppressWarnings({ "java:S110", "java:S1948" })
 public class HttpIntegrationException extends IntegrationException {
 
+    /**
+     * Método HTTP executado.
+     *
+     * <p>
+     * Exemplos:
+     * GET, POST, PUT, DELETE.
+     * </p>
+     */
     private final String method;
-    private final String url;
 
+    /**
+     * URI chamada na integração.
+     */
+    private final URI uri;
+
+    /**
+     * Status retornado pelo provider.
+     */
+    private final Integer status;
+
+    /**
+     * Payload bruto retornado pelo provider.
+     *
+     * <p>
+     * Pode representar:
+     * </p>
+     *
+     * <ul>
+     *   <li>JSON;</li>
+     *   <li>XML;</li>
+     *   <li>texto;</li>
+     *   <li>estrutura serializada.</li>
+     * </ul>
+     */
+    private final Object responsePayload;
+
+    /**
+     * Cria uma nova exceção de integração HTTP.
+     *
+     * @param service         identificador lógico da integração
+     * @param method          método HTTP executado
+     * @param uri             URI chamada
+     * @param status          status retornado
+     * @param responsePayload payload retornado pelo provider
+     * @param message         mensagem resumida da falha
+     * @param metadata        metadados auxiliares
+     * @param externalError   erro externo mapeado
+     * @param cause           causa raiz da falha
+     */
     public HttpIntegrationException(
             String service,
             String method,
-            String url,
+            URI uri,
             Integer status,
+            Object responsePayload,
             String message,
-            String responseBody,
             Map<String, Object> metadata,
-
-            ExternalErrorType externalError, // External
-            TechnicalErrorType errorType, // Interno
-
+            ExternalErrorType externalError,
             Throwable cause) {
 
-        super(service, status, message, responseBody, metadata, externalError, errorType, cause);
+        super(
+                service,
+                message,
+                metadata,
+                externalError,
+                cause);
+
         this.method = method;
-        this.url = url;
-    }
-
-    // TODO Mapeamento Genérico
-    private static TechnicalErrorType resolveErrorType(Integer status) {
-
-        if (status == null) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
-        }
-
-        if (status >= 500) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_ERROR;
-        }
-
-        if (status >= 400) {
-            return TechnicalErrorType.DEPENDENCY_FAILURE;
-        }
-
-        return TechnicalErrorType.EXTERNAL_SERVICE_ERROR;
+        this.uri = uri;
+        this.status = status;
+        this.responsePayload = responsePayload;
     }
 
 }
