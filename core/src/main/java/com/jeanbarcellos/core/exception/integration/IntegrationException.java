@@ -98,20 +98,21 @@ public class IntegrationException extends ApplicationException {
     }
 
     /**
-     * Obtém o erro interno mapeado para a falha de integração.
+     * Erro interno associado à falha.
      *
      * <p>
-     * Quando existir um {@link ExternalErrorType},
-     * o erro será resolvido através do mapeamento definido
-     * no catálogo externo.
+     * Quando houver um erro externo mapeado,
+     * o valor será obtido através do catálogo
+     * do provider.
      * </p>
      *
      * <p>
-     * Caso contrário, assume-se um erro técnico genérico
-     * de integração externa.
+     * Na ausência de um erro externo,
+     * será retornado
+     * {@link TechnicalErrorType#EXTERNAL_SERVICE_ERROR}.
      * </p>
      *
-     * @return erro interno associado à falha
+     * @return erro interno associado
      */
     public ErrorType getErrorType() {
 

@@ -8,7 +8,10 @@ import com.jeanbarcellos.core.integration.ExternalErrorType;
 import lombok.Getter;
 
 /**
- * Erros de integração HTTP (REST).
+ * Exceção para falhas em integrações HTTP
+ * (REST APIs).
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Getter
 @SuppressWarnings({ "java:S110", "java:S1948" })
@@ -74,12 +77,7 @@ public class HttpIntegrationException extends IntegrationException {
             ExternalErrorType externalError,
             Throwable cause) {
 
-        super(
-                service,
-                message,
-                metadata,
-                externalError,
-                cause);
+        super(service, message, metadata, externalError, cause);
 
         this.method = method;
         this.uri = uri;

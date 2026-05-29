@@ -73,4 +73,20 @@ class ValidationExceptionTest {
         assertEquals(1, result.getErrors().size());
         assertEquals(error, result.getErrors().get(0));
     }
+
+    @Test
+    void constructor_whenSingleErrorIsNull_shouldCreateExceptionWithEmptyErrorList() {
+
+        // Arrange
+        String message = "Validation failed";
+
+        // Act
+        ValidationException result = new ValidationException(
+                message,
+                (ValidationError) null);
+
+        // Assert
+        assertEquals(message, result.getMessage());
+        assertTrue(result.getErrors().isEmpty());
+    }
 }
