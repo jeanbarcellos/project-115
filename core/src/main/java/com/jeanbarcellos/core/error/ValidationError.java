@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Representa um erro de validação de campo.
+ * Representa uma violação de validação detectada
+ * nos dados de entrada.
  *
  * <p>
- * Utilizado como extensão do {@link ErrorResponse} para detalhar
- * violações de regras de validação.
+ * Utilizada como extensão da RFC 7807 para detalhar
+ * erros de campos, parâmetros ou propriedades.
  * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>

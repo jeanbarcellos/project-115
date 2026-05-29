@@ -39,8 +39,16 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class ErrorResponse {
 
-    // RFC 7807  ********************************
+    // RFC 7807 ===============================================================
 
+    /**
+     * URI que identifica o tipo do problema.
+     *
+     * <p>
+     * Corresponde ao campo {@code type}
+     * definido pela RFC 7807.
+     * </p>
+     */
     private URI type;
 
     /**
@@ -63,7 +71,7 @@ public class ErrorResponse {
      */
     private URI instance;
 
-    // Observabilidade **************************
+    // Observabilidade =========================================================
 
     /**
      * Timestamp da ocorrência do erro.
@@ -75,14 +83,14 @@ public class ErrorResponse {
      */
     private String correlationId;
 
-    // Validação entrada ************************
+    // Validação ===============================================================
 
     /**
      * Lista de erros de validação (quando aplicável).
      */
     private List<ValidationError> errors;
 
-    // Extensões livres *************************
+    // Extensões livres ========================================================
 
     /**
      * Extensões adicionais permitidas pela RFC 7807.

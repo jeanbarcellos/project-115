@@ -21,6 +21,12 @@ public interface ErrorType {
 
     /**
      * Título curto do erro.
+     * Título curto, estável e legível do erro.
+     *
+     * <p>
+     * Este valor normalmente é utilizado no campo
+     * {@code title} do Problem Details (RFC 7807).
+     * </p>
      *
      * @return título do erro
      */
@@ -34,11 +40,17 @@ public interface ErrorType {
     int getHttpStatus();
 
     /**
-     * Indica se a operação pode ser tentada novamente.
+     * Indica se a operação associada ao erro
+     * pode ser tentada novamente.
      *
-     * Ex:
-     * - timeout → true
-     * - validação → false
+     * <p>
+     * Este atributo representa uma recomendação
+     * operacional e não uma garantia de sucesso
+     * em uma nova tentativa.
+     * </p>
+     *
+     * @return {@code true} quando uma nova tentativa
+     *         é recomendada; caso contrário {@code false}
      */
     boolean isRetryable();
 }

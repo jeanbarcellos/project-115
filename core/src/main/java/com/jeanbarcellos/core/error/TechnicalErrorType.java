@@ -4,12 +4,22 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Enumeração de erros técnicos comuns da aplicação.
+ * Catálogo global de erros técnicos reutilizáveis da plataforma.
  *
  * <p>
- * Esses erros são independentes de domínio e podem ser reutilizados
- * por qualquer módulo da aplicação.
+ * Estes erros representam falhas independentes
+ * de domínio e podem ser utilizados por qualquer
+ * módulo ou microsserviço.
  * </p>
+ *
+ * <p>
+ * Este catálogo NÃO deve conter regras de negócio
+ * específicas. Para isso devem ser utilizados
+ * catálogos próprios de domínio
+ * (ex: UserErrorType, WalletErrorType).
+ * </p>
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Getter
 @RequiredArgsConstructor
@@ -289,9 +299,24 @@ public enum TechnicalErrorType implements ErrorType {
             "Cache miss",
             false);
 
+    /**
+     * Código único do erro.
+     */
     private final String code;
+
+    /**
+     * Status HTTP associado ao erro.
+     */
     private final int httpStatus;
+
+    /**
+     * Título curto e estável do erro.
+     */
     private final String title;
+
+    /**
+     * Indica se uma nova tentativa é recomendada.
+     */
     private final boolean isRetryable;
 
 }

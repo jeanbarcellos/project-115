@@ -43,7 +43,7 @@ import lombok.RequiredArgsConstructor;
 public enum ErrorCategory {
 
     /**
-     * Erros técnicos/internos da aplicação.
+     * Erros técnicos e operacionais.
      */
     TECHNICAL("technical"),
 
