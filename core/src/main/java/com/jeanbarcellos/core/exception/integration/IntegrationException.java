@@ -3,9 +3,9 @@ package com.jeanbarcellos.core.exception.integration;
 import java.util.Map;
 
 import com.jeanbarcellos.core.error.ErrorType;
+import com.jeanbarcellos.core.error.ExternalErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.exception.ApplicationException;
-import com.jeanbarcellos.core.integration.ExternalErrorType;
 
 import lombok.Getter;
 

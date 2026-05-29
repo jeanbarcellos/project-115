@@ -2,7 +2,7 @@ package com.jeanbarcellos.core.exception.integration;
 
 import java.util.Map;
 
-import com.jeanbarcellos.core.integration.ExternalErrorType;
+import com.jeanbarcellos.core.error.ExternalErrorType;
 
 import lombok.Getter;
 

@@ -1,6 +1,4 @@
-package com.jeanbarcellos.core.integration;
-
-import com.jeanbarcellos.core.error.ErrorType;
+package com.jeanbarcellos.core.error;
 
 /**
  * Representa um erro oficialmente documentado e retornado
