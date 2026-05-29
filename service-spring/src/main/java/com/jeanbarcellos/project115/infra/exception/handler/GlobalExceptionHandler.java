@@ -170,7 +170,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         ErrorCategory category = ErrorCategory.VALIDATION;
-                ErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
+        ErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
 
         this.log(category, errorType, ex, ex.getMessage());
 

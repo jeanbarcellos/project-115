@@ -1,0 +1,23 @@
+package com.jeanbarcellos.project115.user.error;
+
+import com.jeanbarcellos.core.error.ErrorType;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Erros de negócio específicos do domínio de usuário.
+ */
+@Getter
+@RequiredArgsConstructor
+public enum UserErrorType implements ErrorType {
+
+    USER_NOT_FOUND("user-not-found", 404, "User not found", false),
+    EMAIL_ALREADY_EXISTS("email-already-exists", 409, "Email already exists", false);
+
+    private final String code;
+    private final int httpStatus;
+    private final String title;
+    private final boolean isRetryable;
+
+}

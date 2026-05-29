@@ -7,3 +7,7 @@ quarkus:
 
   swagger-ui:
     always-include: true
+
+api:
+  problem:
+    base-uri: http://localhost:8080/problems
