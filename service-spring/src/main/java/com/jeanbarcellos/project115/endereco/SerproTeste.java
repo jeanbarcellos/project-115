@@ -3,8 +3,8 @@ package com.jeanbarcellos.project115.endereco;
 import java.net.URI;
 import java.util.Map;
 
+import com.jeanbarcellos.core.error.ExternalErrorType;
 import com.jeanbarcellos.core.exception.integration.HttpIntegrationException;
-import com.jeanbarcellos.core.integration.ExternalErrorType;
 
 public class SerproTeste {
 
