@@ -9,35 +9,37 @@ import java.util.UUID;
  * Implementado com ThreadLocal para manter o identificador
  * durante o ciclo de vida da requisição.
  * </p>
+ *
+ * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public final class CorrelationContext {
 
-    private static final ThreadLocal<String> CORRELATION_ID = new ThreadLocal<>();
+    private static final ThreadLocal<String> HOLDER = new ThreadLocal<>();
 
     private CorrelationContext() {
     }
 
     public static void set(String id) {
-        CORRELATION_ID.set(id);
+        HOLDER.set(id);
     }
 
     public static String get() {
-        return CORRELATION_ID.get();
+        return HOLDER.get();
     }
 
     public static String getOrCreate() {
-        String id = CORRELATION_ID.get();
+        String id = HOLDER.get();
 
         if (id == null) {
             id = UUID.randomUUID().toString();
-            CORRELATION_ID.set(id);
+            HOLDER.set(id);
         }
 
         return id;
     }
 
     public static void clear() {
-        CORRELATION_ID.remove();
+        HOLDER.remove();
     }
 
 }
