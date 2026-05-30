@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.jeanbarcellos.project115</groupId>
+    <artifactId>project115-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>project115-core-test</artifactId>
+  <packaging>jar</packaging>
+
+  <name>project115-core-test</name>
+  <description>Biblioteca de testes</description>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+
+    <!-- ******************************************************* -->
+    <!-- DEPENDENCIAS DE COMPILACAO E RUNTIME                    -->
+    <!-- ******************************************************* -->
+
+    <!-- Lib project115-core-->
+    <dependency>
+      <groupId>com.jeanbarcellos.project115</groupId>
+      <artifactId>project115-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <!-- ******************************************************* -->
+    <!-- DEPENDENCIAS DE TESTES                                  -->
+    <!-- ******************************************************* -->
+
+    <!-- JUnit -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Mocks -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Asserções -->
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- ArchUnit -->
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- ClassGraph -->
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+
+</project>
