@@ -83,6 +83,9 @@ public class ErrorResponse {
      */
     private String correlationId;
 
+    // private String traceId;
+    // private String spanId;
+
     // Validação ===============================================================
 
     /**
