@@ -27,6 +27,8 @@
     <quarkus.platform.version>3.27.2</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.5.3</surefire-plugin.version>
+    <!-- dependencias customizadas -->
+    <project115-core.version>1.0.0-SNAPSHOT</project115-core.version>
   </properties>
 
   <dependencyManagement>
@@ -97,6 +99,13 @@
     <!-- DEPENDENCIAS DE TESTES                                  -->
     <!-- ******************************************************* -->
 
+    <!-- Core Test -->
+    <dependency>
+      <groupId>com.jeanbarcellos.project115</groupId>
+      <artifactId>project115-core-test</artifactId>
+      <version>${project115-core.version}</version>
+    </dependency>
+    
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>

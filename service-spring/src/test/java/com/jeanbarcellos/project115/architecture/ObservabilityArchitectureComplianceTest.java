@@ -1,0 +1,6 @@
+package com.jeanbarcellos.project115.architecture;
+
+import com.jeanbarcellos.coretest.architecture.contracts.ObservabilityArchitectureContract;
+
+class ObservabilityArchitectureComplianceTest extends ObservabilityArchitectureContract {
+}
