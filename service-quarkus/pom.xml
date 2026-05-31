@@ -53,6 +53,7 @@
     <dependency>
       <groupId>com.jeanbarcellos.project115</groupId>
       <artifactId>project115-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- Web -->
@@ -105,7 +106,7 @@
       <artifactId>project115-core-test</artifactId>
       <version>${project115-core.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -174,6 +175,21 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      
+      <!-- <plugin>
+        <groupId>com.jeanbarcellos</groupId>
+        <artifactId>architecture-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate-architecture</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin> -->
+
     </plugins>
   </build>
 
