@@ -1,12 +1,13 @@
-package com.jeanbarcellos.architecture.validator;
+package com.jeanbarcellos.architecture.validation;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 import com.jeanbarcellos.architecture.scanner.ProjectClassLoaderFactory;
+import com.jeanbarcellos.architecture.validation.context.ValidationContext;
 
 /**
- * Executor central das validações arquiteturais.
+ * Orquestrador principal das validações arquiteturais.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -22,7 +23,12 @@ public class ArchitectureValidator {
 
         ClassLoader classLoader = ProjectClassLoaderFactory.create(project);
 
-        new ErrorCatalogValidator(classLoader).validate();
-        new ExternalErrorCatalogValidator(classLoader).validate();
+        ValidationContext context = new ValidationContext();
+
+        new ErrorCatalogValidator(classLoader)
+                .validate(context);
+
+        new ExternalErrorCatalogValidator(classLoader)
+                .validate(context);
     }
 }

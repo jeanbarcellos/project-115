@@ -7,7 +7,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.jeanbarcellos.architecture.validator.ArchitectureValidator;
+import com.jeanbarcellos.architecture.validation.ArchitectureValidator;
 
 /**
  * Executa as validações arquiteturais da plataforma.

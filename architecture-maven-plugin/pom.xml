@@ -14,7 +14,7 @@
   <groupId>com.jeanbarcellos.project115</groupId>
 
   <artifactId>architecture-maven-plugin</artifactId>
-  <version>1.0.0-SNAPSHOT</version> 
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>architecture-maven-plugin</name>
@@ -36,6 +36,13 @@
       <groupId>com.jeanbarcellos.project115</groupId>
       <artifactId>project115-core</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Class Scanner -->
