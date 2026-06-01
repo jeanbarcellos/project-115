@@ -13,11 +13,12 @@
 
   <groupId>com.jeanbarcellos.project115</groupId>
 
-  <artifactId>architecture-maven-plugin</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>project115-architecture-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
-  <name>architecture-maven-plugin</name>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <name>project115-architecture-maven-plugin</name>
   <description>Architecture Maven Plugin</description>
 
   <properties>
@@ -36,6 +37,7 @@
       <groupId>com.jeanbarcellos.project115</groupId>
       <artifactId>project115-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Lombok -->
@@ -49,6 +51,7 @@
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Maven Plugin API -->
@@ -56,6 +59,7 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${maven.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Maven Core -->
@@ -63,6 +67,7 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>${maven.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Maven Plugin Annotations -->

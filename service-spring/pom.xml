@@ -151,6 +151,20 @@
           </excludes>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>com.jeanbarcellos.project115</groupId>
+        <artifactId>project115-architecture-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 

@@ -45,7 +45,7 @@ public class ArchitectureMojo extends AbstractMojo {
 
         this.getLog().info("");
         this.getLog().info("========================================");
-        this.getLog().info(" Project115 Architecture Validation");
+        this.getLog().info(" Architecture Validation");
         this.getLog().info("========================================");
 
         new ArchitectureValidator(project).validate();

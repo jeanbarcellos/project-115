@@ -175,20 +175,19 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      
-      <!-- <plugin>
-        <groupId>com.jeanbarcellos</groupId>
-        <artifactId>architecture-maven-plugin</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
 
+      <plugin>
+        <groupId>com.jeanbarcellos.project115</groupId>
+        <artifactId>project115-architecture-maven-plugin</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
         <executions>
           <execution>
             <goals>
-              <goal>validate-architecture</goal>
+              <goal>validate</goal>
             </goals>
           </execution>
         </executions>
-      </plugin> -->
+      </plugin>
 
     </plugins>
   </build>
