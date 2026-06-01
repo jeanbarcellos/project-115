@@ -3,6 +3,7 @@ package com.jeanbarcellos.architecture.validation.rule;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 
 /**
  * Garante que um catálogo possua pelo menos
@@ -24,22 +25,17 @@ public class ErrorCatalogNotEmptyRule
      *
      * @param target  catálogo validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o catálogo estiver vazio
      */
     @Override
-    public void validate(
-            Class<?> target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(Class<?> target, ValidationContext context) {
 
         Object[] constants = target.getEnumConstants();
 
         if (constants == null || constants.length == 0) {
 
-            throw new MojoExecutionException(
-                    "Empty catalog detected: "
-                            + target.getName());
+            context.getReport().addViolation(
+                    ValidationCategory.ERROR_TYPE,
+                    "Empty catalog detected: " + target.getName());
         }
     }
 

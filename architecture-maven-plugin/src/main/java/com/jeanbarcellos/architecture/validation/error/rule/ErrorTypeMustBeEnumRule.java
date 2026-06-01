@@ -1,8 +1,7 @@
 package com.jeanbarcellos.architecture.validation.error.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 
 /**
@@ -26,20 +25,17 @@ public class ErrorTypeMustBeEnumRule
      *
      * @param target  implementação localizada
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando a implementação não for enum
      */
     @Override
     public void validate(
             Class<?> target,
-            ValidationContext context)
-            throws MojoExecutionException {
+            ValidationContext context) {
 
         if (!target.isEnum()) {
 
-            throw new MojoExecutionException(
-                    "ErrorType implementation must be enum: "
-                            + target.getName());
+            context.getReport().addViolation(
+                    ValidationCategory.ERROR_TYPE,
+                    "ErrorType implementation must be enum: " + target.getName());
         }
     }
 

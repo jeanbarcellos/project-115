@@ -1,8 +1,7 @@
 package com.jeanbarcellos.architecture.validation.error.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ErrorType;
 
@@ -25,22 +24,17 @@ public class ErrorHttpStatusRule
      *
      * @param target  erro validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o status for inválido
      */
     @Override
-    public void validate(
-            ErrorType target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(ErrorType target, ValidationContext context) {
 
         int status = target.getHttpStatus();
 
         if (status < 400 || status > 599) {
 
-            throw new MojoExecutionException(
-                    "Invalid HTTP status for error: "
-                            + target.getCode());
+            context.getReport().addViolation(
+                    ValidationCategory.ERROR_TYPE,
+                    "Invalid HTTP status for error: " + target.getCode());
         }
     }
 

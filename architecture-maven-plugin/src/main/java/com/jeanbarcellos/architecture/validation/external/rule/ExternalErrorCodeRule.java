@@ -1,10 +1,9 @@
 package com.jeanbarcellos.architecture.validation.external.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
-import com.jeanbarcellos.core.error.ExternalErrorType;
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
+import com.jeanbarcellos.core.error.ExternalErrorType;
 
 /**
  * Garante que códigos externos estejam preenchidos.
@@ -17,22 +16,17 @@ public class ExternalErrorCodeRule
     /**
      * Executa a validação.
      *
-     * @param target erro externo validado
+     * @param target  erro externo validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o código estiver vazio
      */
     @Override
-    public void validate(
-            ExternalErrorType target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(ExternalErrorType target, ValidationContext context) {
 
         String code = target.getCode();
 
         if (code == null || code.isBlank()) {
-
-            throw new MojoExecutionException(
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
                     "External error code cannot be empty.");
         }
     }

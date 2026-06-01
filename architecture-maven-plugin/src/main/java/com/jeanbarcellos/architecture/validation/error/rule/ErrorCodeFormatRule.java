@@ -2,9 +2,8 @@ package com.jeanbarcellos.architecture.validation.error.rule;
 
 import java.util.regex.Pattern;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ErrorType;
 
@@ -36,22 +35,16 @@ public class ErrorCodeFormatRule
      *
      * @param target  erro validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o formato for inválido
      */
     @Override
-    public void validate(
-            ErrorType target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(ErrorType target, ValidationContext context) {
 
         String code = target.getCode();
 
         if (code == null || !KEBAB_CASE_PATTERN.matcher(code).matches()) {
-
-            throw new MojoExecutionException(
-                    "Invalid error code format: "
-                            + code);
+            context.getReport().addViolation(
+                    ValidationCategory.ERROR_TYPE,
+                    "Invalid error code format: " + code);
         }
     }
 

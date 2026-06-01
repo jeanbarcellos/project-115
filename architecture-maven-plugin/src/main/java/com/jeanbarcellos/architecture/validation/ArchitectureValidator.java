@@ -7,6 +7,10 @@ import com.jeanbarcellos.architecture.scanner.ProjectClassLoaderFactory;
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
 import com.jeanbarcellos.architecture.validation.error.validator.ErrorCatalogValidator;
 import com.jeanbarcellos.architecture.validation.external.validator.ExternalErrorCatalogValidator;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
+import com.jeanbarcellos.architecture.validation.report.ValidationException;
+import com.jeanbarcellos.architecture.validation.report.ValidationReport;
+import com.jeanbarcellos.architecture.validation.report.ValidationViolation;
 
 /**
  * Orquestrador central responsável por executar
@@ -39,8 +43,7 @@ public class ArchitectureValidator {
     /**
      * Executa todas as validações arquiteturais.
      *
-     * @throws MojoExecutionException quando alguma
-     *                                validação falha
+     * @throws MojoExecutionException quando alguma validação falha
      */
     public void validate() throws MojoExecutionException {
 
@@ -50,6 +53,60 @@ public class ArchitectureValidator {
 
         new ErrorCatalogValidator(classLoader).validate(context);
         new ExternalErrorCatalogValidator(classLoader).validate(context);
+    }
+
+    private void validateReport(ValidationContext context) throws ValidationException {
+
+        ValidationReport report = context.getReport();
+
+        if (!report.hasViolations()) {
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(System.lineSeparator());
+        builder.append("==================================================")
+                .append(System.lineSeparator());
+
+        builder.append(" Architecture Validation Report")
+                .append(System.lineSeparator());
+
+        builder.append("==================================================")
+                .append(System.lineSeparator())
+                .append(System.lineSeparator());
+
+        for (ValidationCategory category : ValidationCategory.values()) {
+
+            boolean categoryPrinted = false;
+
+            for (ValidationViolation violation : report.getViolations()) {
+
+                if (violation.getCategory() != category) {
+                    continue;
+                }
+
+                if (!categoryPrinted) {
+
+                    builder.append("[")
+                            .append(category.getCode())
+                            .append("]")
+                            .append(System.lineSeparator());
+
+                    categoryPrinted = true;
+                }
+
+                builder.append(" - ")
+                        .append(violation.getMessage())
+                        .append(System.lineSeparator());
+            }
+
+            if (categoryPrinted) {
+                builder.append(System.lineSeparator());
+            }
+        }
+
+        throw new ValidationException(builder.toString());
     }
 
 }

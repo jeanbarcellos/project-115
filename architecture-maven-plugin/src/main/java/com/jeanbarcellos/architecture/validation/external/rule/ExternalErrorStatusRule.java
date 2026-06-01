@@ -1,8 +1,7 @@
 package com.jeanbarcellos.architecture.validation.external.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ExternalErrorType;
 
@@ -24,25 +23,23 @@ public class ExternalErrorStatusRule
      *
      * @param target  erro externo validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o status for inválido
      */
     @Override
-    public void validate(
-            ExternalErrorType target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(ExternalErrorType target, ValidationContext context) {
 
         Integer status = target.getStatus();
 
         if (status == null) {
-
-            throw new MojoExecutionException(
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
                     "External error status cannot be null: " + target.getCode());
+            return;
         }
 
         if (status < 100 || status > 599) {
-            throw new MojoExecutionException("Invalid external error status: " + target.getCode() + " -> " + status);
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
+                    "Invalid external error status: " + target.getCode() + " -> " + status);
         }
     }
 

@@ -1,8 +1,7 @@
 package com.jeanbarcellos.architecture.validation.external.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.error.ExternalErrorType;
@@ -28,24 +27,23 @@ public class ExternalErrorMappingRule
      *
      * @param target  erro externo validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando o mapeamento estiver ausente ou
-     *                                inválido
      */
     @Override
-    public void validate(
-            ExternalErrorType target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(ExternalErrorType target, ValidationContext context) {
 
         ErrorType errorType = target.getErrorType();
 
         if (errorType == null) {
-            throw new MojoExecutionException("External error without internal mapping: " + target.getCode());
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
+                    "External error without internal mapping: " + target.getCode());
+            return;
         }
 
         if (errorType == TechnicalErrorType.INTERNAL_ERROR) {
-            throw new MojoExecutionException("External error cannot map to INTERNAL_ERROR: " + target.getCode());
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
+                    "External error cannot map to INTERNAL_ERROR: " + target.getCode());
         }
     }
 

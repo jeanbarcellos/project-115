@@ -3,6 +3,9 @@ package com.jeanbarcellos.architecture.validation.context;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
+import com.jeanbarcellos.architecture.validation.report.ValidationReport;
+
 import lombok.Getter;
 
 /**
@@ -25,8 +28,22 @@ import lombok.Getter;
 public class ValidationContext {
 
     /**
-     * Códigos de erro já processados.
+     * Controle de unicidade global dos códigos.
      */
     private final Set<String> errorCodes = new HashSet<>();
 
+    /**
+     * Relatório acumulado.
+     */
+    private final ValidationReport report = new ValidationReport();
+
+    /**
+     * Registra uma nova violação.
+     *
+     * @param category categoria da validação
+     * @param message  descrição da falha
+     */
+    public void addViolation(ValidationCategory category, String message) {
+        this.report.addViolation(category, message);
+    }
 }

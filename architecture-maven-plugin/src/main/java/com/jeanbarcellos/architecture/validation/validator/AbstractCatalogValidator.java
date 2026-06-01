@@ -49,8 +49,7 @@ public abstract class AbstractCatalogValidator<T> {
      *
      * @param context contexto compartilhado
      *
-     * @throws MojoExecutionException quando
-     *                                alguma regra falha
+     * @throws MojoExecutionException quando alguma regra falha
      */
     public final void validate(
             ValidationContext context)

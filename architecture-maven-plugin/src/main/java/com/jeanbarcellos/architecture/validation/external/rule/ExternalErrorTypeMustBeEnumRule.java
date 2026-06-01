@@ -1,8 +1,7 @@
 package com.jeanbarcellos.architecture.validation.external.rule;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.report.ValidationCategory;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 
 /**
@@ -24,20 +23,14 @@ public class ExternalErrorTypeMustBeEnumRule
      *
      * @param target  implementação encontrada
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando a implementaçãonão for um enum
      */
     @Override
-    public void validate(
-            Class<?> target,
-            ValidationContext context)
-            throws MojoExecutionException {
+    public void validate(Class<?> target, ValidationContext context) {
 
         if (!target.isEnum()) {
-
-            throw new MojoExecutionException(
-                    "ExternalErrorType implementation must be enum: "
-                            + target.getName());
+            context.getReport().addViolation(
+                    ValidationCategory.EXTERNAL_ERROR,
+                    "ExternalErrorType implementation must be enum: " + target.getName());
         }
     }
 

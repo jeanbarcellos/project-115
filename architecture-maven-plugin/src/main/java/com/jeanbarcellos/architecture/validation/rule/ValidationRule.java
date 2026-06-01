@@ -28,13 +28,7 @@ public interface ValidationRule<T> {
      *
      * @param target  objeto validado
      * @param context contexto compartilhado
-     *
-     * @throws MojoExecutionException quando
-     *                                a validação falha
      */
-    void validate(
-            T target,
-            ValidationContext context)
-            throws MojoExecutionException;
+    void validate(T target, ValidationContext context);
 
 }
