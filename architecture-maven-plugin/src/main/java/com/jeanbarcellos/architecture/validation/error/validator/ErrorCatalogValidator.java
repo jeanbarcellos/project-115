@@ -13,27 +13,47 @@ import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.architecture.validation.validator.AbstractCatalogValidator;
 
 /**
- * Validador dos catálogos ErrorType.
+ * Executor responsável pela validação
+ * dos catálogos que implementam ErrorType.
+ *
+ * <p>
+ * Centraliza todas as regras relacionadas
+ * ao catálogo oficial de erros da plataforma.
+ * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public class ErrorCatalogValidator
         extends AbstractCatalogValidator<ErrorType> {
 
+    /**
+     * Cria uma nova instância.
+     *
+     * @param classLoader class loader do projeto
+     */
     public ErrorCatalogValidator(ClassLoader classLoader) {
         super(classLoader);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Class<ErrorType> getContract() {
         return ErrorType.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ErrorType cast(Object constant) {
         return (ErrorType) constant;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<ValidationRule<Class<?>>> getCatalogRules() {
 
@@ -42,6 +62,9 @@ public class ErrorCatalogValidator
                 new ErrorCatalogNotEmptyRule());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<ValidationRule<ErrorType>> getItemRules() {
 
@@ -51,4 +74,5 @@ public class ErrorCatalogValidator
                 new ErrorTitleRule(),
                 new ErrorHttpStatusRule());
     }
+
 }

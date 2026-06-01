@@ -2,18 +2,26 @@ package com.jeanbarcellos.architecture.validation.error.rule;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
+import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
-import com.jeanbarcellos.core.error.ErrorType;
 
 /**
- * Garante título preenchido.
+ * Garante que o título do erro esteja preenchido.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public class ErrorTitleRule
         implements ValidationRule<ErrorType> {
 
+    /**
+     * Executa a validação.
+     *
+     * @param target  erro validado
+     * @param context contexto compartilhado
+     *
+     * @throws MojoExecutionException quando o título estiver vazio
+     */
     @Override
     public void validate(
             ErrorType target,
@@ -24,8 +32,9 @@ public class ErrorTitleRule
                 || target.getTitle().isBlank()) {
 
             throw new MojoExecutionException(
-                    "Title cannot be empty: "
+                    "Error title cannot be empty: "
                             + target.getCode());
         }
     }
+
 }

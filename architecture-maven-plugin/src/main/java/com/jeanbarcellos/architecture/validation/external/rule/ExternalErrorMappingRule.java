@@ -4,35 +4,49 @@ import org.apache.maven.plugin.MojoExecutionException;
 
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
 import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
+import com.jeanbarcellos.core.error.ErrorType;
 import com.jeanbarcellos.core.error.ExternalErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 
 /**
- * Impede mapeamentos inválidos para erros internos.
+ * Garante que qualquer erro externo esteja
+ * corretamente mapeado para um erro interno.
+ *
+ * <p>
+ * Esta regra impede que falhas externas sejam
+ * propagadas sem tradução para o catálogo oficial
+ * de erros da plataforma.
+ * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public class ExternalErrorMappingRule
         implements ValidationRule<ExternalErrorType> {
 
+    /**
+     * Executa a validação.
+     *
+     * @param target  erro externo validado
+     * @param context contexto compartilhado
+     *
+     * @throws MojoExecutionException quando o mapeamento estiver ausente ou
+     *                                inválido
+     */
     @Override
     public void validate(
             ExternalErrorType target,
             ValidationContext context)
             throws MojoExecutionException {
 
-        if (target.getErrorType() == null) {
+        ErrorType errorType = target.getErrorType();
 
-            throw new MojoExecutionException(
-                    "External error without mapping: "
-                            + target.getCode());
+        if (errorType == null) {
+            throw new MojoExecutionException("External error without internal mapping: " + target.getCode());
         }
 
-        if (target.getErrorType() == TechnicalErrorType.INTERNAL_ERROR) {
-
-            throw new MojoExecutionException(
-                    "External error cannot map to INTERNAL_ERROR: "
-                            + target.getCode());
+        if (errorType == TechnicalErrorType.INTERNAL_ERROR) {
+            throw new MojoExecutionException("External error cannot map to INTERNAL_ERROR: " + target.getCode());
         }
     }
+
 }
