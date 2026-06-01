@@ -7,7 +7,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.jeanbarcellos.architecture.validation.ArchitectureValidator;
+import com.jeanbarcellos.architecture.governance.ArchitectureValidator;
 
 /**
  * Goal principal do plugin responsável por executar
