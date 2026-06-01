@@ -1,21 +1,18 @@
-package com.jeanbarcellos.architecture.validation.rule;
-
-import java.util.regex.Pattern;
+package com.jeanbarcellos.architecture.validation.error.rule;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
- * Garante utilização de kebab-case.
+ * Garante status HTTP válido.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ErrorCodeFormatRule
+public class ErrorHttpStatusRule
         implements ValidationRule<ErrorType> {
-
-    private static final Pattern PATTERN = Pattern.compile("[a-z0-9]+(-[a-z0-9]+)*");
 
     @Override
     public void validate(
@@ -23,13 +20,13 @@ public class ErrorCodeFormatRule
             ValidationContext context)
             throws MojoExecutionException {
 
-        String code = target.getCode();
+        int status = target.getHttpStatus();
 
-        if (code == null || !PATTERN.matcher(code).matches()) {
+        if (status < 400 || status > 599) {
 
             throw new MojoExecutionException(
-                    "Invalid error code: "
-                            + code);
+                    "Invalid HTTP status: "
+                            + target.getCode());
         }
     }
 }

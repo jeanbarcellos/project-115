@@ -1,8 +1,9 @@
-package com.jeanbarcellos.architecture.validation.rule;
+package com.jeanbarcellos.architecture.validation.external.rule;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 
 /**
  * Garante que implementações de ExternalErrorType

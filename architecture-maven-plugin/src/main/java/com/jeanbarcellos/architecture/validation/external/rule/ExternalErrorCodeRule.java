@@ -1,16 +1,17 @@
-package com.jeanbarcellos.architecture.validation.rule;
+package com.jeanbarcellos.architecture.validation.external.rule;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.jeanbarcellos.architecture.validation.context.ValidationContext;
+import com.jeanbarcellos.architecture.validation.rule.ValidationRule;
 import com.jeanbarcellos.core.error.ExternalErrorType;
 
 /**
- * Valida título do erro externo.
+ * Valida código do erro externo.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ExternalErrorTitleRule
+public class ExternalErrorCodeRule
         implements ValidationRule<ExternalErrorType> {
 
     @Override
@@ -19,12 +20,11 @@ public class ExternalErrorTitleRule
             ValidationContext context)
             throws MojoExecutionException {
 
-        // if (target.getTitle() == null
-        //         || target.getTitle().isBlank()) {
+        if (target.getCode() == null
+                || target.getCode().isBlank()) {
 
-        //     throw new MojoExecutionException(
-        //             "External error title cannot be empty: "
-        //                     + target.getCode());
-        // }
+            throw new MojoExecutionException(
+                    "External error code cannot be empty");
+        }
     }
 }
