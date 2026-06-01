@@ -7,7 +7,13 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 
 /**
- * Scanner genérico de classes.
+ * Responsável por localizar implementações
+ * de contratos no classpath do projeto.
+ *
+ * <p>
+ * Utiliza ClassGraph para realizar
+ * o escaneamento das classes compiladas.
+ * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -16,6 +22,16 @@ public final class ClassScanner {
     private ClassScanner() {
     }
 
+    /**
+     * Localiza implementações de um contrato.
+     *
+     * @param contract    contrato pesquisado
+     * @param classLoader class loader do projeto
+     *
+     * @param <T>         tipo do contrato
+     *
+     * @return implementações encontradas
+     */
     public static <T> Set<Class<? extends T>> findImplementations(
             Class<T> contract,
             ClassLoader classLoader) {
@@ -33,4 +49,5 @@ public final class ClassScanner {
                     .collect(Collectors.toSet());
         }
     }
+
 }

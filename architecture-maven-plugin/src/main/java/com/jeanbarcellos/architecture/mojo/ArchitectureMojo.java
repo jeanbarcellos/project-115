@@ -10,7 +10,19 @@ import org.apache.maven.project.MavenProject;
 import com.jeanbarcellos.architecture.validation.ArchitectureValidator;
 
 /**
- * Executa as validações arquiteturais da plataforma.
+ * Goal principal do plugin responsável por executar
+ * todas as validações arquiteturais da plataforma.
+ *
+ * <p>
+ * Este goal é executado durante a fase
+ * {@code verify} do ciclo de vida Maven.
+ * </p>
+ *
+ * <p>
+ * O objetivo é impedir que violações
+ * arquiteturais cheguem aos ambientes
+ * de homologação ou produção.
+ * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -23,18 +35,22 @@ public class ArchitectureMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
+    /**
+     * Executa todas as validações arquiteturais.
+     *
+     * @throws MojoExecutionException quando alguma regra arquitetural é violada
+     */
     @Override
     public void execute() throws MojoExecutionException {
 
-        getLog().info("");
-        getLog().info("======================================");
-        getLog().info(" Architecture Validation");
-        getLog().info("======================================");
+        this.getLog().info("");
+        this.getLog().info("========================================");
+        this.getLog().info(" Project115 Architecture Validation");
+        this.getLog().info("========================================");
 
-        ArchitectureValidator validator = new ArchitectureValidator(this.project);
+        new ArchitectureValidator(project).validate();
 
-        validator.validate();
-
-        getLog().info("Architecture validation completed.");
+        this.getLog().info("Architecture validation completed.");
     }
+
 }

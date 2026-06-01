@@ -9,8 +9,15 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Cria ClassLoader contendo classes e dependências
- * do projeto que está utilizando o plugin.
+ * Fábrica responsável por criar o
+ * ClassLoader contendo todas as classes
+ * e dependências do projeto validado.
+ *
+ * <p>
+ * Este ClassLoader é utilizado pelos
+ * scanners para localizar implementações
+ * dos contratos arquiteturais.
+ * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -19,10 +26,15 @@ public final class ProjectClassLoaderFactory {
     private ProjectClassLoaderFactory() {
     }
 
+    /**
+     * Cria o ClassLoader do projeto.
+     *
+     * @param project projeto Maven atual
+     *
+     * @return class loader configurado
+     */
     public static ClassLoader create(MavenProject project) {
-
         try {
-
             List<URL> urls = new ArrayList<>();
 
             for (String element : project.getCompileClasspathElements()) {
@@ -40,4 +52,5 @@ public final class ProjectClassLoaderFactory {
                     ex);
         }
     }
+
 }

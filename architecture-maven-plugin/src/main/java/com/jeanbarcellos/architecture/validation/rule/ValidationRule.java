@@ -7,9 +7,34 @@ import com.jeanbarcellos.architecture.validation.context.ValidationContext;
 /**
  * Contrato base para regras arquiteturais.
  *
+ * <p>
+ * Cada implementação representa uma regra
+ * isolada e reutilizável.
+ * </p>
+ *
+ * <p>
+ * As regras devem ser pequenas, focadas
+ * e possuir apenas uma responsabilidade.
+ * </p>
+ *
+ * @param <T> tipo validado
+ *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public interface ValidationRule<T> {
 
-    void validate(T target, ValidationContext context) throws MojoExecutionException;
+    /**
+     * Executa a validação.
+     *
+     * @param target  objeto validado
+     * @param context contexto compartilhado
+     *
+     * @throws MojoExecutionException quando
+     *                                a validação falha
+     */
+    void validate(
+            T target,
+            ValidationContext context)
+            throws MojoExecutionException;
+
 }
