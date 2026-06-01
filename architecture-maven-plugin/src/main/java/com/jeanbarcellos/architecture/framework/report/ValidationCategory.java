@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
  * Categorias de validações arquiteturais.
  *
  * <p>
- * Utilizadas para classificação e agrupamento
- * das violações encontradas durante o processo
- * de validação.
+ * Permitem classificar o tipo de regra
+ * executada dentro de cada módulo
+ * de governança.
  * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
@@ -19,34 +19,48 @@ import lombok.RequiredArgsConstructor;
 public enum ValidationCategory {
 
     /**
-     * Regras relacionadas ao catálogo ErrorType.
+     * Regras relacionadas à definição
+     * estrutural do catálogo.
      */
-    ERROR_TYPE("ERROR-TYPE"),
+    CATALOG("CATALOG"),
 
     /**
-     * Regras relacionadas ao catálogo ExternalErrorType.
+     * Regras relacionadas ao contrato
+     * dos elementos.
      */
-    EXTERNAL_ERROR("EXTERNAL-ERROR"),
+    CONTRACT("CONTRACT"),
 
     /**
-     * Regras relacionadas às exceções.
+     * Regras relacionadas a mapeamentos.
      */
-    EXCEPTION("EXCEPTION"),
+    MAPPING("MAPPING"),
 
     /**
-     * Regras relacionadas aos pacotes.
+     * Regras relacionadas a dependências.
      */
-    PACKAGE("PACKAGE"),
+    DEPENDENCY("DEPENDENCY"),
 
     /**
-     * Regras relacionadas a DDD.
+     * Regras relacionadas a organização
+     * em camadas.
      */
-    DDD("DDD"),
+    LAYERING("LAYERING"),
 
     /**
-     * Regras relacionadas à arquitetura hexagonal.
+     * Regras relacionadas à nomenclatura.
      */
-    HEXAGONAL("HEXAGONAL"),
+    NAMING("NAMING"),
+
+    /**
+     * Regras relacionadas à estrutura
+     * arquitetural.
+     */
+    STRUCTURE("STRUCTURE"),
+
+    /**
+     * Regras relacionadas a anotações.
+     */
+    ANNOTATION("ANNOTATION"),
 
     /**
      * Regras relacionadas à observabilidade.
@@ -54,7 +68,7 @@ public enum ValidationCategory {
     OBSERVABILITY("OBSERVABILITY");
 
     /**
-     * Código da categoria.
+     * Código textual da categoria.
      */
     private final String code;
 

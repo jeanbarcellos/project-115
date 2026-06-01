@@ -2,7 +2,9 @@ package com.jeanbarcellos.architecture.governance.external.rule;
 
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
 import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
-import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+import com.jeanbarcellos.architecture.framework.report.ValidationModule;
+import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
+import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
 
 /**
  * Garante que implementações de {@code ExternalErrorType}
@@ -16,22 +18,35 @@ import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 public class ExternalErrorTypeMustBeEnumRule
-        implements ValidationRule<Class<?>> {
+        implements CatalogRule {
 
     /**
-     * Executa a validação.
-     *
-     * @param target  implementação encontrada
-     * @param context contexto compartilhado
+     * {@inheritDoc}
      */
     @Override
-    public void validate(Class<?> target, ValidationContext context) {
+    public RuleMetadata metadata() {
 
-        if (!target.isEnum()) {
+        return RuleMetadata.builder()
+                .code("EXT-001")
+                .name("ExternalErrorType deve ser enum")
+                .description("Toda implementação da interface ExternalErrorType deve ser enum.")
+                .recommendation("Converta a implementação para enum.")
+                .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(Class<?> catalog, ValidationContext context) {
+
+        if (!catalog.isEnum()) {
             context.addViolation(
-                    ValidationCategory.EXTERNAL_ERROR,
-                    target,
-                    "ExternalErrorType implementation must be enum: " + target.getName());
+                    ValidationModule.EXTERNAL,
+                    ValidationCategory.CATALOG,
+                    this,
+                    catalog,
+                    "ExternalErrorType implementation must be enum: " + catalog.getName());
         }
     }
 

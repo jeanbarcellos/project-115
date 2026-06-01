@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+
 import lombok.Getter;
 
 /**
@@ -23,22 +25,37 @@ public class ValidationReport {
     /**
      * Registra uma nova violação.
      *
-     * @param category  categoria da validação
-     * @param className classe relacionada
-     * @param filePath  arquivo relacionado
-     * @param message   descrição da violação
+     * @param module       módulo responsável
+     * @param category     categoria da validação
+     * @param rule         regra que falhou
+     * @param className    classe relacionada
+     * @param element      elemento relacionado
+     * @param filePath     arquivo relacionado
+     * @param lineNumber   linha futura
+     * @param columnNumber coluna futura
+     * @param message      descrição da falha
      */
     public void addViolation(
+            ValidationModule module,
             ValidationCategory category,
+            ValidationRule rule,
             String className,
+            String element,
             String filePath,
+            Integer lineNumber,
+            Integer columnNumber,
             String message) {
 
-        violations.add(
+        this.violations.add(
                 ValidationViolation.builder()
+                        .module(module)
                         .category(category)
+                        .rule(rule)
                         .className(className)
+                        .element(element)
                         .filePath(filePath)
+                        .lineNumber(lineNumber)
+                        .columnNumber(columnNumber)
                         .message(message)
                         .build());
     }
@@ -59,6 +76,77 @@ public class ValidationReport {
      */
     public List<ValidationViolation> getViolations() {
         return Collections.unmodifiableList(violations);
+    }
+
+    /**
+     * Gera representação textual do relatório.
+     *
+     * @return relatório formatado
+     */
+    public String format() {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(System.lineSeparator());
+
+        builder.append(
+                "==================================================")
+                .append(System.lineSeparator());
+
+        builder.append(
+                " Architecture Validation Report")
+                .append(System.lineSeparator());
+
+        builder.append(
+                "==================================================")
+                .append(System.lineSeparator())
+                .append(System.lineSeparator());
+
+        for (ValidationViolation violation : violations) {
+
+            builder.append("[")
+                    .append(violation.getModule().name())
+                    .append("/")
+                    .append(violation.getCategory().name())
+                    .append("]")
+                    .append(System.lineSeparator());
+
+            builder.append("Rule: ")
+                    .append(violation.getRule().metadata().getCode())
+                    .append(" - ")
+                    .append(violation.getRule().metadata().getName());
+
+            builder.append("Class: ")
+                    .append(violation.getClassName())
+                    .append(System.lineSeparator());
+
+            if (violation.getFilePath() != null) {
+                builder.append("File : ")
+                        .append(violation.getFilePath())
+                        .append(System.lineSeparator());
+            }
+
+            if (violation.getElement() != null) {
+                builder.append("Element : ")
+                        .append(violation.getElement())
+                        .append(System.lineSeparator());
+            }
+
+            builder.append("Description:")
+                    .append(System.lineSeparator())
+                    .append(violation.getRule().metadata().getDescription());
+
+            builder.append("Recommendation:")
+                    .append(System.lineSeparator())
+                    .append(violation.getRule().metadata().getRecommendation());
+
+            builder.append("Message: ")
+                    .append(violation.getMessage())
+                    .append(System.lineSeparator())
+                    .append(System.lineSeparator());
+        }
+
+        return builder.toString();
     }
 
 }

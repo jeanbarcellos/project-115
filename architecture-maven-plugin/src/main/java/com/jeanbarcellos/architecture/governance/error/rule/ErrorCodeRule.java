@@ -1,19 +1,19 @@
-package com.jeanbarcellos.architecture.governance.external.rule;
+package com.jeanbarcellos.architecture.governance.error.rule;
 
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
 import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
-import com.jeanbarcellos.core.error.ExternalErrorType;
+import com.jeanbarcellos.core.error.ErrorType;
 
 /**
- * Garante que códigos externos estejam preenchidos.
+ * Garante que códigos de erro estejam
+ * preenchidos.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ExternalErrorCodeRule
-        implements ItemRule<ExternalErrorType> {
+public class ErrorCodeRule implements ItemRule<ErrorType> {
 
     /**
      * {@inheritDoc}
@@ -22,10 +22,10 @@ public class ExternalErrorCodeRule
     public RuleMetadata metadata() {
 
         return RuleMetadata.builder()
-                .code("EXT-002")
-                .name("Código externo obrigatório")
-                .description("Todo erro externo deve possuir um código preenchido.")
-                .recommendation("Informe o código retornado pelo provider.")
+                .code("ERR-003")
+                .name("Código do erro obrigatório")
+                .description("Todos os itens do catálogo ErrorType devem possuir código preenchido.")
+                .recommendation("Informe um código único  para o erro.")
                 .build();
     }
 
@@ -33,18 +33,21 @@ public class ExternalErrorCodeRule
      * {@inheritDoc}
      */
     @Override
-    public void validate(ExternalErrorType target, ValidationContext context) {
+    public void validate(
+            ErrorType target,
+            ValidationContext context) {
 
         String code = target.getCode();
 
         if (code == null || code.isBlank()) {
+
             context.addViolation(
-                    ValidationModule.EXTERNAL,
+                    ValidationModule.ERROR,
                     ValidationCategory.CONTRACT,
                     this,
                     target.getClass(),
                     ((Enum<?>) target).name(),
-                    "External error code cannot be empty.");
+                    "Error code cannot be empty.");
         }
     }
 

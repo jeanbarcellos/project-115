@@ -2,7 +2,9 @@ package com.jeanbarcellos.architecture.governance.error.rule;
 
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
 import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
-import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+import com.jeanbarcellos.architecture.framework.report.ValidationModule;
+import com.jeanbarcellos.architecture.framework.rule.ItemRule;
+import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -10,26 +12,37 @@ import com.jeanbarcellos.core.error.ErrorType;
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ErrorTitleRule
-        implements ValidationRule<ErrorType> {
+public class ErrorTitleRule implements ItemRule<ErrorType> {
 
     /**
-     * Executa a validação.
-     *
-     * @param target  erro validado
-     * @param context contexto compartilhado
+     * {@inheritDoc}
      */
     @Override
-    public void validate(
-            ErrorType target,
-            ValidationContext context) {
+    public RuleMetadata metadata() {
+
+        return RuleMetadata.builder()
+                .code("ERR-006")
+                .name("Título do erro obrigatório")
+                .description("Todos os erros devem possuir um título preenchido.")
+                .recommendation("Informe um título descritivo  para o erro.")
+                .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(ErrorType target, ValidationContext context) {
 
         if (target.getTitle() == null
                 || target.getTitle().isBlank()) {
 
             context.addViolation(
-                    ValidationCategory.ERROR_TYPE,
+                    ValidationModule.ERROR,
+                    ValidationCategory.CONTRACT,
+                    this,
                     target.getClass(),
+                    ((Enum<?>) target).name(),
                     "Error title cannot be empty: " + target.getCode());
         }
     }

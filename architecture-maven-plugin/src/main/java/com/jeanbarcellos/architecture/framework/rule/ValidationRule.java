@@ -1,32 +1,24 @@
 package com.jeanbarcellos.architecture.framework.rule;
 
-import com.jeanbarcellos.architecture.framework.context.ValidationContext;
-
 /**
- * Contrato base para regras arquiteturais.
+ * Contrato base para todas as regras
+ * arquiteturais do framework.
  *
  * <p>
- * Cada implementação representa uma regra
- * isolada e reutilizável.
+ * Cada regra deve possuir um código único
+ * e estável utilizado para rastreamento,
+ * documentação e identificação em relatórios.
  * </p>
- *
- * <p>
- * As regras devem ser pequenas, focadas
- * e possuir apenas uma responsabilidade.
- * </p>
- *
- * @param <T> tipo validado
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public interface ValidationRule<T> {
+public interface ValidationRule {
 
     /**
-     * Executa a validação.
+     * Retorna os metadados da regra.
      *
-     * @param target  objeto validado
-     * @param context contexto compartilhado
+     * @return metadados da regra
      */
-    void validate(T target, ValidationContext context);
+    RuleMetadata metadata();
 
 }

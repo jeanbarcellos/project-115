@@ -1,32 +1,24 @@
 package com.jeanbarcellos.architecture.framework.report;
 
+import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+
 import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Representa uma violação arquitetural identificada
- * durante a execução do plugin.
+ * Representa uma violação arquitetural
+ * encontrada durante o processo de validação.
  *
  * <p>
  * Cada violação contém informações suficientes
- * para auxiliar a localização e correção do problema.
+ * para identificação e correção do problema.
  * </p>
  *
  * <p>
- * Atualmente são registradas:
- * </p>
- *
- * <ul>
- * <li>categoria da validação;</li>
- * <li>classe responsável pela violação;</li>
- * <li>arquivo relacionado;</li>
- * <li>mensagem detalhada.</li>
- * </ul>
- *
- * <p>
- * A estrutura já está preparada para futura evolução
- * com suporte a localização precisa em código-fonte
- * (linha e coluna).
+ * A estrutura já está preparada para futura
+ * evolução com suporte a localização em
+ * código-fonte (arquivo, linha e coluna).
  * </p>
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
@@ -36,15 +28,41 @@ import lombok.Getter;
 public class ValidationViolation {
 
     /**
+     * Módulo de governança responsável pela validação.
+     */
+    private final ValidationModule module;
+
+    /**
      * Categoria da validação.
      */
     private final ValidationCategory category;
+
+    /**
+     * Regra que falhou.
+     */
+    private final ValidationRule rule;
 
     /**
      * Nome completo da classe relacionada
      * à violação.
      */
     private final String className;
+
+    /**
+     * Elemento específico relacionado
+     * à violação.
+     *
+     * <p>
+     * Exemplos:
+     * </p>
+     *
+     * <ul>
+     * <li>USER_NOT_FOUND</li>
+     * <li>WALLET_NOT_FOUND</li>
+     * <li>CREATE_USER_COMMAND</li>
+     * </ul>
+     */
+    private final String element;
 
     /**
      * Caminho do arquivo relacionado.

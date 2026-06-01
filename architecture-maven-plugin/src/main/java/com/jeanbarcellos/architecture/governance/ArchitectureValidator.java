@@ -1,17 +1,13 @@
 package com.jeanbarcellos.architecture.governance;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
-import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationException;
-import com.jeanbarcellos.architecture.framework.report.ValidationReport;
-import com.jeanbarcellos.architecture.framework.report.ValidationViolation;
+import com.jeanbarcellos.architecture.framework.validator.ValidatorModule;
 import com.jeanbarcellos.architecture.governance.error.validator.ErrorCatalogValidator;
 import com.jeanbarcellos.architecture.governance.external.validator.ExternalErrorCatalogValidator;
 import com.jeanbarcellos.architecture.scanner.ProjectClassLoaderFactory;
@@ -62,114 +58,120 @@ public class ArchitectureValidator {
 
         ClassLoader classLoader = ProjectClassLoaderFactory.create(project);
 
-        ValidationContext context = new ValidationContext();
+        ValidationContext context = new ValidationContext(project, classLoader);
 
-        // Adicionar novos validators aqui
-        new ErrorCatalogValidator(classLoader).validate(context);
-        new ExternalErrorCatalogValidator(classLoader).validate(context);
+        List<ValidatorModule> modules = List.of(
+                new ErrorCatalogValidator(),
+                new ExternalErrorCatalogValidator());
 
-        this.validateReport(context);
-    }
-
-    /**
-     * Analisa o relatório final e interrompe
-     * o build quando existirem violações.
-     *
-     * @param context contexto compartilhado
-     *
-     * @throws ValidationException quando houver violações
-     */
-    private void validateReport(ValidationContext context) throws ValidationException {
-
-        ValidationReport report = context.getReport();
-
-        if (!report.hasViolations()) {
-            return;
+        for (ValidatorModule module : modules) {
+            module.validate(context);
         }
 
-        throw new ValidationException(
-                this.buildReport(report));
-    }
-
-    /**
-     * Constrói o relatório textual final.
-     *
-     * @param report relatório consolidado
-     *
-     * @return relatório formatado
-     */
-    private String buildReport(ValidationReport report) {
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(System.lineSeparator());
-
-        builder.append(
-                "==================================================")
-                .append(System.lineSeparator());
-
-        builder.append(
-                " Architecture Validation Report")
-                .append(System.lineSeparator());
-
-        builder.append(
-                "==================================================")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        Map<ValidationCategory, List<ValidationViolation>> grouped = this.groupByCategory(report);
-
-        grouped.forEach((category, violations) -> {
-
-            builder.append("[")
-                    .append(category.getCode())
-                    .append("]")
-                    .append(System.lineSeparator());
-
-            violations.forEach(violation -> {
-
-                builder.append("Class : ")
-                        .append(violation.getClassName())
-                        .append(System.lineSeparator());
-
-                builder.append("File  : ")
-                        .append(violation.getFilePath())
-                        .append(System.lineSeparator());
-
-                builder.append("Error : ")
-                        .append(violation.getMessage())
-                        .append(System.lineSeparator())
-                        .append(System.lineSeparator());
-            });
-        });
-
-        return builder.toString();
-    }
-
-    /**
-     * Agrupa violações por categoria.
-     *
-     * @param report relatório consolidado
-     *
-     * @return violações agrupadas
-     */
-    private Map<ValidationCategory, List<ValidationViolation>> groupByCategory(ValidationReport report) {
-
-        Map<ValidationCategory, List<ValidationViolation>> result = new EnumMap<>(ValidationCategory.class);
-
-        for (ValidationCategory category : ValidationCategory.values()) {
-
-            List<ValidationViolation> violations = report.getViolations()
-                    .stream()
-                    .filter(v -> v.getCategory() == category)
-                    .toList();
-
-            if (!violations.isEmpty()) {
-                result.put(category, violations);
-            }
+        if (context.getReport().hasViolations()) {
+            throw new ValidationException(context.getReport().format());
         }
-
-        return result;
     }
+
+    // /**
+    //  * Analisa o relatório final e interrompe
+    //  * o build quando existirem violações.
+    //  *
+    //  * @param context contexto compartilhado
+    //  *
+    //  * @throws ValidationException quando houver violações
+    //  */
+    // private void validateReport(ValidationContext context) throws ValidationException {
+
+    //     ValidationReport report = context.getReport();
+
+    //     if (!report.hasViolations()) {
+    //         return;
+    //     }
+
+    //     throw new ValidationException(
+    //             this.buildReport(report));
+    // }
+
+    // /**
+    //  * Constrói o relatório textual final.
+    //  *
+    //  * @param report relatório consolidado
+    //  *
+    //  * @return relatório formatado
+    //  */
+    // private String buildReport(ValidationReport report) {
+
+    //     StringBuilder builder = new StringBuilder();
+
+    //     builder.append(System.lineSeparator());
+
+    //     builder.append(
+    //             "==================================================")
+    //             .append(System.lineSeparator());
+
+    //     builder.append(
+    //             " Architecture Validation Report")
+    //             .append(System.lineSeparator());
+
+    //     builder.append(
+    //             "==================================================")
+    //             .append(System.lineSeparator())
+    //             .append(System.lineSeparator());
+
+    //     Map<ValidationCategory, List<ValidationViolation>> grouped = this.groupByCategory(report);
+
+    //     grouped.forEach((category, violations) -> {
+
+    //         builder.append("[")
+    //                 .append(category.getCode())
+    //                 .append("]")
+    //                 .append(System.lineSeparator());
+
+    //         violations.forEach(violation -> {
+
+    //             builder.append("Class : ")
+    //                     .append(violation.getClassName())
+    //                     .append(System.lineSeparator());
+
+    //             builder.append("File  : ")
+    //                     .append(violation.getFilePath())
+    //                     .append(System.lineSeparator());
+
+    //             builder.append("Error : ")
+    //                     .append(violation.getMessage())
+    //                     .append(System.lineSeparator())
+    //                     .append(System.lineSeparator());
+    //         });
+    //     });
+
+    //     return builder.toString();
+    // }
+
+    // /**
+    //  * Agrupa violações por categoria.
+    //  *
+    //  * @param report relatório consolidado
+    //  *
+    //  * @return violações agrupadas
+    //  */
+    // private Map<ValidationCategory, List<ValidationViolation>> groupByCategory(ValidationReport report) {
+
+    //     Map<ValidationCategory, List<ValidationViolation>> result = new EnumMap<>(ValidationCategory.class);
+
+    //     for (ValidationCategory category : ValidationCategory.values()) {
+
+    //         List<ValidationViolation> violations = report.getViolations()
+    //                 .stream()
+    //                 .filter(v -> v.getCategory() == category)
+    //                 .toList();
+
+    //         if (!violations.isEmpty()) {
+    //             result.put(category, violations);
+    //         }
+    //     }
+
+    //     return result;
+    // }
 
 }

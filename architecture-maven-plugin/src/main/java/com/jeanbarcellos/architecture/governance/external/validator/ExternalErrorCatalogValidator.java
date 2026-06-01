@@ -2,8 +2,9 @@ package com.jeanbarcellos.architecture.governance.external.validator;
 
 import java.util.List;
 
-import com.jeanbarcellos.architecture.framework.rule.ErrorCatalogNotEmptyRule;
-import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
+import com.jeanbarcellos.architecture.framework.rule.EnumCatalogNotEmptyRule;
+import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.validator.AbstractCatalogValidator;
 import com.jeanbarcellos.architecture.governance.external.rule.ExternalErrorCodeRule;
 import com.jeanbarcellos.architecture.governance.external.rule.ExternalErrorDescriptionRule;
@@ -28,15 +29,6 @@ public class ExternalErrorCatalogValidator
         extends AbstractCatalogValidator<ExternalErrorType> {
 
     /**
-     * Cria uma nova instância.
-     *
-     * @param classLoader class loader do projeto
-     */
-    public ExternalErrorCatalogValidator(ClassLoader classLoader) {
-        super(classLoader);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -56,18 +48,18 @@ public class ExternalErrorCatalogValidator
      * {@inheritDoc}
      */
     @Override
-    protected List<ValidationRule<Class<?>>> getCatalogRules() {
+    protected List<CatalogRule> getCatalogRules() {
 
         return List.of(
                 new ExternalErrorTypeMustBeEnumRule(),
-                new ErrorCatalogNotEmptyRule());
+                new EnumCatalogNotEmptyRule());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected List<ValidationRule<ExternalErrorType>> getItemRules() {
+    protected List<ItemRule<ExternalErrorType>> getItemRules() {
 
         return List.of(
                 new ExternalErrorCodeRule(),
@@ -75,5 +67,4 @@ public class ExternalErrorCatalogValidator
                 new ExternalErrorStatusRule(),
                 new ExternalErrorMappingRule());
     }
-
 }

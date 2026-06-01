@@ -2,10 +2,12 @@ package com.jeanbarcellos.architecture.governance.error.validator;
 
 import java.util.List;
 
-import com.jeanbarcellos.architecture.framework.rule.ErrorCatalogNotEmptyRule;
-import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
+import com.jeanbarcellos.architecture.framework.rule.EnumCatalogNotEmptyRule;
+import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.validator.AbstractCatalogValidator;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorCodeFormatRule;
+import com.jeanbarcellos.architecture.governance.error.rule.ErrorCodeRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorCodeUniqueRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorHttpStatusRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorTitleRule;
@@ -27,15 +29,6 @@ public class ErrorCatalogValidator
         extends AbstractCatalogValidator<ErrorType> {
 
     /**
-     * Cria uma nova instância.
-     *
-     * @param classLoader class loader do projeto
-     */
-    public ErrorCatalogValidator(ClassLoader classLoader) {
-        super(classLoader);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -55,22 +48,23 @@ public class ErrorCatalogValidator
      * {@inheritDoc}
      */
     @Override
-    protected List<ValidationRule<Class<?>>> getCatalogRules() {
+    protected List<CatalogRule> getCatalogRules() {
 
         return List.of(
                 new ErrorTypeMustBeEnumRule(),
-                new ErrorCatalogNotEmptyRule());
+                new EnumCatalogNotEmptyRule());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected List<ValidationRule<ErrorType>> getItemRules() {
+    protected List<ItemRule<ErrorType>> getItemRules() {
 
         return List.of(
-                new ErrorCodeUniqueRule(),
+                new ErrorCodeRule(),
                 new ErrorCodeFormatRule(),
+                new ErrorCodeUniqueRule(),
                 new ErrorTitleRule(),
                 new ErrorHttpStatusRule());
     }
