@@ -21,4 +21,22 @@ public interface ValidationRule {
      */
     RuleMetadata metadata();
 
+    /**
+     * Código da regra.
+     *
+     * @return código
+     */
+    default String getCode() {
+        return metadata().getCode();
+    }
+
+    /**
+     * Nome da regra.
+     *
+     * @return nome
+     */
+    default String getName() {
+        return metadata().getName();
+    }
+
 }

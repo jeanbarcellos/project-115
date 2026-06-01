@@ -16,18 +16,21 @@ import com.jeanbarcellos.architecture.framework.report.ValidationModule;
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class EnumCatalogNotEmptyRule
-        implements CatalogRule {
+public class EnumCatalogNotEmptyRule implements CatalogRule {
+
+    private static final RuleMetadata METADA = RuleMetadata.of(
+            "ERR-002",
+            "Catálogo não pode estar vazio",
+            "Todo catálogo baseado em enum deve possuir ao menos um item.",
+            "Adicione pelo menos um elemento ao catálogo.",
+            ValidationSeverity.ERROR);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-        return RuleMetadata.of("ERR-002",
-                "Catálogo não pode estar vazio",
-                "Todo catálogo baseado em enum deve possuir ao menos um item.",
-                "Adicione pelo menos um elemento ao catálogo.");
+        return METADA;
     }
 
     /**

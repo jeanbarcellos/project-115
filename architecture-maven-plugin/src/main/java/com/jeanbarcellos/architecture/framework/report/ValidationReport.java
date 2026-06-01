@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.jeanbarcellos.architecture.framework.report.formatter.ConsoleValidationReportFormatter;
 import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 
 import lombok.Getter;
 
@@ -79,74 +81,39 @@ public class ValidationReport {
     }
 
     /**
-     * Gera representação textual do relatório.
+     * Indica se existem erros críticos.
      *
-     * @return relatório formatado
+     * @return true quando houver erros
+     */
+    public boolean hasErrors() {
+        return violations.stream()
+                .anyMatch(v -> v.getRule().metadata()
+                        .getSeverity() == ValidationSeverity.ERROR);
+    }
+
+    /**
+     * Indica se existem warnings.
+     *
+     * @return true quando houver warnings
+     */
+    public boolean hasWarnings() {
+        return violations.stream()
+                .anyMatch(v -> v.getRule().metadata()
+                        .getSeverity() == ValidationSeverity.WARNING);
+    }
+
+    /**
+     * Quantidade total de violações.
+     */
+    public int count() {
+        return violations.size();
+    }
+
+    /**
+     * Gera relatório textual.
      */
     public String format() {
-
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(System.lineSeparator());
-
-        builder.append(
-                "==================================================")
-                .append(System.lineSeparator());
-
-        builder.append(
-                " Architecture Validation Report")
-                .append(System.lineSeparator());
-
-        builder.append(
-                "==================================================")
-                .append(System.lineSeparator())
-                .append(System.lineSeparator());
-
-        for (ValidationViolation violation : violations) {
-
-            builder.append("[")
-                    .append(violation.getModule().name())
-                    .append("/")
-                    .append(violation.getCategory().name())
-                    .append("]")
-                    .append(System.lineSeparator());
-
-            builder.append("Rule: ")
-                    .append(violation.getRule().metadata().getCode())
-                    .append(" - ")
-                    .append(violation.getRule().metadata().getName());
-
-            builder.append("Class: ")
-                    .append(violation.getClassName())
-                    .append(System.lineSeparator());
-
-            if (violation.getFilePath() != null) {
-                builder.append("File : ")
-                        .append(violation.getFilePath())
-                        .append(System.lineSeparator());
-            }
-
-            if (violation.getElement() != null) {
-                builder.append("Element : ")
-                        .append(violation.getElement())
-                        .append(System.lineSeparator());
-            }
-
-            builder.append("Description:")
-                    .append(System.lineSeparator())
-                    .append(violation.getRule().metadata().getDescription());
-
-            builder.append("Recommendation:")
-                    .append(System.lineSeparator())
-                    .append(violation.getRule().metadata().getRecommendation());
-
-            builder.append("Message: ")
-                    .append(violation.getMessage())
-                    .append(System.lineSeparator())
-                    .append(System.lineSeparator());
-        }
-
-        return builder.toString();
+        return new ConsoleValidationReportFormatter().format(this);
     }
 
 }

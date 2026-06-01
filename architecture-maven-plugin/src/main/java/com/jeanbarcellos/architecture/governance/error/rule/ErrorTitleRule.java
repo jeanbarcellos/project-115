@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -14,18 +15,19 @@ import com.jeanbarcellos.core.error.ErrorType;
  */
 public class ErrorTitleRule implements ItemRule<ErrorType> {
 
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-006",
+            "Título do erro obrigatório",
+            "Todos os erros devem possuir um título preenchido.",
+            "Informe um título descritivo  para o erro.",
+            ValidationSeverity.ERROR);
+
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("ERR-006")
-                .name("Título do erro obrigatório")
-                .description("Todos os erros devem possuir um título preenchido.")
-                .recommendation("Informe um título descritivo  para o erro.")
-                .build();
+        return METADATA;
     }
 
     /**

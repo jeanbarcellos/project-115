@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ExternalErrorType;
 
 /**
@@ -12,21 +13,21 @@ import com.jeanbarcellos.core.error.ExternalErrorType;
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ExternalErrorCodeRule
-        implements ItemRule<ExternalErrorType> {
+public class ExternalErrorCodeRule implements ItemRule<ExternalErrorType> {
+
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "EXT-002",
+            "Código externo obrigatório",
+            "Todo erro externo deve possuir um código preenchido.",
+            "Informe o código retornado pelo provider.",
+            ValidationSeverity.ERROR);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("EXT-002")
-                .name("Código externo obrigatório")
-                .description("Todo erro externo deve possuir um código preenchido.")
-                .recommendation("Informe o código retornado pelo provider.")
-                .build();
+        return METADATA;
     }
 
     /**

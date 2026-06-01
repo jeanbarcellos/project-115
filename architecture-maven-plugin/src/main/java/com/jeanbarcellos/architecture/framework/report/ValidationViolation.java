@@ -1,6 +1,5 @@
 package com.jeanbarcellos.architecture.framework.report;
 
-import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
 import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
 
 import lombok.Builder;

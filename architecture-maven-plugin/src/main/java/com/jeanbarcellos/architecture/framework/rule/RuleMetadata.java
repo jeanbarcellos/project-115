@@ -1,6 +1,8 @@
 package com.jeanbarcellos.architecture.framework.rule;
 
-import lombok.AllArgsConstructor;
+import java.util.Objects;
+
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,8 +23,7 @@ import lombok.Getter;
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Getter
-@Builder
-@AllArgsConstructor
+@Builder(access = AccessLevel.PRIVATE)
 public class RuleMetadata {
 
     /**
@@ -55,13 +56,38 @@ public class RuleMetadata {
      */
     private final String recommendation;
 
-    public static RuleMetadata of(String code, String name, String description, String recommendation) {
-        return RuleMetadata.builder()
-                .code(code)
-                .name(name)
-                .description(description)
-                .recommendation(recommendation)
-                .build();
+    /**
+     * Severidade da regra.
+     */
+    private final ValidationSeverity severity;
+
+    public RuleMetadata(
+            String code,
+            String name,
+            String description,
+            String recommendation,
+            ValidationSeverity severity) {
+
+        this.code = Objects.requireNonNull(code);
+        this.name = Objects.requireNonNull(name);
+        this.description = Objects.requireNonNull(description);
+        this.recommendation = Objects.requireNonNull(recommendation);
+        this.severity = Objects.requireNonNull(severity);
+    }
+
+    public static RuleMetadata of(
+            String code,
+            String name,
+            String description,
+            String recommendation,
+            ValidationSeverity severity) {
+
+        return new RuleMetadata(
+                code,
+                name,
+                description,
+                recommendation,
+                severity);
     }
 
 }

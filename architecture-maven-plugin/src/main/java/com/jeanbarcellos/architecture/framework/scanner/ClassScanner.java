@@ -1,4 +1,4 @@
-package com.jeanbarcellos.architecture.scanner;
+package com.jeanbarcellos.architecture.framework.scanner;
 
 import java.util.Set;
 import java.util.stream.Collectors;

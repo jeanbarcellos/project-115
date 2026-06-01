@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -22,17 +23,21 @@ import com.jeanbarcellos.core.error.ErrorType;
 public class ErrorCodeUniqueRule implements ItemRule<ErrorType> {
 
     /**
+     * Metatados da Regra
+     */
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-005",
+            "Código do erro deve ser único",
+            "Não é permitido reutilizar o mesmo código em múltiplos erros.",
+            "Defina um código exclusivo para o erro informado.",
+            ValidationSeverity.ERROR);
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("ERR-005")
-                .name("Código do erro deve ser único")
-                .description("Não é permitido reutilizar o mesmo código em múltiplos erros.")
-                .recommendation("Defina um código exclusivo para o erro informado.")
-                .build();
+        return METADATA;
     }
 
     /**

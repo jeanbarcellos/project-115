@@ -4,19 +4,21 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Representa os módulos de governança
- * arquitetural suportados pelo framework.
+ * Representa os módulos de governança arquitetural suportados pelo framework.
  *
  * <p>
- * Cada módulo agrupa regras relacionadas
- * a uma determinada área da arquitetura.
+ * Cada módulo agrupa regras relacionadas a uma determinada área da arquitetura.
  * </p>
+ *
+ * Pergunta: Onde estou validando?
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Getter
 @RequiredArgsConstructor
 public enum ValidationModule {
+
+    // Domínio =================================================================
 
     /**
      * Governança dos catálogos ErrorType.
@@ -33,6 +35,8 @@ public enum ValidationModule {
      */
     EXCEPTION("EXCEPTION"),
 
+    // Arquitetura =============================================================
+
     /**
      * Governança de DDD.
      */
@@ -48,10 +52,24 @@ public enum ValidationModule {
      */
     HEXAGONAL("HEXAGONAL"),
 
+    // Observabilitade =========================================================
+
     /**
      * Governança de observabilidade.
      */
-    OBSERVABILITY("OBSERVABILITY");
+    OBSERVABILITY("OBSERVABILITY"),
+
+    // Tecnologia ==============================================================
+
+    /**
+     * Governança na utilização do framework Spring
+     */
+    SPRING("SPRING"),
+
+    /**
+     * Governança na utilização do framework Quarkus
+     */
+    QUARKUS("QUARKUS");
 
     /**
      * Código textual do módulo.

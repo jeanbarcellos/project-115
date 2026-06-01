@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -20,18 +21,19 @@ import com.jeanbarcellos.core.error.ErrorType;
  */
 public class ErrorHttpStatusRule implements ItemRule<ErrorType> {
 
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-007",
+            "HTTP Status inválido",
+            "O status HTTP associado ao erro deve estar entre 100 e 599.",
+            "Utilize um código HTTP válido.",
+            ValidationSeverity.ERROR);
+
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("ERR-007")
-                .name("HTTP Status inválido")
-                .description("O status HTTP associado ao erro deve estar entre 100 e 599.")
-                .recommendation("Utilize um código HTTP válido.")
-                .build();
+        return METADATA;
     }
 
     /**

@@ -7,10 +7,11 @@ import lombok.RequiredArgsConstructor;
  * Categorias de validações arquiteturais.
  *
  * <p>
- * Permitem classificar o tipo de regra
- * executada dentro de cada módulo
- * de governança.
+ * Permitem classificar o tipo de regra executada dentro de cada módulo de
+ * governança.
  * </p>
+ *
+ * Pergunta: O que estou validando?
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -60,12 +61,7 @@ public enum ValidationCategory {
     /**
      * Regras relacionadas a anotações.
      */
-    ANNOTATION("ANNOTATION"),
-
-    /**
-     * Regras relacionadas à observabilidade.
-     */
-    OBSERVABILITY("OBSERVABILITY");
+    ANNOTATION("ANNOTATION");
 
     /**
      * Código textual da categoria.

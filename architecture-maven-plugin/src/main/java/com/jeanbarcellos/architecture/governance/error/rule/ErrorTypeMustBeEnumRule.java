@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 
 /**
  * Garante que implementações de ErrorType
@@ -21,17 +22,19 @@ import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
  */
 public class ErrorTypeMustBeEnumRule implements CatalogRule {
 
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-001",
+            "ErrorType deve ser enum",
+            "Toda implementação da interface ErrorType deve ser declarada como enum.",
+            "Substitua implementações concretas por enums.",
+            ValidationSeverity.ERROR);
+
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-        return RuleMetadata.builder()
-                .code("ERR-001")
-                .name("ErrorType deve ser enum")
-                .description("Toda implementação da interface ErrorType deve ser declarada como enum.")
-                .recommendation("Substitua implementações concretas por enums.")
-                .build();
+        return METADATA;
     }
 
     /**

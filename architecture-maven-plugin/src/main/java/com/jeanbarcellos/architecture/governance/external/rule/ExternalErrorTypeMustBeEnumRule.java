@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 
 /**
  * Garante que implementações de {@code ExternalErrorType}
@@ -17,21 +18,21 @@ import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ExternalErrorTypeMustBeEnumRule
-        implements CatalogRule {
+public class ExternalErrorTypeMustBeEnumRule implements CatalogRule {
+
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "EXT-001",
+            "ExternalErrorType deve ser enum",
+            "Toda implementação da interface ExternalErrorType deve ser enum.",
+            "Converta a implementação para enum.",
+            ValidationSeverity.ERROR);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("EXT-001")
-                .name("ExternalErrorType deve ser enum")
-                .description("Toda implementação da interface ExternalErrorType deve ser enum.")
-                .recommendation("Converta a implementação para enum.")
-                .build();
+        return METADATA;
     }
 
     /**

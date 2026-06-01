@@ -7,6 +7,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -33,17 +34,21 @@ public class ErrorCodeFormatRule implements ItemRule<ErrorType> {
     private static final Pattern KEBAB_CASE_PATTERN = Pattern.compile("[a-z0-9]+(-[a-z0-9]+)*");
 
     /**
+     * Metatados da Regra
+     */
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-001",
+            "ErrorType deve ser enum",
+            "Toda implementação ...",
+            "Substitua implementações ...",
+            ValidationSeverity.ERROR);
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("ERR-004")
-                .name("Formato do código inválido")
-                .description("Os códigos dos erros devem seguir o padrão definido pela arquitetura.")
-                .recommendation("Utilize letras minúsculas e hífens  conforme o padrão adotado.")
-                .build();
+        return METADATA;
     }
 
     /**

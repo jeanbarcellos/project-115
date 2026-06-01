@@ -5,6 +5,7 @@ import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
 import com.jeanbarcellos.architecture.framework.report.ValidationModule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
 import com.jeanbarcellos.architecture.framework.rule.RuleMetadata;
+import com.jeanbarcellos.architecture.framework.rule.ValidationSeverity;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**
@@ -16,17 +17,21 @@ import com.jeanbarcellos.core.error.ErrorType;
 public class ErrorCodeRule implements ItemRule<ErrorType> {
 
     /**
+     * Metatados da Regra
+     */
+    private static final RuleMetadata METADATA = RuleMetadata.of(
+            "ERR-003",
+            "Código do erro obrigatório",
+            "Todos os itens do catálogo ErrorType devem possuir código preenchido.",
+            "Informe um código único  para o erro.",
+            ValidationSeverity.ERROR);
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public RuleMetadata metadata() {
-
-        return RuleMetadata.builder()
-                .code("ERR-003")
-                .name("Código do erro obrigatório")
-                .description("Todos os itens do catálogo ErrorType devem possuir código preenchido.")
-                .recommendation("Informe um código único  para o erro.")
-                .build();
+        return METADATA;
     }
 
     /**

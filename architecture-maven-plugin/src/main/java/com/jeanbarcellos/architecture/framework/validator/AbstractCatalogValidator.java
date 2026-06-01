@@ -6,7 +6,7 @@ import java.util.Set;
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
 import com.jeanbarcellos.architecture.framework.rule.CatalogRule;
 import com.jeanbarcellos.architecture.framework.rule.ItemRule;
-import com.jeanbarcellos.architecture.scanner.ClassScanner;
+import com.jeanbarcellos.architecture.framework.scanner.ClassScanner;
 
 /**
  * Implementação base para validação de catálogos.
@@ -66,8 +66,7 @@ public abstract class AbstractCatalogValidator<T> implements ValidatorModule {
      * @param context contexto compartilhado
      */
     @Override
-    public final void validate(
-            ValidationContext context) {
+    public final void validate(ValidationContext context) {
 
         Set<Class<? extends T>> catalogs;
 
@@ -77,51 +76,6 @@ public abstract class AbstractCatalogValidator<T> implements ValidatorModule {
             catalogs = ClassScanner.findImplementations(this.getContract(), context.getClassLoader());
             context.getScanCache().put(this.getContract(), catalogs);
         }
-
-        for (Class<? extends T> catalog : catalogs) {
-            this.validateCatalog(catalog, context);
-            this.validateItems(catalog, context);
-        }
     }
 
-    /**
-     * Executa validações do catálogo.
-     *
-     * @param catalog catálogo localizado
-     * @param context contexto compartilhado
-     */
-    private void validateCatalog(
-            Class<?> catalog,
-            ValidationContext context) {
-
-        for (CatalogRule rule : getCatalogRules()) {
-            rule.validate(catalog, context);
-        }
-    }
-
-    /**
-     * Executa validações dos itens.
-     *
-     * @param catalog catálogo localizado
-     * @param context contexto compartilhado
-     */
-    private void validateItems(
-            Class<?> catalog,
-            ValidationContext context) {
-
-        Object[] constants = catalog.getEnumConstants();
-
-        if (constants == null) {
-            return;
-        }
-
-        for (Object constant : constants) {
-
-            T item = cast(constant);
-
-            for (ItemRule<T> rule : getItemRules()) {
-                rule.validate(item, context);
-            }
-        }
-    }
 }

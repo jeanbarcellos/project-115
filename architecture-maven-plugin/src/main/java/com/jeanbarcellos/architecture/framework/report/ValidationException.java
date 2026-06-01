@@ -1,22 +1,37 @@
 package com.jeanbarcellos.architecture.framework.report;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 /**
- * Exceção lançada ao final da execução
- * quando violações arquiteturais são encontradas.
+ * Exceção lançada quando são encontradas
+ * violações arquiteturais que impedem a
+ * continuidade do build.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
-public class ValidationException extends MojoExecutionException {
+@SuppressWarnings("java:S1948")
+public class ValidationException extends RuntimeException {
 
     /**
-     * Cria uma nova exceção.
-     *
-     * @param message relatório formatado
+     * Relatório de validação.
      */
-    public ValidationException(String message) {
-        super(message);
+    private final ValidationReport report;
+
+    /**
+     * Cria nova exceção.
+     *
+     * @param report relatório gerado
+     */
+    public ValidationException(ValidationReport report) {
+        super(report.format());
+        this.report = report;
+    }
+
+    /**
+     * Retorna o relatório associado.
+     *
+     * @return relatório
+     */
+    public ValidationReport getReport() {
+        return report;
     }
 
 }
