@@ -28,6 +28,7 @@ public class ErrorCodeFormatRule
     /**
      * Expressão regular utilizada para validação.
      */
+    @SuppressWarnings("java:S5998")
     private static final Pattern KEBAB_CASE_PATTERN = Pattern.compile("[a-z0-9]+(-[a-z0-9]+)*");
 
     /**
@@ -42,8 +43,9 @@ public class ErrorCodeFormatRule
         String code = target.getCode();
 
         if (code == null || !KEBAB_CASE_PATTERN.matcher(code).matches()) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target.getClass(),
                     "Invalid error code format: " + code);
         }
     }

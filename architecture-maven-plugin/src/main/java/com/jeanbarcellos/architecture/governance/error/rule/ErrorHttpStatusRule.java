@@ -32,8 +32,9 @@ public class ErrorHttpStatusRule
 
         if (status < 400 || status > 599) {
 
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target.getClass(),
                     "Invalid HTTP status for error: " + target.getCode());
         }
     }

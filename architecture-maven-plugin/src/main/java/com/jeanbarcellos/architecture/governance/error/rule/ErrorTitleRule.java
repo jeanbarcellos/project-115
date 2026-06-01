@@ -27,8 +27,9 @@ public class ErrorTitleRule
         if (target.getTitle() == null
                 || target.getTitle().isBlank()) {
 
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target.getClass(),
                     "Error title cannot be empty: " + target.getCode());
         }
     }

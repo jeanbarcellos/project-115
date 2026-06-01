@@ -2,6 +2,7 @@ package com.jeanbarcellos.architecture.governance.error.validator;
 
 import java.util.List;
 
+import com.jeanbarcellos.architecture.framework.rule.ErrorCatalogNotEmptyRule;
 import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
 import com.jeanbarcellos.architecture.framework.validator.AbstractCatalogValidator;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorCodeFormatRule;
@@ -9,7 +10,6 @@ import com.jeanbarcellos.architecture.governance.error.rule.ErrorCodeUniqueRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorHttpStatusRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorTitleRule;
 import com.jeanbarcellos.architecture.governance.error.rule.ErrorTypeMustBeEnumRule;
-import com.jeanbarcellos.architecture.governance.rule.ErrorCatalogNotEmptyRule;
 import com.jeanbarcellos.core.error.ErrorType;
 
 /**

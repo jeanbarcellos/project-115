@@ -34,15 +34,17 @@ public class ExternalErrorMappingRule
         ErrorType errorType = target.getErrorType();
 
         if (errorType == null) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "External error without internal mapping: " + target.getCode());
             return;
         }
 
         if (errorType == TechnicalErrorType.INTERNAL_ERROR) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "External error cannot map to INTERNAL_ERROR: " + target.getCode());
         }
     }

@@ -25,8 +25,9 @@ public class ExternalErrorCodeRule
         String code = target.getCode();
 
         if (code == null || code.isBlank()) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "External error code cannot be empty.");
         }
     }

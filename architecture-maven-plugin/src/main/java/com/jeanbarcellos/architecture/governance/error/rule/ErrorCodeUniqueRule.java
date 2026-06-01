@@ -30,8 +30,9 @@ public class ErrorCodeUniqueRule
     public void validate(ErrorType target, ValidationContext context) {
 
         if (!context.getErrorCodes().add(target.getCode())) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target.getClass(),
                     "Duplicated error code detected: " + target.getCode());
         }
     }

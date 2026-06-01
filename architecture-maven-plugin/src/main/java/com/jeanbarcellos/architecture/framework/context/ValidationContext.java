@@ -41,9 +41,14 @@ public class ValidationContext {
      * Registra uma nova violação.
      *
      * @param category categoria da validação
-     * @param message  descrição da falha
+     * @param clazz    classe relacionada
+     * @param message  descrição da violação
      */
-    public void addViolation(ValidationCategory category, String message) {
-        this.report.addViolation(category, message);
+    public void addViolation(
+            ValidationCategory category,
+            Class<?> clazz,
+            String message) {
+
+        this.report.addViolation(category, clazz.getName(), null, message);
     }
 }

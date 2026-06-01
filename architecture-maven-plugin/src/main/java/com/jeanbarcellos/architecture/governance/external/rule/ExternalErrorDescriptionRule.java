@@ -27,8 +27,9 @@ public class ExternalErrorDescriptionRule
 
         if (description == null || description.isBlank()) {
 
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "External error description cannot be empty: " + target.getCode());
         }
     }

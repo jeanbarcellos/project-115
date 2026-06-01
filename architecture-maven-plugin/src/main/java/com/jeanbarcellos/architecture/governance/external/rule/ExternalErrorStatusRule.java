@@ -30,15 +30,17 @@ public class ExternalErrorStatusRule
         Integer status = target.getStatus();
 
         if (status == null) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "External error status cannot be null: " + target.getCode());
             return;
         }
 
         if (status < 100 || status > 599) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target.getClass(),
                     "Invalid external error status: " + target.getCode() + " -> " + status);
         }
     }

@@ -21,16 +21,24 @@ public class ValidationReport {
     private final List<ValidationViolation> violations = new ArrayList<>();
 
     /**
-     * Adiciona uma nova violação.
+     * Registra uma nova violação.
      *
-     * @param category categoria da regra
-     * @param message  descrição da falha
+     * @param category  categoria da validação
+     * @param className classe relacionada
+     * @param filePath  arquivo relacionado
+     * @param message   descrição da violação
      */
-    public void addViolation(ValidationCategory category, String message) {
+    public void addViolation(
+            ValidationCategory category,
+            String className,
+            String filePath,
+            String message) {
 
-        this.violations.add(
+        violations.add(
                 ValidationViolation.builder()
                         .category(category)
+                        .className(className)
+                        .filePath(filePath)
                         .message(message)
                         .build());
     }

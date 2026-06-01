@@ -27,14 +27,12 @@ public class ErrorTypeMustBeEnumRule
      * @param context contexto compartilhado
      */
     @Override
-    public void validate(
-            Class<?> target,
-            ValidationContext context) {
+    public void validate(Class<?> target, ValidationContext context) {
 
         if (!target.isEnum()) {
-
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target,
                     "ErrorType implementation must be enum: " + target.getName());
         }
     }

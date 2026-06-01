@@ -1,8 +1,7 @@
-package com.jeanbarcellos.architecture.governance.rule;
+package com.jeanbarcellos.architecture.framework.rule;
 
 import com.jeanbarcellos.architecture.framework.context.ValidationContext;
 import com.jeanbarcellos.architecture.framework.report.ValidationCategory;
-import com.jeanbarcellos.architecture.framework.rule.ValidationRule;
 
 /**
  * Garante que um catálogo possua pelo menos
@@ -32,8 +31,9 @@ public class ErrorCatalogNotEmptyRule
 
         if (constants == null || constants.length == 0) {
 
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.ERROR_TYPE,
+                    target,
                     "Empty catalog detected: " + target.getName());
         }
     }

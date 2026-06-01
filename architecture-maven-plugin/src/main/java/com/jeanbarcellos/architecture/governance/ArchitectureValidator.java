@@ -1,5 +1,9 @@
 package com.jeanbarcellos.architecture.governance;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
@@ -16,6 +20,15 @@ import com.jeanbarcellos.architecture.scanner.ProjectClassLoaderFactory;
  * Orquestrador central responsável por executar
  * todos os validadores arquiteturais registrados.
  *
+ * <p>
+ * Responsável por:
+ * </p>
+ * <ul>
+ * <li>criar o contexto compartilhado;</li>
+ * <li>executar os validadores registrados;</li>
+ * <li>gerar o relatório consolidado;</li>
+ * <li>falhar o build quando necessário.</li>
+ * </ul>
  * <p>
  * Novos validadores devem ser adicionados aqui
  * para participarem automaticamente do pipeline
@@ -51,10 +64,21 @@ public class ArchitectureValidator {
 
         ValidationContext context = new ValidationContext();
 
+        // Adicionar novos validators aqui
         new ErrorCatalogValidator(classLoader).validate(context);
         new ExternalErrorCatalogValidator(classLoader).validate(context);
+
+        this.validateReport(context);
     }
 
+    /**
+     * Analisa o relatório final e interrompe
+     * o build quando existirem violações.
+     *
+     * @param context contexto compartilhado
+     *
+     * @throws ValidationException quando houver violações
+     */
     private void validateReport(ValidationContext context) throws ValidationException {
 
         ValidationReport report = context.getReport();
@@ -63,50 +87,89 @@ public class ArchitectureValidator {
             return;
         }
 
+        throw new ValidationException(
+                this.buildReport(report));
+    }
+
+    /**
+     * Constrói o relatório textual final.
+     *
+     * @param report relatório consolidado
+     *
+     * @return relatório formatado
+     */
+    private String buildReport(ValidationReport report) {
+
         StringBuilder builder = new StringBuilder();
 
         builder.append(System.lineSeparator());
-        builder.append("==================================================")
+
+        builder.append(
+                "==================================================")
                 .append(System.lineSeparator());
 
-        builder.append(" Architecture Validation Report")
+        builder.append(
+                " Architecture Validation Report")
                 .append(System.lineSeparator());
 
-        builder.append("==================================================")
+        builder.append(
+                "==================================================")
                 .append(System.lineSeparator())
                 .append(System.lineSeparator());
 
+        Map<ValidationCategory, List<ValidationViolation>> grouped = this.groupByCategory(report);
+
+        grouped.forEach((category, violations) -> {
+
+            builder.append("[")
+                    .append(category.getCode())
+                    .append("]")
+                    .append(System.lineSeparator());
+
+            violations.forEach(violation -> {
+
+                builder.append("Class : ")
+                        .append(violation.getClassName())
+                        .append(System.lineSeparator());
+
+                builder.append("File  : ")
+                        .append(violation.getFilePath())
+                        .append(System.lineSeparator());
+
+                builder.append("Error : ")
+                        .append(violation.getMessage())
+                        .append(System.lineSeparator())
+                        .append(System.lineSeparator());
+            });
+        });
+
+        return builder.toString();
+    }
+
+    /**
+     * Agrupa violações por categoria.
+     *
+     * @param report relatório consolidado
+     *
+     * @return violações agrupadas
+     */
+    private Map<ValidationCategory, List<ValidationViolation>> groupByCategory(ValidationReport report) {
+
+        Map<ValidationCategory, List<ValidationViolation>> result = new EnumMap<>(ValidationCategory.class);
+
         for (ValidationCategory category : ValidationCategory.values()) {
 
-            boolean categoryPrinted = false;
+            List<ValidationViolation> violations = report.getViolations()
+                    .stream()
+                    .filter(v -> v.getCategory() == category)
+                    .toList();
 
-            for (ValidationViolation violation : report.getViolations()) {
-
-                if (violation.getCategory() != category) {
-                    continue;
-                }
-
-                if (!categoryPrinted) {
-
-                    builder.append("[")
-                            .append(category.getCode())
-                            .append("]")
-                            .append(System.lineSeparator());
-
-                    categoryPrinted = true;
-                }
-
-                builder.append(" - ")
-                        .append(violation.getMessage())
-                        .append(System.lineSeparator());
-            }
-
-            if (categoryPrinted) {
-                builder.append(System.lineSeparator());
+            if (!violations.isEmpty()) {
+                result.put(category, violations);
             }
         }
 
-        throw new ValidationException(builder.toString());
+        return result;
     }
 
 }

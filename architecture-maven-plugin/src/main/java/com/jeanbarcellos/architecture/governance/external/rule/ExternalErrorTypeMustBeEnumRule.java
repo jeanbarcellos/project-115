@@ -28,8 +28,9 @@ public class ExternalErrorTypeMustBeEnumRule
     public void validate(Class<?> target, ValidationContext context) {
 
         if (!target.isEnum()) {
-            context.getReport().addViolation(
+            context.addViolation(
                     ValidationCategory.EXTERNAL_ERROR,
+                    target,
                     "ExternalErrorType implementation must be enum: " + target.getName());
         }
     }
