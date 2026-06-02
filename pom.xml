@@ -41,7 +41,11 @@
 
   <modules>
     <module>core</module>
+    <module>core-spring</module>
+    <module>core-quarkus</module>
+
     <module>core-test</module>
+
     <module>architecture-maven-plugin</module>
     <module>service-spring</module>
     <module>service-quarkus</module>
@@ -53,6 +57,16 @@
       <dependency>
         <groupId>com.jeanbarcellos.project115</groupId>
         <artifactId>project115-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.jeanbarcellos.project115</groupId>
+        <artifactId>project115-core-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.jeanbarcellos.project115</groupId>
+        <artifactId>project115-core-quarkus</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -176,7 +176,8 @@
         </configuration>
       </plugin>
 
-      <plugin>
+      <!-- Plugin de governanca -->
+      <!-- <plugin>
         <groupId>com.jeanbarcellos.project115</groupId>
         <artifactId>project115-architecture-maven-plugin</artifactId>
         <version>1.0.0-SNAPSHOT</version>
@@ -187,7 +188,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
 
     </plugins>
   </build>
