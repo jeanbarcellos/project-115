@@ -1,4 +1,4 @@
-package com.jeanbarcellos.project115.infra.exception.handler;
+package com.jeanbarcellos.project115.infra.error;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 
@@ -46,12 +46,13 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.INTERNAL_ERROR;
         }
 
-        // ============================
+        // ==============================================================================
         // GENERIC
-        // ============================
+        // ==============================================================================
 
-        if (ex instanceof java.net.SocketTimeoutException || ex instanceof java.net.http.HttpTimeoutException) {
-            return TechnicalErrorType.TIMEOUT;
+        if (hasCause(ex, "java.net.SocketTimeoutException")
+                || hasCause(ex, "java.net.http.HttpTimeoutException")) {
+            return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
         }
         // MicroProfile Fault Tolerance (Timeout)
         if (isInstanceOf(ex.getClass(), "org.eclipse.microprofile.faulttolerance.exceptions.TimeoutException")) {
@@ -62,9 +63,9 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.SERVICE_UNAVAILABLE;
         }
 
-        // ============================
+        // ==============================================================================
         // VALIDATION
-        // ============================
+        // ==============================================================================
 
         // Erro de Bean Validation (Ex: @NotNull, @Email no corpo ou parâmetros)
         if (ex instanceof jakarta.validation.ConstraintViolationException) {
@@ -77,9 +78,9 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.INVALID_FORMAT;
         }
 
-        // ============================
+        // ==============================================================================
         // RESOURCE
-        // ============================
+        // ==============================================================================
 
         if (ex instanceof jakarta.ws.rs.NotFoundException) {
             return TechnicalErrorType.RESOURCE_NOT_FOUND;
@@ -92,9 +93,9 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.MALFORMED_JSON;
         }
 
-        // ============================
+        // ==============================================================================
         // CONFLICT / CONCURRENCY
-        // ============================
+        // ==============================================================================
 
         if (isInstanceOf(ex.getClass(), "jakarta.persistence.OptimisticLockException")){
             return TechnicalErrorType.OPTIMISTIC_LOCK_ERROR;
@@ -103,9 +104,9 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.PESSIMISTIC_LOCK_ERROR;
         }
 
-        // ============================
+        // ==============================================================================
         // AUTH / SECURITY
-        // ============================
+        // ==============================================================================
 
         // Quarkus Security (Nativo) e JAX-RS
         if (isInstanceOf(ex.getClass(), "io.quarkus.security.UnauthorizedException") ||
@@ -130,9 +131,9 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.INVALID_TOKEN;
         }
 
-        // ============================
+        // ==============================================================================
         // INTEGRATION / EXTERNAL
-        // ============================
+        // ==============================================================================
 
         // Caso o projeto utilize Feign Client ao invés do MicroProfile Rest Client
         if (isInstanceOf(ex.getClass(), "feign.FeignException")) {
@@ -219,6 +220,28 @@ public class TechnicalErrorResolver {
         }
         // Chamada recursiva para verificar a classe pai (suporta herança completa de exceções)
         return isInstanceOf(clazz.getSuperclass(), targetClassName);
+    }
+
+    /**
+     * Verifica se a exceção ou qualquer uma de suas causas pertence à hierarquia de um tipo
+     * informado.
+     *
+     * @param throwable exceção inicial.
+     * @param targetClassName nome totalmente qualificado do tipo procurado.
+     * @return true quando encontrado na cadeia de causas.
+     */
+    private static boolean hasCause(Throwable throwable, String targetClassName) {
+
+        while (throwable != null) {
+
+            if (isInstanceOf(throwable.getClass(), targetClassName)) {
+                return true;
+            }
+
+            throwable = throwable.getCause();
+        }
+
+        return false;
     }
 
 }

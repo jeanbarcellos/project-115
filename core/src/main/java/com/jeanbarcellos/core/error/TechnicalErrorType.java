@@ -25,9 +25,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TechnicalErrorType implements ErrorType {
 
-    // ============================
+    // ==============================================================================
     // GENERIC
-    // ============================
+    // ==============================================================================
+    // Falhas técnicas genéricas que não pertencem a uma categoria
+    // específica da plataforma.
+    // ==============================================================================
 
     INTERNAL_ERROR(
             "internal-error",
@@ -53,15 +56,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Operation timed out",
             true),
 
-    UNKNOWN_ERROR(
-            "unknown-error",
-            500,
-            "Unknown error",
-            true),
-
-    // ============================
+    // ==============================================================================
     // VALIDATION
-    // ============================
+    // ==============================================================================
+    // Erros relacionados à validação de entradas,
+    // parâmetros, payloads e contratos de API.
+    // ==============================================================================
 
     /**
      * Erro de validação de entrada (cliente).
@@ -99,9 +99,11 @@ public enum TechnicalErrorType implements ErrorType {
             "Invalid format",
             false),
 
-    // ============================
+    // ==============================================================================
     // RESOURCE
-    // ============================
+    // Erros relacionados à localização, existência,
+    // disponibilidade ou manipulação de recursos.
+    // ==============================================================================
 
     RESOURCE_NOT_FOUND(
             "resource-not-found",
@@ -127,6 +129,18 @@ public enum TechnicalErrorType implements ErrorType {
             "Resource no longer available",
             false),
 
+    RESOURCE_UNSUPPORTED_MEDIA_TYPE(
+            "resource-unsupported-media-type",
+            415,
+            "Unsupported media type",
+            false),
+
+    RESOURCE_METHOD_NOT_ALLOWED(
+            "resource-method-not-allowed",
+            405,
+            "Method not allowed.",
+            false),
+
     MALFORMED_JSON(
             "malformed-json",
             400,
@@ -139,9 +153,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Unexpected error",
             false),
 
-    // ============================
+    // ==============================================================================
     // CONFLICT / CONCURRENCY
-    // ============================
+    // ==============================================================================
+    // Erros causados por concorrência, conflitos
+    // de estado, versionamento e idempotência.
+    // ==============================================================================
 
     CONFLICT("conflict",
             409,
@@ -178,9 +195,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Idempotency payload mismatch",
             false),
 
-    // ============================
+    // ==============================================================================
     // AUTH / SECURITY
-    // ============================
+    // ==============================================================================
+    // Erros relacionados à autenticação,
+    // autorização e segurança da aplicação.
+    // ==============================================================================
 
     UNAUTHORIZED(
             "unauthorized",
@@ -212,12 +232,15 @@ public enum TechnicalErrorType implements ErrorType {
             "Invalid token",
             false),
 
-    // ============================
+    // ==============================================================================
     // INTEGRATION / EXTERNAL
-    // ============================
+    // ==============================================================================
+    // Falhas ocorridas durante comunicação com
+    // sistemas externos ou dependências remotas.
+    // ==============================================================================
 
     EXTERNAL_SERVICE_ERROR(
-            "external-service-error",
+                    "external-service-error",
             502,
             "External service failure",
             true),
@@ -234,18 +257,27 @@ public enum TechnicalErrorType implements ErrorType {
             "External service unavailable",
             true),
 
+    EXTERNAL_SERVICE_BAD_RESPONSE(
+            "external-service-bad-response",
+            502,
+            "Invalid response from external service",
+            true),
+
     DEPENDENCY_FAILURE(
             "dependency-failure",
             424,
             "Dependency failure",
             true),
 
-    // ============================
+    // ==============================================================================
     // DATA / INFRASTRUCTURE
-    // ============================
+    // ==============================================================================
+    // Falhas relacionadas à persistência, integridade serialização,
+    // armazenamento e conectividade.
+    // ==============================================================================
 
     DATABASE_ERROR(
-            "database-error",
+                    "database-error",
             500,
             "Database error",
             true),
@@ -268,14 +300,56 @@ public enum TechnicalErrorType implements ErrorType {
             "Malformed request body",
             false),
 
-    CONNECTION_ERROR("connection-error",
+
+    // ==============================================================================
+    // INFRASTRUCTURE
+    // ==============================================================================
+    // Falhas relacionadas à infraestrutura,
+    // conectividade, configuração, armazenamento de arquivos e mensageria.
+    // ==============================================================================
+
+    CONNECTION_ERROR(
+            "connection-error",
             500,
             "Connection error",
             true),
 
-    // ============================
+    CONFIGURATION_ERROR(
+            "configuration-error",
+            500,
+            "Application configuration error",
+            false),
+
+    FILE_STORAGE_ERROR(
+            "file-storage-error",
+            500,
+            "File storage error",
+            true),
+
+    MESSAGE_BROKER_ERROR(
+            "message-broker-error",
+            500,
+            "Message broker error",
+            true),
+
+    MESSAGE_PUBLISH_ERROR(
+            "message-publish-error",
+            500,
+            "Message publish error",
+            true),
+
+    MESSAGE_CONSUME_ERROR(
+            "message-consume-error",
+            500,
+            "Message consume error",
+            true),
+
+    // ==============================================================================
     // RATE LIMIT / THROTTLING
-    // ============================
+    // ==============================================================================
+    // Limitações de consumo aplicadas para proteção
+    // de recursos internos ou externos.
+    // ==============================================================================
 
     RATE_LIMIT_EXCEEDED(
             "rate-limit-exceeded",
@@ -283,9 +357,12 @@ public enum TechnicalErrorType implements ErrorType {
             "Too many requests",
             true),
 
-    // ============================
+    // ==============================================================================
     // CACHE
-    // ============================
+    // ==============================================================================
+    // Falhas relacionadas à infraestrutura de cache
+    // ou operações executadas sobre ela.
+    // ==============================================================================
 
     CACHE_ERROR(
             "cache-error",
