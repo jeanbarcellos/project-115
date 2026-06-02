@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.jeanbarcellos.core.error.DomainViolation;
 
 /**
- * Testes unitários da classe {@link DomainValidationException}.
+ * Testes de unidade da classe {@link DomainValidationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

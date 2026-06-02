@@ -19,18 +19,39 @@ import lombok.Getter;
  * @author Jean Barcellos (jeanbarcellos@hotmail.com)
  */
 @Getter
+@SuppressWarnings("java:S1948")
 public class BusinessException extends ApplicationException {
 
-    private final ErrorType type;
+    /**
+     * Tipo do erro documentado no catálogo.
+     */
+    private final ErrorType errorType;
+
+    /**
+     * Propriedades adicionais para resposta ou logging.
+     */
     private final Map<String, Object> properties;
 
-    public BusinessException(ErrorType type, String message) {
-        this(type, message, Map.of());
+    /**
+     * Cria uma exceção de negócio.
+     *
+     * @param errorType tipo do erro
+     * @param message   mensagem detalhada
+     */
+    public BusinessException(ErrorType errorType, String message) {
+        this(errorType, message, Map.of());
     }
 
-    public BusinessException(ErrorType type, String message, Map<String, Object> properties) {
+    /**
+     * Cria uma exceção de negócio.
+     *
+     * @param errorType  tipo do erro
+     * @param message    mensagem detalhada
+     * @param properties propriedades adicionais
+     */
+    public BusinessException(ErrorType errorType, String message, Map<String, Object> properties) {
         super(message);
-        this.type = type;
+        this.errorType = errorType;
         this.properties = properties;
     }
 

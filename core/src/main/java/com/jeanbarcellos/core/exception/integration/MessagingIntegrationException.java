@@ -61,4 +61,5 @@ public class MessagingIntegrationException extends IntegrationException {
         this.topicOrQueue = topicOrQueue;
         this.operation = operation;
     }
+
 }

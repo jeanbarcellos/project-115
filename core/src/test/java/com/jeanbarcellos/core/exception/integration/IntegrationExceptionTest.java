@@ -15,7 +15,7 @@ import com.jeanbarcellos.core.error.ExternalErrorType;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 
 /**
- * Testes unitários da classe {@link IntegrationException}.
+ * Testes de unidade da classe {@link IntegrationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -34,13 +34,12 @@ class IntegrationExceptionTest {
                 "requestId", "123");
 
         // Act
-        IntegrationException result =
-                new TestIntegrationException(
-                        service,
-                        message,
-                        metadata,
-                        TestExternalErrorType.GENERIC,
-                        cause);
+        IntegrationException result = new TestIntegrationException(
+                service,
+                message,
+                metadata,
+                TestExternalErrorType.GENERIC,
+                cause);
 
         // Assert
         assertEquals(service, result.getService());
@@ -61,13 +60,12 @@ class IntegrationExceptionTest {
         // Arrange
 
         // Act
-        IntegrationException result =
-                new TestIntegrationException(
-                        "rest-serpro",
-                        "Provider error",
-                        null,
-                        TestExternalErrorType.GENERIC,
-                        null);
+        IntegrationException result = new TestIntegrationException(
+                "rest-serpro",
+                "Provider error",
+                null,
+                TestExternalErrorType.GENERIC,
+                null);
 
         // Assert
         assertTrue(result.getMetadata().isEmpty());
@@ -81,13 +79,12 @@ class IntegrationExceptionTest {
         metadata.put("requestId", "123");
 
         // Act
-        IntegrationException result =
-                new TestIntegrationException(
-                        "rest-serpro",
-                        "Provider error",
-                        metadata,
-                        TestExternalErrorType.GENERIC,
-                        null);
+        IntegrationException result = new TestIntegrationException(
+                "rest-serpro",
+                "Provider error",
+                metadata,
+                TestExternalErrorType.GENERIC,
+                null);
 
         // Assert
         assertThrows(
@@ -99,13 +96,12 @@ class IntegrationExceptionTest {
     void getErrorType_whenExternalErrorIsProvided_shouldReturnMappedErrorType() {
 
         // Arrange
-        IntegrationException exception =
-                new TestIntegrationException(
-                        "rest-serpro",
-                        "Provider error",
-                        null,
-                        TestExternalErrorType.GENERIC,
-                        null);
+        IntegrationException exception = new TestIntegrationException(
+                "rest-serpro",
+                "Provider error",
+                null,
+                TestExternalErrorType.GENERIC,
+                null);
 
         // Act
         ErrorType result = exception.getErrorType();
@@ -120,13 +116,12 @@ class IntegrationExceptionTest {
     void getErrorType_whenExternalErrorIsNull_shouldReturnDefaultErrorType() {
 
         // Arrange
-        IntegrationException exception =
-                new TestIntegrationException(
-                        "rest-serpro",
-                        "Provider error",
-                        null,
-                        null,
-                        null);
+        IntegrationException exception = new TestIntegrationException(
+                "rest-serpro",
+                "Provider error",
+                null,
+                null,
+                null);
 
         // Act
         ErrorType result = exception.getErrorType();
@@ -139,7 +134,7 @@ class IntegrationExceptionTest {
 
     /**
      * Implementação concreta utilizada exclusivamente
-     * nos testes unitários de {@link IntegrationException}.
+     * nos Testes de unidade de {@link IntegrationException}.
      *
      * @author Jean Barcellos <jeanbarcellos@hotmail.com>
      */

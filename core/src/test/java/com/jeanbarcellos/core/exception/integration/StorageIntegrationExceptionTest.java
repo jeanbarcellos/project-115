@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testes unitários da classe {@link StorageIntegrationException}.
+ * Testes de unidade da classe {@link StorageIntegrationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

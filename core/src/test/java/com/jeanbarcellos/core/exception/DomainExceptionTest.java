@@ -8,7 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testes unitários da classe {@link DomainException}.
+ * Testes de unidade da classe {@link DomainException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

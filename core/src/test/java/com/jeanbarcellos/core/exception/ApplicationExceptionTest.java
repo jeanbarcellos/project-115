@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testes unitários da classe {@link ApplicationException}.
+ * Testes de unidade da classe {@link ApplicationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

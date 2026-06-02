@@ -17,6 +17,7 @@ package com.jeanbarcellos.core.exception;
  * @author Jean Barcellos (jeanbarcellos@hotmail.com)
  */
 public class ApplicationException extends RuntimeException {
+
     /**
      * Constrói uma nova exceção com a mensagem detalhada especificada.
      *

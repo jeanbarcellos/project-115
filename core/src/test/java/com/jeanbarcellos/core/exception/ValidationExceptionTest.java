@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.jeanbarcellos.core.error.ValidationError;
 
 /**
- * Testes unitários da classe {@link ValidationException}.
+ * Testes de unidade da classe {@link ValidationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

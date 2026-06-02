@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 
 /**
- * Testes unitários da classe {@link BusinessException}.
+ * Testes de unidade da classe {@link BusinessException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
@@ -27,7 +27,7 @@ class BusinessExceptionTest {
         BusinessException result = new BusinessException(errorType, message);
 
         // Assert
-        assertEquals(errorType, result.getType());
+        assertEquals(errorType, result.getErrorType());
         assertEquals(message, result.getMessage());
         assertTrue(result.getProperties().isEmpty());
     }
@@ -48,7 +48,7 @@ class BusinessExceptionTest {
                         properties);
 
         // Assert
-        assertEquals(errorType, result.getType());
+        assertEquals(errorType, result.getErrorType());
         assertEquals(message, result.getMessage());
         assertEquals(properties, result.getProperties());
     }

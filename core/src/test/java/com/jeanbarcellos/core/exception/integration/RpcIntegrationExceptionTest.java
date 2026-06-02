@@ -7,7 +7,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testes unitários da classe {@link RpcIntegrationException}.
+ * Testes de unidade da classe {@link RpcIntegrationException}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

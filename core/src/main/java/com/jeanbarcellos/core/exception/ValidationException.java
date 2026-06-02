@@ -33,7 +33,8 @@ public class ValidationException extends ApplicationException {
     /**
      * Construtor para falhas de validação com múltiplos campos inválidos.
      *
-     * @param message Mensagem específica e legível sobre o contexto do erro (RFC 9457 'detail').
+     * @param message Mensagem específica e legível sobre o contexto do erro (RFC
+     *                9457 'detail').
      * @param errors  Lista de campos que falharam na validação e seus motivos.
      */
     public ValidationException(String message, List<ValidationError> errors) {
@@ -59,4 +60,5 @@ public class ValidationException extends ApplicationException {
     public List<ValidationError> getErrors() {
         return errors;
     }
+
 }

@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Testes unitários do contrato {@link ExternalErrorType}.
+ * Testes de unidade do contrato {@link ExternalErrorType}.
  *
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */

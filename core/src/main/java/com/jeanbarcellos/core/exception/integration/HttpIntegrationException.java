@@ -14,7 +14,7 @@ import lombok.Getter;
  * @author Jean Barcellos <jeanbarcellos@hotmail.com>
  */
 @Getter
-@SuppressWarnings({ "java:S110", "java:S1948" })
+@SuppressWarnings({ "java:S110", "java:S1948", "java:S107" })
 public class HttpIntegrationException extends IntegrationException {
 
     /**
