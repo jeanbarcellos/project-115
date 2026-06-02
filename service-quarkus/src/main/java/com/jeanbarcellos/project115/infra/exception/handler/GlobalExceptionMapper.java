@@ -21,7 +21,7 @@ import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.exception.integration.IntegrationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-
+import com.jeanbarcellos.project115.infra.error.TechnicalErrorResolver;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
@@ -156,7 +156,7 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
     private Response handleBusinessException(BusinessException ex) {
 
         ErrorCategory category = ErrorCategory.BUSINESS;
-        ErrorType errorType = ex.getType();
+        ErrorType errorType = ex.getErrorType();
 
         this.log(category, errorType, ex, ex.getMessage());
 

@@ -41,13 +41,9 @@ public enum SerproErrorType implements ExternalErrorType {
 
 
     private final Integer status;
-
     private final String code;
-
     private final String description;
-
     private final boolean retryable;
-
     private final ErrorType errorType;
 
 }

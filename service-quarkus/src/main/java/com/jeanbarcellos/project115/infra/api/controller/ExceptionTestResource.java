@@ -23,6 +23,10 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class ExceptionTestResource {
 
+    // =========================================================================
+    // DOMAIN
+    // =========================================================================
+
     @GET
     @Path("/domain")
     public void domain() {
@@ -53,6 +57,10 @@ public class ExceptionTestResource {
                                 -1)));
     }
 
+    // =========================================================================
+    // BISOMESS
+    // =========================================================================
+
     @GET
     @Path("/business")
     public void business() {
@@ -74,6 +82,10 @@ public class ExceptionTestResource {
                                 "Invalid CPF",
                                 "123")));
     }
+
+    // =========================================================================
+    // FALLBACK
+    // =========================================================================
 
     @GET
     @Path("/runtime")

@@ -146,7 +146,7 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
 
         ErrorCategory category = ErrorCategory.BUSINESS;
-        ErrorType errorType = ex.getType();
+        ErrorType errorType = ex.getErrorType();
 
         this.log(category, errorType, ex, ex.getMessage());
 

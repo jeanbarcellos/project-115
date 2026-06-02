@@ -50,7 +50,7 @@ import jakarta.ws.rs.core.MediaType;
 public class IntegrationExceptionTestController {
 
     // =========================================================================
-    // HTTP
+    // INTEGRACION >>> HTTP
     // =========================================================================
 
     /**
@@ -65,13 +65,13 @@ public class IntegrationExceptionTestController {
                 "GET",
                 URI.create("https://api.serpro.gov.br/v1/customers/777"),
                 404,
-                "Customer not found",
                 """
                 {
                   "code": "NOT_FOUND",
                   "message": "Customer not found"
                 }
                 """,
+                "Customer not found",
                 Map.of(
                         "providerRequestId", UUID.randomUUID().toString(),
                         "endpoint", "/v1/customers/777"),
@@ -91,13 +91,14 @@ public class IntegrationExceptionTestController {
                 "POST",
                 URI.create("https://api.serpro.gov.br/v1/customers"),
                 400,
-                "Invalid request",
+
                 """
                 {
                   "code": "INVALID_REQUEST",
                   "message": "Document is invalid"
                 }
                 """,
+                "Invalid request",
                 Map.of(
                         "document", "123"),
                 SerproErrorType.INVALID_REQUEST,
@@ -116,13 +117,13 @@ public class IntegrationExceptionTestController {
                 "GET",
                 URI.create("https://api.serpro.gov.br/v1/customers"),
                 500,
-                "Internal provider error",
                 """
                 {
                   "code": "INTERNAL_ERROR",
                   "message": "Unexpected provider failure"
                 }
                 """,
+                "Internal provider error",
                 Map.of(
                         "providerRequestId", UUID.randomUUID().toString()),
                 SerproErrorType.INTERNAL_ERROR,
