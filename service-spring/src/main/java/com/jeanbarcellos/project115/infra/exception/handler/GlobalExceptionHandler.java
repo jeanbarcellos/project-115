@@ -5,14 +5,12 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import com.jeanbarcellos.core.error.ErrorCategory;
 import com.jeanbarcellos.core.error.ErrorResponse;
 import com.jeanbarcellos.core.error.ErrorType;
@@ -25,8 +23,7 @@ import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.exception.integration.IntegrationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-import com.jeanbarcellos.project115.infra.error.TechnicalErrorResolver;
-
+import com.jeanbarcellos.core.spring.infra.error.TechnicalErrorResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 

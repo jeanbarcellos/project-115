@@ -5,10 +5,8 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import com.jeanbarcellos.core.error.ErrorCategory;
 import com.jeanbarcellos.core.error.ErrorResponse;
 import com.jeanbarcellos.core.error.ErrorType;
@@ -21,7 +19,7 @@ import com.jeanbarcellos.core.exception.DomainValidationException;
 import com.jeanbarcellos.core.exception.ValidationException;
 import com.jeanbarcellos.core.exception.integration.IntegrationException;
 import com.jeanbarcellos.core.observability.CorrelationContext;
-import com.jeanbarcellos.project115.infra.error.TechnicalErrorResolver;
+import com.jeanbarcellos.core.quarkus.infra.error.TechnicalErrorResolver;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;

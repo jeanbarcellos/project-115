@@ -52,7 +52,7 @@
     <!-- Lib project115-core-->
     <dependency>
       <groupId>com.jeanbarcellos.project115</groupId>
-      <artifactId>project115-core</artifactId>
+      <artifactId>project115-core-quarkus</artifactId>
       <version>${project.version}</version>
     </dependency>
 
