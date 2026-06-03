@@ -18,8 +18,14 @@
   <description>Biblioteca compartilhada para microserviços Quarkus</description>
 
   <properties>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <!-- Java -->
+    <java.version>17</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <!-- Dependências -->
+    <jakarta.ws.rs-api.version>4.0.0</jakarta.ws.rs-api.version>
+    <jackson.version>2.19.1</jackson.version>
+    <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
+    <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
   </properties>
 
   <dependencies>
@@ -40,6 +46,42 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- API Jakarta REST (JAX-RS) para exceções e contratos HTTP -->
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>${jakarta.ws.rs-api.version}</version>
+    </dependency>
+
+    <!-- API Jakarta Validation para Bean Validation (@Valid, @NotNull, etc.) -->
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>${jakarta.validation-api.version}</version>
+    </dependency>
+
+    <!-- API Jakarta Persistence para exceções e contratos JPA -->
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>${jakarta.persistence-api.version}</version>
+    </dependency>
+
+    <!-- Jackson Core para parsing e processamento de JSON -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <!-- Jackson Databind para serialização e desserialização de objetos -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
     <!-- ******************************************************* -->
