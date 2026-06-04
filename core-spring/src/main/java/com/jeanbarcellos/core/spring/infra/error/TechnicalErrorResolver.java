@@ -3,18 +3,8 @@ package com.jeanbarcellos.core.spring.infra.error;
 import java.util.List;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
-import com.jeanbarcellos.core.error.resolver.ErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringCacheErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringConflictErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringDataErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringFallbackErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringGenericErrorReolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringInfraestructureErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringIntegrationErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringRateLimitErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringResourceErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringSecurityErrorResolver;
-import com.jeanbarcellos.core.spring.infra.error.resolver.SpringValidationErrorResolver;
+import com.jeanbarcellos.core.error.resolver.*;
+import com.jeanbarcellos.core.spring.infra.error.resolver.*;
 
 /**
  * Utilitário responsável por traduzir exceções técnicas (nativas, de frameworks
@@ -39,17 +29,38 @@ import com.jeanbarcellos.core.spring.infra.error.resolver.SpringValidationErrorR
 public final class TechnicalErrorResolver {
 
     private static final List<ErrorResolver> RESOLVERS = List.of(
+            new CommonValidationErrorResolver(),
             new SpringValidationErrorResolver(),
+
+            new CommonResourceErrorResolver(),
             new SpringResourceErrorResolver(),
+
+            new CommonSecurityErrorResolver(),
             new SpringSecurityErrorResolver(),
+
+            new CommonConflictErrorResolver(),
             new SpringConflictErrorResolver(),
+
+            new CommonDataErrorResolver(),
             new SpringDataErrorResolver(),
+
+            new CommonIntegrationErrorResolver(),
             new SpringIntegrationErrorResolver(),
+
+            new CommonInfraestructureErrorResolver(),
             new SpringInfraestructureErrorResolver(),
+
+            new CommonRateLimitErrorResolver(),
             new SpringRateLimitErrorResolver(),
+
+            new CommonCacheErrorResolver(),
             new SpringCacheErrorResolver(),
+
+            new CommonFallbackErrorResolver(),
             new SpringFallbackErrorResolver(),
-            new SpringGenericErrorReolver());
+
+            new CommonGenericErrorResolver(),
+            new SpringGenericErrorResolver());
 
     /**
      * Construtor privado para ocultar o construtor público implícito,

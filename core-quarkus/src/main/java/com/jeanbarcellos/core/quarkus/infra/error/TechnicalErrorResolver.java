@@ -3,18 +3,9 @@ package com.jeanbarcellos.core.quarkus.infra.error;
 import java.util.List;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
+import com.jeanbarcellos.core.error.resolver.*;
 import com.jeanbarcellos.core.error.resolver.ErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusCacheErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusConflictErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusDataErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusFallbackErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusGenericErrorReolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusInfraestructureErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusIntegrationErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusRateLimitErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusResourceErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusSecurityErrorResolver;
-import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusValidationErrorResolver;
+import com.jeanbarcellos.core.quarkus.infra.error.resolver.*;
 
 /**
  * Utilitário responsável por traduzir exceções técnicas (nativas, de frameworks ou bibliotecas)
@@ -39,17 +30,39 @@ import com.jeanbarcellos.core.quarkus.infra.error.resolver.QuarkusValidationErro
 public class TechnicalErrorResolver {
 
     private static final List<ErrorResolver> RESOLVERS = List.of(
-        new QuarkusValidationErrorResolver(),
-        new QuarkusResourceErrorResolver(),
-        new QuarkusSecurityErrorResolver(),
-        new QuarkusConflictErrorResolver(),
-        new QuarkusDataErrorResolver(),
-        new QuarkusIntegrationErrorResolver(),
-        new QuarkusInfraestructureErrorResolver(),
-        new QuarkusRateLimitErrorResolver(),
-        new QuarkusCacheErrorResolver(),
-        new QuarkusFallbackErrorResolver(),
-        new QuarkusGenericErrorReolver());
+            new CommonValidationErrorResolver(),
+            new QuarkusValidationErrorResolver(),
+
+            new CommonResourceErrorResolver(),
+            new QuarkusResourceErrorResolver(),
+
+            new CommonSecurityErrorResolver(),
+            new QuarkusSecurityErrorResolver(),
+
+            new CommonConflictErrorResolver(),
+            new QuarkusConflictErrorResolver(),
+
+            new CommonDataErrorResolver(),
+            new QuarkusDataErrorResolver(),
+
+            new CommonIntegrationErrorResolver(),
+            new QuarkusIntegrationErrorResolver(),
+
+            new CommonInfraestructureErrorResolver(),
+            new QuarkusInfraestructureErrorResolver(),
+
+            new CommonRateLimitErrorResolver(),
+            new QuarkusRateLimitErrorResolver(),
+
+            new CommonCacheErrorResolver(),
+            new QuarkusCacheErrorResolver(),
+
+            new CommonFallbackErrorResolver(),
+            new QuarkusFallbackErrorResolver(),
+
+            new CommonGenericErrorResolver(),
+            new QuarkusGenericErrorResolver());
+
 
     /**
      * Construtor privado para ocultar o construtor público implícito,
