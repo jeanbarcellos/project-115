@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
 import com.jeanbarcellos.core.error.resolver.*;
-import com.jeanbarcellos.core.error.resolver.ErrorResolver;
 import com.jeanbarcellos.core.quarkus.infra.error.resolver.*;
 
 /**
@@ -29,7 +28,7 @@ import com.jeanbarcellos.core.quarkus.infra.error.resolver.*;
  */
 public class TechnicalErrorResolver {
 
-    private static final List<ErrorResolver> RESOLVERS = List.of(
+    private static final List<ErrorResolver> RESOLUTION_CHAIN = List.of(
             new CommonValidationErrorResolver(),
             new QuarkusValidationErrorResolver(),
 
@@ -57,11 +56,12 @@ public class TechnicalErrorResolver {
             new CommonCacheErrorResolver(),
             new QuarkusCacheErrorResolver(),
 
-            new CommonFallbackErrorResolver(),
-            new QuarkusFallbackErrorResolver(),
-
             new CommonGenericErrorResolver(),
-            new QuarkusGenericErrorResolver());
+            new QuarkusGenericErrorResolver(),
+
+            new CommonFallbackErrorResolver(),
+            new QuarkusFallbackErrorResolver()
+        );
 
 
     /**
@@ -86,7 +86,7 @@ public class TechnicalErrorResolver {
             return TechnicalErrorType.INTERNAL_ERROR;
         }
 
-        for (ErrorResolver resolver : RESOLVERS) {
+        for (ErrorResolver resolver : RESOLUTION_CHAIN) {
 
             TechnicalErrorType type = resolver.resolve(ex);
 

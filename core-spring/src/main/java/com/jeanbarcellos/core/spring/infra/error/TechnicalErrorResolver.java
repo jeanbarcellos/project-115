@@ -28,7 +28,7 @@ import com.jeanbarcellos.core.spring.infra.error.resolver.*;
  */
 public final class TechnicalErrorResolver {
 
-    private static final List<ErrorResolver> RESOLVERS = List.of(
+    private static final List<ErrorResolver> RESOLUTION_CHAIN = List.of(
             new CommonValidationErrorResolver(),
             new SpringValidationErrorResolver(),
 
@@ -56,11 +56,12 @@ public final class TechnicalErrorResolver {
             new CommonCacheErrorResolver(),
             new SpringCacheErrorResolver(),
 
-            new CommonFallbackErrorResolver(),
-            new SpringFallbackErrorResolver(),
-
             new CommonGenericErrorResolver(),
-            new SpringGenericErrorResolver());
+            new SpringGenericErrorResolver(),
+
+            new CommonFallbackErrorResolver(),
+            new SpringFallbackErrorResolver()
+        );
 
     /**
      * Construtor privado para ocultar o construtor público implícito,
@@ -87,7 +88,7 @@ public final class TechnicalErrorResolver {
             return TechnicalErrorType.INTERNAL_ERROR;
         }
 
-        for (ErrorResolver resolver : RESOLVERS) {
+        for (ErrorResolver resolver : RESOLUTION_CHAIN) {
 
             TechnicalErrorType type = resolver.resolve(ex);
 
