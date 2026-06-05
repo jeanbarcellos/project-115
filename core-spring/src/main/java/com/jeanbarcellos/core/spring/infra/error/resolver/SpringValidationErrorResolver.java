@@ -22,14 +22,6 @@ public final class SpringValidationErrorResolver extends AbstractErrorResolver {
             return TechnicalErrorType.INPUT_VALIDATION_ERROR;
         }
 
-        if (ex instanceof jakarta.validation.ConstraintViolationException) {
-            return TechnicalErrorType.INPUT_VALIDATION_ERROR;
-        }
-
-        if (ex instanceof jakarta.validation.ValidationException) {
-            return TechnicalErrorType.SYSTEM_VALIDATION_ERROR;
-        }
-
         if (ex instanceof org.springframework.validation.BindException) {
             return TechnicalErrorType.INPUT_VALIDATION_ERROR;
         }
@@ -73,6 +65,7 @@ public final class SpringValidationErrorResolver extends AbstractErrorResolver {
         if (ex instanceof org.springframework.web.bind.ServletRequestBindingException) {
             return TechnicalErrorType.MISSING_PARAMETER;
         }
+        
         return null;
     }
 

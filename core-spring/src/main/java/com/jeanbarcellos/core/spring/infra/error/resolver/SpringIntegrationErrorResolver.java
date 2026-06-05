@@ -8,11 +8,6 @@ public class SpringIntegrationErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        if (hasCause(ex, "java.net.SocketTimeoutException")
-                || hasCause(ex, "java.net.http.HttpTimeoutException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
-        }
-
         // OpenFeign Clients
 
         if (hasCause(ex, "feign.codec.DecodeException")) {
@@ -65,20 +60,6 @@ public class SpringIntegrationErrorResolver extends AbstractErrorResolver {
         if (isInstanceOf(ex.getClass(),
                 "org.apache.hc.client5.http.ConnectTimeoutException")) {
             return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
-        }
-
-        // Outros
-
-        if (hasCause(ex, "javax.net.ssl.SSLException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_UNAVAILABLE;
-        }
-
-        if (hasCause(ex, "java.net.ConnectException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_UNAVAILABLE;
-        }
-
-        if (hasCause(ex, "java.net.UnknownHostException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_UNAVAILABLE;
         }
 
         return null;

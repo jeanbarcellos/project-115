@@ -20,12 +20,7 @@ public final class SpringResourceErrorResolver extends AbstractErrorResolver {
             return TechnicalErrorType.INVALID_FORMAT;
         }
 
-        if (isInstanceOf(ex.getClass(),
-                "org.springframework.web.servlet.NoHandlerFoundException")) {
-            return TechnicalErrorType.RESOURCE_NOT_FOUND;
-        }
-
-        if (ex instanceof jakarta.persistence.EntityNotFoundException) {
+        if (isInstanceOf(ex.getClass(), "org.springframework.web.servlet.NoHandlerFoundException")) {
             return TechnicalErrorType.RESOURCE_NOT_FOUND;
         }
 
@@ -34,10 +29,6 @@ public final class SpringResourceErrorResolver extends AbstractErrorResolver {
         }
 
         if (ex instanceof org.springframework.http.converter.HttpMessageNotReadableException) {
-            return TechnicalErrorType.MALFORMED_JSON;
-        }
-
-        if (ex instanceof com.fasterxml.jackson.core.JsonParseException) {
             return TechnicalErrorType.MALFORMED_JSON;
         }
 

@@ -47,8 +47,8 @@ public final class TechnicalErrorResolver {
             new CommonIntegrationErrorResolver(),
             new SpringIntegrationErrorResolver(),
 
-            new CommonInfraestructureErrorResolver(),
-            new SpringInfraestructureErrorResolver(),
+            new CommonInfrastructureErrorResolver(),
+            new SpringInfrastructureErrorResolver(),
 
             new CommonRateLimitErrorResolver(),
             new SpringRateLimitErrorResolver(),

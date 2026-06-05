@@ -8,11 +8,6 @@ public class QuarkusRateLimitErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        // Resilience4j (se utilizado no projeto Quarkus)
-        if (isInstanceOf(ex.getClass(), "io.github.resilience4j.ratelimiter.RequestNotPermitted")) {
-            return TechnicalErrorType.RATE_LIMIT_EXCEEDED;
-        }
-
         return null;
     }
 

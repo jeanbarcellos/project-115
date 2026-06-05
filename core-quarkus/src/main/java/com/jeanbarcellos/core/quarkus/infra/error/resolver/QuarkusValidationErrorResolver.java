@@ -8,14 +8,6 @@ public class QuarkusValidationErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        // Erro de Bean Validation (Ex: @NotNull, @Email no corpo ou parâmetros)
-        if (ex instanceof jakarta.validation.ConstraintViolationException) {
-            return TechnicalErrorType.INPUT_VALIDATION_ERROR;
-        }
-
-        if (ex instanceof jakarta.validation.ValidationException) {
-            return TechnicalErrorType.SYSTEM_VALIDATION_ERROR;
-        }
         if (ex instanceof jakarta.ws.rs.BadRequestException) {
             return TechnicalErrorType.INVALID_PARAMETER;
         }

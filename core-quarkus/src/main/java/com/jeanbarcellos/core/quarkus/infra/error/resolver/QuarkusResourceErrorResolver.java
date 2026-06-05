@@ -20,14 +20,6 @@ public class QuarkusResourceErrorResolver extends AbstractErrorResolver {
             return TechnicalErrorType.RESOURCE_UNSUPPORTED_MEDIA_TYPE;
         }
 
-        if (isInstanceOf(ex.getClass(), "jakarta.persistence.EntityNotFoundException")) {
-            return TechnicalErrorType.RESOURCE_NOT_FOUND;
-        }
-
-        if (ex instanceof com.fasterxml.jackson.core.JsonParseException) {
-            return TechnicalErrorType.MALFORMED_JSON;
-        }
-
         return null;
     }
 

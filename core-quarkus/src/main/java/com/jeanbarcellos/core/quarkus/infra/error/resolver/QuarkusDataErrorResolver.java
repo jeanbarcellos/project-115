@@ -8,14 +8,6 @@ public class QuarkusDataErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        if (ex instanceof java.sql.SQLException) {
-            return TechnicalErrorType.DATABASE_ERROR;
-        }
-
-        if (ex instanceof java.sql.SQLTimeoutException) {
-            return TechnicalErrorType.TIMEOUT;
-        }
-
         if (isInstanceOf(ex.getClass(), "jakarta.persistence.QueryTimeoutException")) {
             return TechnicalErrorType.TIMEOUT;
         }
@@ -30,8 +22,7 @@ public class QuarkusDataErrorResolver extends AbstractErrorResolver {
             return TechnicalErrorType.DATA_INTEGRITY_VIOLATION;
         }
 
-        if (ex instanceof com.fasterxml.jackson.databind.exc.MismatchedInputException
-                || ex instanceof com.fasterxml.jackson.databind.JsonMappingException) {
+        if (ex instanceof com.fasterxml.jackson.databind.JsonMappingException) {
             return TechnicalErrorType.DESERIALIZATION_ERROR;
         }
 

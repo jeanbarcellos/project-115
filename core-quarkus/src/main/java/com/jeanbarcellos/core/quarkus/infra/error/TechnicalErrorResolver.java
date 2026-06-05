@@ -48,8 +48,8 @@ public class TechnicalErrorResolver {
             new CommonIntegrationErrorResolver(),
             new QuarkusIntegrationErrorResolver(),
 
-            new CommonInfraestructureErrorResolver(),
-            new QuarkusInfraestructureErrorResolver(),
+            new CommonInfrastructureErrorResolver(),
+            new QuarkusInfrastructureErrorResolver(),
 
             new CommonRateLimitErrorResolver(),
             new QuarkusRateLimitErrorResolver(),

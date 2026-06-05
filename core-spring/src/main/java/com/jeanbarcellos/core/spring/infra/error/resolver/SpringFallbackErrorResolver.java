@@ -8,8 +8,7 @@ public class SpringFallbackErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        // Captura exceções genéricas lançadas manualmente como throw new
-        // ResponseStatusException(...)
+        // Captura exceções genéricas lançadas manualmente como throw new ResponseStatusException(...)
         if (ex instanceof org.springframework.web.server.ResponseStatusException responseStatusEx) {
 
             int status = responseStatusEx.getStatusCode().value();

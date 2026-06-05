@@ -1,9 +1,14 @@
-package com.jeanbarcellos.core.quarkus.infra.error.resolver;
+package com.jeanbarcellos.core.error.resolver;
 
 import com.jeanbarcellos.core.error.TechnicalErrorType;
-import com.jeanbarcellos.core.error.resolver.AbstractErrorResolver;
 
-public class QuarkusInfraestructureErrorResolver extends AbstractErrorResolver {
+/**
+ * Resolver responsável por falhas de infraestrutura
+ * independentes de framework.
+ *
+ * @author Jean Barcellos
+ */
+public class CommonInfrastructureErrorResolver extends AbstractErrorResolver {
 
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
@@ -24,23 +29,11 @@ public class QuarkusInfraestructureErrorResolver extends AbstractErrorResolver {
             return TechnicalErrorType.FILE_STORAGE_ERROR;
         }
 
-        if (ex instanceof java.nio.file.AccessDeniedException) {
-            return TechnicalErrorType.ACCESS_DENIED;
-        }
-
         if (ex instanceof java.nio.file.FileSystemException) {
             return TechnicalErrorType.FILE_STORAGE_ERROR;
         }
 
         if (hasCause(ex, "org.apache.kafka.common.KafkaException")) {
-            return TechnicalErrorType.MESSAGE_BROKER_ERROR;
-        }
-
-        if (hasCause(ex, "org.apache.kafka.common.errors.TimeoutException")) {
-            return TechnicalErrorType.MESSAGE_BROKER_ERROR;
-        }
-
-        if (hasCause(ex, "org.springframework.amqp.AmqpException")) {
             return TechnicalErrorType.MESSAGE_BROKER_ERROR;
         }
 

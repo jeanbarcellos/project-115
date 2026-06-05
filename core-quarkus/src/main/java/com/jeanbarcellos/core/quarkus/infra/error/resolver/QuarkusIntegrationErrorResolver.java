@@ -8,16 +8,6 @@ public class QuarkusIntegrationErrorResolver extends AbstractErrorResolver {
     @Override
     public TechnicalErrorType resolve(Throwable ex) {
 
-        if (hasCause(ex, "java.net.SocketTimeoutException")
-                || hasCause(ex, "java.net.http.HttpTimeoutException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
-        }
-
-        if (hasCause(ex, "java.net.SocketTimeoutException")
-                || hasCause(ex, "java.net.http.HttpTimeoutException")) {
-            return TechnicalErrorType.EXTERNAL_SERVICE_TIMEOUT;
-        }
-
         if (hasCause(ex, "org.eclipse.microprofile.rest.client.RestClientException")) {
             return TechnicalErrorType.EXTERNAL_SERVICE_ERROR;
         }
