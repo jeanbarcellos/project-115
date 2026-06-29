@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jeanbarcellos.core.spring.annotation.Valid;
 import com.jeanbarcellos.project115.user.application.dto.UserCreateRequest;
 import com.jeanbarcellos.project115.user.application.dto.UserResponse;
 import com.jeanbarcellos.project115.user.application.dto.UserUpdateRequest;
 import com.jeanbarcellos.project115.user.application.service.UserService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
