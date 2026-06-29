@@ -1,0 +1,7 @@
+com.jeanbarcellos.core.observability.spring.boot.configuration.RestTemplateObservabilityAutoConfiguration
+
+com.jeanbarcellos.core.observability.spring.boot.configuration.RestClientObservabilityAutoConfiguration
+
+com.jeanbarcellos.core.observability.spring.boot.configuration.WebClientObservabilityAutoConfiguration
+
+com.jeanbarcellos.core.observability.spring.boot.configuration.FeignObservabilityAutoConfiguration

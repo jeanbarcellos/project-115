@@ -1129,3 +1129,23 @@ Não existe mágica.
 ---
 ---
 
+
+```
+-javaagent:/otel/opentelemetry-javaagent.jar
+
+-Dotel.logs.exporter=otlp
+-Dotel.exporter.otlp.endpoint=http://alloy:4318
+-Dotel.exporter.otlp.protocol=http/protobuf
+-Dotel.propagators=tracecontext,baggage
+-Dotel.traces.exporter=none
+-Dotel.metrics.exporter=none
+```
+
+Conteúdo das classes:
+
+``` 
+```
+
+
+```
+``` 

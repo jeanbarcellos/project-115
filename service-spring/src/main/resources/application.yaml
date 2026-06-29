@@ -1,6 +1,8 @@
 spring:
   application:
-    name: project115-service-spring
+    name: @project.artifactId@
+    version: @project.version@
+    tag: jeanbarcellos
 
   datasource:
     url: jdbc:h2:mem:testdb
@@ -18,9 +20,26 @@ spring:
     mapper:
       sort-properties-alphabetically: false
 
+
 logging:
   level:
     "org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver": ERROR
+
+
 api:
   problem:
     base-uri: http://localhost:8080/problems
+
+
+core:
+  observability:
+    enabled: true
+    correlation-header: correlation-id
+    correlation-required: false
+    response-header-enabled: true
+
+# spring:
+#   application:
+#     name: @project.artifactId@
+#     version: @project.version@
+#     tags: cadastro,pix
