@@ -9,6 +9,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.jeanbarcellos.core.error.ErrorCategory;
@@ -196,9 +198,9 @@ public class GlobalExceptionHandler {
 
         ErrorCategory category = ErrorCategory.INTEGRATION;
         ErrorType errorType = ex.getErrorType();
+        String detail = ex.getMessage();
 
         Map<String, Object> properties = new HashMap<>();
-
         properties.put("service", ex.getService());
 
         if (ex.getExternalError() != null) {
@@ -213,7 +215,7 @@ public class GlobalExceptionHandler {
 
         this.log(category, errorType, ex, ex.getMessage());
 
-        return this.buildResponse(request, errorType, ex.getMessage(), properties);
+        return this.buildResponse(request, errorType, detail, properties);
     }
 
     // =========================================================================
@@ -240,6 +242,46 @@ public class GlobalExceptionHandler {
         return this.buildResponse(request, errorType, ex.getMessage());
     }
 
+
+    // org.springframework.web.bind.MethodArgumentNotValidException
+    // org.springframework.validation.method.MethodValidationException
+    // org.springframework.web.method.annotation.HandlerMethodValidationException
+    // jakarta.validation.ConstraintViolationException
+    // org.springframework.validation.BindException
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
+
+        ErrorCategory category = ErrorCategory.VALIDATION;
+        ErrorType errorType = TechnicalErrorType.INPUT_VALIDATION_ERROR;
+        String detail = "Argumento informado não é valido";
+
+
+        List<ValidationError> violations = ex.getBindingResult().getAllErrors()
+                .stream()
+                .map(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        return ValidationError.of(
+                                fieldError.getField(),
+                                fieldError.getDefaultMessage(),
+                                fieldError.getRejectedValue());
+                    }
+
+                    // Para erros globais (ObjectError), não há um valor rejeitado específico
+                    return ValidationError.of(
+                            error.getObjectName(),
+                            error.getDefaultMessage(),
+                            null);
+                })
+                .toList();
+
+        this.log(category, errorType, ex, ex.getMessage());
+
+        return this.buildResponse(request, errorType, detail, violations);
+    }
+
     // =========================================================================
     // GENERIC / TECHNICAL
     // =========================================================================
@@ -261,6 +303,9 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
+        // Temporário
+        log.info(ex.getClass().getName());
+
         ErrorCategory category = ErrorCategory.TECHNICAL;
         TechnicalErrorType errorType = TechnicalErrorResolver.resolveType(ex);
         String detail = "Unexpected error";
@@ -269,6 +314,7 @@ public class GlobalExceptionHandler {
 
         return this.buildResponse(request, errorType, detail);
     }
+
 
     // =========================================================================
     // BUILDERS
