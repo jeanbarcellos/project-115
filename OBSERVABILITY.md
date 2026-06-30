@@ -1143,9 +1143,76 @@ Não existe mágica.
 
 Conteúdo das classes:
 
-``` 
+
+PARTE 1 — core
+
+Estrutura
+```
+core
+
+src/main/java
+
+com.jeanbarcellos.core
+
+└── observability
+
+    ├── constants
+    │     ObservabilityConstants.java
+    │
+    ├── context
+    │     ObservabilityContext.java
+    │     ObservabilityContextProvider.java
+    │
+    ├── exception
+    │     MissingCorrelationIdException.java
+    │
+    ├── generator
+    │     CorrelationIdGenerator.java
+    │
+    └── properties
+          ObservabilityProperties.java
+
+```
+
+Parte  2
+
+
+
+
+CorrelationIdFilter
+ObservabilityAutoConfiguration
+
+
+Paerte 3
+
+core-observability-spring-boot
+
+```
+com.jeanbarcellos.core.observability.spring.boot
+
+├── configuration
+│
+│     RestTemplateObservabilityAutoConfiguration
+│     RestClientObservabilityAutoConfiguration
+│     WebClientObservabilityAutoConfiguration
+│     FeignObservabilityAutoConfiguration
+│
+├── interceptor
+│
+│     RestTemplateCorrelationInterceptor
+│     RestClientCorrelationInterceptor
+│     FeignCorrelationInterceptor
+│
+├── webclient
+│
+│     CorrelationExchangeFilter
+│
+└── customizer
+      RestTemplateObservabilityCustomizer
+      RestClientObservabilityCustomizer
+      WebClientObservabilityCustomizer
 ```
 
 
-```
-``` 
+
+https://chatgpt.com/g/g-p-6902af1dca6881919edc4164e8d227fd/c/6a372941-8608-83e9-878b-cee10f2c9ead

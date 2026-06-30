@@ -22,11 +22,6 @@
     <java.version>17</java.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <!-- Dependências -->
-    <spring-framework.version>6.2.17</spring-framework.version>
-    <jackson.version>2.19.1</jackson.version>
-    <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
-    <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
   </properties>
 
   <dependencies>
@@ -36,8 +31,8 @@
     <!-- ******************************************************* -->
 
     <dependency>
-      <groupId>com.jeanbarcellos</groupId>
-      <artifactId>core-observability-spring</artifactId>
+      <groupId>com.jeanbarcellos.project115</groupId>
+      <artifactId>project115-core-observability-spring</artifactId>
     </dependency>
 
     <dependency>
@@ -60,10 +55,10 @@
       <artifactId>logstash-logback-encoder</artifactId>
     </dependency>
 
-    <dependency>
+    <!-- <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
       <artifactId>opentelemetry-logback-mdc-1.0</artifactId>
-    </dependency>
+    </dependency> -->
 
     <!-- ******************************************************* -->
     <!-- DEPENDENCIAS DE TESTES                                  -->

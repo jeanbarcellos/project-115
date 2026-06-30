@@ -1,33 +1,89 @@
 package com.jeanbarcellos.core.observability.spring.properties;
 
-import com.jeanbarcellos.core.observability.constants.ObservabilityConstants;
-import com.jeanbarcellos.core.observability.properties.ObservabilityProperties;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Getter
-@Setter
+import com.jeanbarcellos.core.observability.constants.ObservabilityConstants;
+import com.jeanbarcellos.core.observability.properties.ObservabilityProperties;
+
+import lombok.Data;
+
+/**
+ * Spring Boot binding para as propriedades de observabilidade.
+ *
+ * <p>
+ * Esta classe é responsável apenas por realizar o binding das propriedades
+ * definidas em {@code application.yml}. O restante da biblioteca utiliza
+ * {@link ObservabilityProperties}, mantendo o módulo {@code core}
+ * completamente desacoplado do Spring.
+ * </p>
+ *
+ * <pre>
+ * core:
+ *   observability:
+ *     enabled: true
+ *     correlation:
+ *       header: correlation-id
+ *       required: false
+ *       response-header-enabled: true
+ * </pre>
+ *
+ * @author Jean Barcellos
+ */
+@Data
 @ConfigurationProperties(prefix = "core.observability")
 public class SpringObservabilityProperties {
 
+    /**
+     * Habilita ou desabilita a biblioteca de observabilidade.
+     */
     private boolean enabled = true;
 
-    private String correlationHeader =
-            ObservabilityConstants.DEFAULT_CORRELATION_HEADER;
+    /**
+     * Configurações relacionadas ao Correlation ID.
+     */
+    private final Correlation correlation = new Correlation();
 
-    private boolean responseHeaderEnabled = true;
+    /**
+     * Converte as propriedades do Spring para o modelo utilizado pelo módulo core.
+     *
+     * @return propriedades de observabilidade
+     */
+    public ObservabilityProperties toCoreProperties() {
 
-    private boolean correlationRequired = false;
-
-    public ObservabilityProperties toProperties() {
-
-        return ObservabilityProperties.builder()
-                .enabled(enabled)
-                .correlationHeader(correlationHeader)
-                .responseHeaderEnabled(responseHeaderEnabled)
-                .correlationRequired(correlationRequired)
+        final ObservabilityProperties properties = ObservabilityProperties.builder()
+                .enabled(this.enabled)
                 .build();
+
+        properties.getCorrelation().setHeader(this.correlation.getHeader());
+        properties.getCorrelation().setRequired(this.correlation.isRequired());
+        properties.getCorrelation().setResponseHeaderEnabled(
+                this.correlation.isResponseHeaderEnabled());
+
+        return properties;
+    }
+
+    /**
+     * Configurações relacionadas ao Correlation ID.
+     */
+    @Data
+    public static class Correlation {
+
+        /**
+         * Nome do header HTTP utilizado para transportar o Correlation ID.
+         */
+        private String header = ObservabilityConstants.DEFAULT_CORRELATION_HEADER;
+
+        /**
+         * Indica se o header é obrigatório.
+         *
+         * Caso falso, será gerado automaticamente quando ausente.
+         */
+        private boolean required = false;
+
+        /**
+         * Indica se o Correlation ID deve ser devolvido na resposta HTTP.
+         */
+        private boolean responseHeaderEnabled = true;
     }
 
 }
